@@ -38,7 +38,7 @@ describe("Unit of work module", () => {
 	describe("\"getAllRepositoryNames\" method", () => {
 		describe("Happy Path", () => {
 			it("Should get all repositories", () => {
-				const expectedRepositories: string[] = [];
+				const expectedRepositories: string[] = ["CourseRepository"];
 
 				const repositories = unitOfWork.getAllRepositoryNames();
 

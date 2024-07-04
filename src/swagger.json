@@ -9,9 +9,41 @@
 		{
 			"url": "http://localhost:3000/",
 			"description": "Local host server, exclusively for back-end developers."
+		},
+		{
+			"url": "https://inviting-piranha-singularly.ngrok-free.app/api",
+			"description": "LMS API's for integration"
 		}
 	],
-	"paths": {},
+	"paths": {
+		"/course": {
+			"get": {
+				"summary": "Get the list of courses",
+				"tags": [
+					"Course"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {},
+				"responses": {
+					"200": {
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"$ref": "#/components/schemas/Course"
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	},
 	"components": {
 		"securitySchemes": {
 			"bearerAuth": {
@@ -51,6 +83,217 @@
 				},
 				"required": [
 					"errors"
+				]
+			},
+			"Course": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "string",
+						"example": "667f14303cebd3afba47d623"
+					},
+					"title": {
+						"type": "string",
+						"example": "The Complete Python Bootcamp From Zero to Hero in Python"
+					},
+					"description": {
+						"type": "string",
+						"example": "Learn Python like a Professional Start from the basics and go all the way to creating your own applications and games"
+					},
+					"rating": {
+						"type": "object",
+						"properties": {
+							"value": {
+								"type": "number",
+								"example": 4.6
+							},
+							"totalCount": {
+								"type": "number",
+								"example": 509746
+							}
+						},
+						"required": [
+							"value",
+							"totalCount"
+						]
+					},
+					"totalStudents": {
+						"type": "number",
+						"example": 1925103
+					},
+					"creators": {
+						"type": "array",
+						"items": {
+							"type": "string",
+							"example": "Jane Doe"
+						}
+					},
+					"lastUpdatedOn": {
+						"type": "string",
+						"example": "2024-06-28T20:23:05.316Z"
+					},
+					"languages": {
+						"type": "array",
+						"items": {
+							"type": "string",
+							"enum": [
+								"ENGLISH"
+							],
+							"example": "ENGLISH"
+						}
+					},
+					"subtitles": {
+						"type": "array",
+						"items": {
+							"type": "string",
+							"enum": [
+								"ENGLISH",
+								"FRENCH",
+								"GERMAN"
+							],
+							"example": "ENGLISH"
+						}
+					},
+					"learnings": {
+						"type": "array",
+						"items": {
+							"type": "string",
+							"example": "You will learn how to leverage the power of Python to solve tasks."
+						}
+					},
+					"materialsAndOffers": {
+						"type": "array",
+						"items": {
+							"type": "string",
+							"example": "22 hours on-demand video"
+						}
+					},
+					"price": {
+						"type": "object",
+						"properties": {
+							"currency": {
+								"type": "string",
+								"enum": [
+									"CAD"
+								],
+								"example": "CAD"
+							},
+							"value": {
+								"type": "number",
+								"example": 104.99
+							}
+						},
+						"required": [
+							"currency",
+							"value"
+						]
+					},
+					"image": {
+						"type": "string",
+						"example": "https://learning-management-system-project.s3.amazonaws.com/public/courses/CSS+-+The+Complete+Guide+2020+(incl.+Flexbox%2C+Grid+%26+Sass)/CSS+-+The+Complete+Guide+2020+(incl.+Flexbox%2C+Grid+%26+Sass).jpg"
+					},
+					"sections": {
+						"type": "array",
+						"item": {
+							"type": "object",
+							"properties": {
+								"id": {
+									"type": "string",
+									"example": "667f14303cebd3afba47d624"
+								},
+								"title": {
+									"type": "string",
+									"example": "Course Overview"
+								},
+								"lectures": {
+									"type": "array",
+									"items": {
+										"type": "object",
+										"properties": {
+											"id": {
+												"type": "string",
+												"example": "667f14303cebd3afba47d625"
+											},
+											"title": {
+												"type": "string",
+												"example": "Auto-Welcome Message"
+											},
+											"description": {
+												"type": "string",
+												"example": "Welcome to the Complete Python Bootcamp"
+											},
+											"duration": {
+												"type": "number",
+												"example": 399000
+											},
+											"link": {
+												"type": "string",
+												"example": "https://learning-management-system-project.s3.amazonaws.com/withmonday.m3u8"
+											},
+											"thumbnail": {
+												"type": "string",
+												"example": "https://learning-management-system-project.s3.amazonaws.com/public/courses/CSS+-+The+Complete+Guide+2020+(incl.+Flexbox%2C+Grid+%26+Sass)/sections/1.+Getting+Started/lectures/1.+Introduction/1.+Introduction-00001.png"
+											}
+										},
+										"required": [
+											"id",
+											"title",
+											"description",
+											"duration",
+											"link",
+											"thumbnail"
+										]
+									}
+								},
+								"lecturesCount": {
+									"type": "number",
+									"example": 5
+								},
+								"lecturesDuration": {
+									"type": "number",
+									"example": "1140000 (in milliseconds)"
+								}
+							},
+							"required": [
+								"id",
+								"title",
+								"lectures",
+								"lecturesCount",
+								"lecturesDuration"
+							]
+						}
+					},
+					"totalSectionsCount": {
+						"type": "number",
+						"example": 23
+					},
+					"totalLecturesCount": {
+						"type": "number",
+						"example": 156
+					},
+					"totalDuration": {
+						"type": "number",
+						"example": "79980000 (in milliseconds)"
+					}
+				},
+				"required": [
+					"id",
+					"title",
+					"description",
+					"rating",
+					"totalStudents",
+					"creators",
+					"lastUpdatedOn",
+					"languages",
+					"subtitles",
+					"learnings",
+					"materialsAndOffers",
+					"price",
+					"image",
+					"sections",
+					"totalSectionsCount",
+					"totalLecturesCount",
+					"totalDuration"
 				]
 			}
 		}

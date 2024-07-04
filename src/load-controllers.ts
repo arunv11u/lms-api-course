@@ -1,1 +1,1 @@
-export {};
+import "./course/presentation/controller";

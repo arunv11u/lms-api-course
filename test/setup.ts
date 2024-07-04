@@ -1,10 +1,10 @@
 /* eslint-disable no-console */
 import dotenv from "dotenv";
 import nconf from "nconf";
+import { mongoDBConnect } from "@arunvaradharajalu/common.mongodb-api";
 import { DefaultConfig, Environment } from "../src/utils/types";
 import { config, testConfig } from "../src/utils/config";
 import { winstonLogger } from "../src/utils/winston";
-import { mongoDBConnect } from "@arunvaradharajalu/common.mongodb-api";
 
 
 
@@ -24,8 +24,8 @@ beforeAll(async () => {
 	);
 
 	mongoDBConnect.url = nconf.get("mongodbURL");
-	mongoDBConnect.username = testConfig.mongodbUsername;
-	mongoDBConnect.password = testConfig.mongodbPassword;
+	mongoDBConnect.username = testConfig.MONGODB_USERNAME;
+	mongoDBConnect.password = testConfig.MONGODB_PASSWORD;
 	mongoDBConnect.dbName = testConfig.mongodbDatabaseName;
 
 	try {
