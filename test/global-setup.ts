@@ -12,8 +12,8 @@ export default async function globalSetup() {
 				count: 1,
 				storageEngine: "wiredTiger",
 				auth: {
-					customRootName: testConfig.mongodbUsername,
-					customRootPwd: testConfig.mongodbPassword
+					customRootName: testConfig.MONGODB_USERNAME,
+					customRootPwd: testConfig.MONGODB_PASSWORD
 				}
 			}
 		});
@@ -32,8 +32,8 @@ export default async function globalSetup() {
 			`${process.env.MONGO_URI}`,
 			{
 				auth: { 
-					username: testConfig.mongodbUsername, 
-					password: testConfig.mongodbPassword 
+					username: testConfig.MONGODB_USERNAME, 
+					password: testConfig.MONGODB_PASSWORD 
 				},
 			}
 		);

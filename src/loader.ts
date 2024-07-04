@@ -1,6 +1,7 @@
 import { Express } from "express";
 import { Server } from "http";
 import nconf from "nconf";
+import { mongoDBConnect } from "@arunvaradharajalu/common.mongodb-api";
 import {
 	DefaultConfig,
 	Environment,
@@ -17,7 +18,6 @@ import {
 } from "./utils";
 import { routes } from "./routes";
 import { sockets } from "./socket";
-import { mongoDBConnect } from "@arunvaradharajalu/common.mongodb-api";
 
 
 

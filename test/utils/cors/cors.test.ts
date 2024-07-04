@@ -57,12 +57,7 @@ describe("Config Module", () => {
 						"DELETE",
 						"PUT",
 						"OPTIONS"
-					],
-					allowedHeaders: [
-						"Content-Type",
-						"Authorization"
-					],
-					credentials: true
+					]
 				};
 				const mockRequest: Partial<Request> = {};
 				const mockCallback: jest.Mock = jest.fn();
@@ -86,12 +81,7 @@ describe("Config Module", () => {
 						"DELETE",
 						"PUT",
 						"OPTIONS"
-					],
-					allowedHeaders: [
-						"Content-Type",
-						"Authorization"
-					],
-					credentials: true
+					]
 				};
 				const mockRequest: Partial<Request> = {};
 				const mockCallback: jest.Mock = jest.fn();
