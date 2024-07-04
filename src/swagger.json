@@ -35,7 +35,27 @@
 							"application/json": {
 								"schema": {
 									"type": "object",
-									"$ref": "#/components/schemas/Course"
+									"properties": {
+										"data": {
+											"type": "object",
+											"properties": {
+												"docs": {
+													"$ref": "#/components/schemas/Course"
+												},
+												"count": {
+													"type": "number",
+													"example": 10
+												}
+											},
+											"required": [
+												"docs",
+												"count"
+											]
+										}
+									},
+									"required": [
+										"data"
+									]
 								}
 							}
 						}
@@ -194,7 +214,7 @@
 					},
 					"sections": {
 						"type": "array",
-						"item": {
+						"items": {
 							"type": "object",
 							"properties": {
 								"id": {
