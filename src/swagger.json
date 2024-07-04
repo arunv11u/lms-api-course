@@ -1,0 +1,58 @@
+{
+	"openapi": "3.0.0",
+	"info": {
+		"title": "Learning Management System APIs",
+		"description": "This is a Learning Management System API documentation which is only exposed on development environment.",
+		"version": "1.0.0"
+	},
+	"servers": [
+		{
+			"url": "http://localhost:3000/",
+			"description": "Local host server, exclusively for back-end developers."
+		}
+	],
+	"paths": {},
+	"components": {
+		"securitySchemes": {
+			"bearerAuth": {
+				"type": "http",
+				"scheme": "bearer"
+			}
+		},
+		"requestBodies": {},
+		"schemas": {
+			"Error": {
+				"type": "object",
+				"properties": {
+					"errors": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "string",
+									"example": "INV_INP"
+								},
+								"message": {
+									"type": "string",
+									"example": "Name is required"
+								},
+								"field": {
+									"type": "string",
+									"example": "name"
+								}
+							},
+							"required": [
+								"code",
+								"message"
+							]
+						}
+					}
+				},
+				"required": [
+					"errors"
+				]
+			}
+		}
+	}
+}
