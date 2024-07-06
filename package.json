@@ -82,6 +82,7 @@
 		"@arunvaradharajalu/common.decorators": "^1.0.2",
 		"@arunvaradharajalu/common.errors": "^1.0.0",
 		"@arunvaradharajalu/common.firebase-cloud-messaging": "^1.0.1",
+		"@arunvaradharajalu/common.mail-client": "^1.0.1",
 		"@arunvaradharajalu/common.mongodb-api": "^1.0.0",
 		"aws-sdk": "^2.1630.0",
 		"axios": "^1.7.2",

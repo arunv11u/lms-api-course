@@ -1,8 +1,7 @@
 import nconf from "nconf";
-import { MailClientImpl } from "../mail-client";
+import { MailClientImpl, MailClient } from "@arunvaradharajalu/common.mail-client";
 import {
-	ErrorCodes,
-	MailClient
+	ErrorCodes
 } from "../types";
 import { GenericError } from "../errors";
 

@@ -10,8 +10,6 @@ export * from "./helpers";
 
 export * from "./json-web-token";
 
-export * from "./mail-client";
-
 export * from "./mongodb-paginator";
 
 export * from "./rate-limiter";
