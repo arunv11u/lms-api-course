@@ -10,8 +10,6 @@ export * from "./json-web-token";
 
 export * from "./logger";
 
-export * from "./mongodb-paginator";
-
 export * from "./one-time-password";
 
 export * from "./rate-limiter";
