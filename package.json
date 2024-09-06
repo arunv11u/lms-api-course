@@ -42,7 +42,7 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/arunv11u/learning-management-system.git"
+		"url": "git+https://github.com/arunv11u/lms-api.main.git"
 	},
 	"keywords": [
 		"Learning Management System"
