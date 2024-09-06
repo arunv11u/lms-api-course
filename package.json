@@ -50,9 +50,9 @@
 	"author": "Arun Varadharajalu and Ashwin Bhaskaran",
 	"license": "ISC",
 	"bugs": {
-		"url": "https://github.com/arunv11u/learning-management-system/issues"
+		"url": "https://github.com/arunv11u/lms-api.main/issues"
 	},
-	"homepage": "https://github.com/arunv11u/learning-management-system#readme",
+	"homepage": "https://github.com/arunv11u/lms-api.main#readme",
 	"devDependencies": {
 		"@faker-js/faker": "^7.6.0",
 		"@types/jest": "^29.5.12",
