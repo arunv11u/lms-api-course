@@ -1,12 +1,12 @@
 import { UnitOfWork, UnitOfWorkImpl } from "../../../utils";
 import { CourseRepository } from "../../domain";
-import {
+import { 
 	GetAllCoursesDocResponseDTOImpl,
-	GetAllCoursesResponseDTO,
-	GetAllCoursesResponseDTOImpl,
-	GetAllCoursesSectionLectureResponseDTOImpl,
+	GetAllCoursesResponseDTO, 
+	GetAllCoursesResponseDTOImpl, 
+	GetAllCoursesSectionLectureResponseDTOImpl, 
 	GetAllCoursesSectionResponseDTOImpl
-} from "../../presentation";
+} from "../dto";
 import { GetAllCoursesUsecase } from "./get-all-courses.usecase.type";
 
 
