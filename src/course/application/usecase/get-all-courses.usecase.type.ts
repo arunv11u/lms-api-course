@@ -1,5 +1,5 @@
 import { Usecase } from "../../../utils";
-import { GetAllCoursesResponseDTO } from "../../presentation";
+import { GetAllCoursesResponseDTO } from "../dto";
 
 
 export abstract class GetAllCoursesUsecase implements Usecase { 
