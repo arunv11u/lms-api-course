@@ -7,11 +7,11 @@ import {
 	GetAllCoursesSectionLectureResponseDTOImpl, 
 	GetAllCoursesSectionResponseDTOImpl
 } from "../dto";
-import { GetAllCoursesUsecase } from "./get-all-courses.usecase.type";
+import { GetAllCoursesUseCase } from "./get-all-courses.use-case.type";
 
 
 
-export class GetAllCoursesUsecaseImpl implements GetAllCoursesUsecase {
+export class GetAllCoursesUseCaseImpl implements GetAllCoursesUseCase {
 	private _unitOfWork: UnitOfWork;
 	private _getAllCoursesResponseDTO: GetAllCoursesResponseDTO;
 

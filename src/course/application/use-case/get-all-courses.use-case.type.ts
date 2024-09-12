@@ -1,7 +1,7 @@
-import { Usecase } from "../../../utils";
+import { UseCase } from "../../../utils";
 import { GetAllCoursesResponseDTO } from "../dto";
 
 
-export abstract class GetAllCoursesUsecase implements Usecase { 
+export abstract class GetAllCoursesUseCase implements UseCase { 
 	abstract execute(): Promise<GetAllCoursesResponseDTO>;
 }

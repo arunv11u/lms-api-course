@@ -28,7 +28,7 @@ export * from "./docs-count-list.type";
 
 export * from "./factory.type";
 
-export * from "./usecase.type";
+export * from "./use-case.type";
 
 export * from "./loader.type";
 

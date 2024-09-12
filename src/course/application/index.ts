@@ -1,3 +1,3 @@
 export * from "./dto";
 
-export * from "./usecase";
+export * from "./use-case";
