@@ -2,7 +2,7 @@ import { Controller, Get } from "@arunvaradharajalu/common.decorators";
 import { Request, Response, NextFunction } from "express";
 import { getResponseHandler, winstonLogger } from "../../../utils";
 import { getCourseFactory } from "../../../global-config";
-import { GetAllCoursesUsecase } from "../../application";
+import { GetAllCoursesUseCase } from "../../application";
 
 
 
@@ -22,7 +22,7 @@ export class CourseController {
 			const courseFactory = getCourseFactory();
 			const responseHandler = getResponseHandler();
 
-			const GetAllCoursesUsecase = courseFactory.make("GetAllCoursesUsecase") as GetAllCoursesUsecase;
+			const GetAllCoursesUsecase = courseFactory.make("GetAllCoursesUseCase") as GetAllCoursesUseCase;
 
 			const getAllCoursesResponseDTO =
 				await GetAllCoursesUsecase.execute();
