@@ -10,6 +10,8 @@ export * from "./helpers";
 
 export * from "./json-web-token";
 
+export * from "./messaging";
+
 export * from "./rate-limiter";
 
 export * from "./response-handler";

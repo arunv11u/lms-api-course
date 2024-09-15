@@ -22,7 +22,8 @@ export enum ErrorCodes {
 	invalidCredentials = "INVALID_CREDENTIALS",
 	invalidPassword = "INV_PASSWORD",
 	invalidRefreshToken = "INVALID_REFRESH_TOKEN",
-	internalError = "INTERNAL_ERROR"
+	internalError = "INTERNAL_ERROR",
+	messageEmptyInMessagingListener = "MESSAGE_EMPTY_IN_MESSAGING_LISTENER"
 }
 
 export interface FormattedError {

@@ -9,6 +9,7 @@ import {
 	LogPath,
 	config,
 	devConfig,
+	messagingClient,
 	prodConfig,
 	socketConnect,
 	stagingConfig,
@@ -18,6 +19,7 @@ import {
 } from "./utils";
 import { routes } from "./routes";
 import { sockets } from "./socket";
+import { MessagingLoaderImpl } from "./messaging-loader";
 
 
 
@@ -62,6 +64,22 @@ export class LoaderImpl implements Loader {
 		socketConnect.init(server);
 		socketConnect.connect();
 		sockets.listen();
+
+
+		const messagingLoader = new MessagingLoaderImpl();
+
+		messagingClient.setup(true, true);
+		messagingClient.brokers = [nconf.get("bootstrapKafkaBroker")];
+		messagingClient.clientId = messagingLoader.clientId;
+		messagingClient.producerConfig = messagingLoader.producerConfig;
+		messagingClient.consumerConfig = messagingLoader.consumerConfig;
+		messagingClient.listeners = messagingLoader.listeners;
+		messagingClient.consumerRunConfig =
+			messagingLoader.consumerRunConfig;
+
+		messagingClient.init();
+		await messagingClient.onConnect();
+		await messagingClient.onSubscribe();
 
 		routes.listen(app);
 
