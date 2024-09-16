@@ -6,8 +6,6 @@ export * from "./express";
 
 export * from "./firebase-app-tokens";
 
-export * from "./json-web-token";
-
 export * from "./logger";
 
 export * from "./messaging";
