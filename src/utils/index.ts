@@ -8,8 +8,6 @@ export * from "./errors";
 
 export * from "./helpers";
 
-export * from "./json-web-token";
-
 export * from "./messaging";
 
 export * from "./rate-limiter";
