@@ -83,6 +83,8 @@ export class StaffCreatedListener extends
 			await processStudentCreatedEventUseCase.execute();
 		} catch (error) {
 			winstonLogger.winston.error("Error in student created listener :", error);
+
+			throw error;
 		}
 	}
 }
