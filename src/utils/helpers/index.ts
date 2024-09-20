@@ -2,10 +2,6 @@ export * from "./get-current-date.helper";
 
 export * from "./get-extension-from-mime-type.helper";
 
-export * from "./get-fcm.helper";
-
-export * from "./get-mail-client.helper";
-
 export * from "./get-mongodb-repository.helper";
 
 export * from "./get-response-handler.helper";

@@ -1,7 +1,7 @@
 {
-	"name": "learning-management-system",
+	"name": "learning-management-system-api-course",
 	"version": "1.0.0",
-	"description": "This package contains learning management system modules",
+	"description": "This package contains learning management system modules related to courses",
 	"main": "src/app.ts",
 	"scripts": {
 		"start:localhost": "nodemon",
@@ -47,7 +47,7 @@
 	"keywords": [
 		"Learning Management System"
 	],
-	"author": "Arun Varadharajalu and Ashwin Bhaskaran",
+	"author": "Arun Varadharajalu, Ashwin Bhaskaran and Praveen Thirumalai",
 	"license": "ISC",
 	"bugs": {
 		"url": "https://github.com/arunv11u/lms-api.main/issues"
@@ -55,9 +55,9 @@
 	"homepage": "https://github.com/arunv11u/lms-api.main#readme",
 	"devDependencies": {
 		"@faker-js/faker": "^7.6.0",
+		"@types/cors": "^2.8.17",
 		"@types/jest": "^29.5.12",
 		"@types/nconf": "^0.10.6",
-		"@types/nodemailer": "^6.4.15",
 		"@types/supertest": "^6.0.2",
 		"@types/swagger-ui-express": "^4.1.6",
 		"@typescript-eslint/eslint-plugin": "^7.11.0",
@@ -78,23 +78,17 @@
 	},
 	"dependencies": {
 		"@arunvaradharajalu/common.app-router": "^1.1.8",
-		"@arunvaradharajalu/common.axios": "^1.1.3",
 		"@arunvaradharajalu/common.decorators": "^1.0.2",
 		"@arunvaradharajalu/common.errors": "^1.0.0",
-		"@arunvaradharajalu/common.firebase-cloud-messaging": "^1.0.1",
-		"@arunvaradharajalu/common.mail-client": "^1.0.1",
 		"@arunvaradharajalu/common.mongodb-api": "^1.0.0",
 		"aws-sdk": "^2.1630.0",
-		"axios": "^1.7.2",
+		"cors": "^2.8.5",
 		"express": "^4.19.2",
 		"express-rate-limit": "^6.7.0",
-		"handlebars": "^4.7.8",
-		"jsonwebtoken": "^9.0.2",
 		"kafkajs": "^2.2.4",
 		"kafkajs-snappy": "^1.1.0",
 		"mongodb": "^6.8.0",
 		"nconf": "^0.12.1",
-		"nodemailer": "^6.9.13",
 		"socket.io": "^4.7.5",
 		"swagger-ui-express": "^5.0.0",
 		"uuid": "^9.0.1",

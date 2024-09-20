@@ -1,7 +1,7 @@
 {
 	"openapi": "3.0.0",
 	"info": {
-		"title": "Learning Management System APIs",
+		"title": "Learning Management System Course APIs",
 		"description": "This is a Learning Management System API documentation which is only exposed on development environment.",
 		"version": "1.0.0"
 	},
