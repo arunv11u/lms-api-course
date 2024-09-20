@@ -1,4 +1,4 @@
-import { UnitOfWork, UnitOfWorkImpl, winstonLogger } from "../../../utils";
+import { UnitOfWork, UnitOfWorkImpl } from "../../../utils";
 import { StudentCreatedEventValueObject, StudentRepository } from "../../domain";
 import { StudentCreatedEventRequestDTO } from "../dto";
 import { ProcessStudentCreatedEventUseCase } from "./process-student-created-event.use-case.type";
@@ -23,15 +23,6 @@ export class ProcessStudentCreatedEventUseCaseImpl implements
 
 	async execute(): Promise<void> {
 		const studentRepository = this._unitOfWork.getRepository("StudentRepository") as StudentRepository;
-
-		const student = await studentRepository
-			.get(this._studentCreatedEventRequestDTO.id);
-
-		if (student) {
-			winstonLogger.winston.info("Skipping student created event because the student already exists");
-
-			return;
-		}
 
 		const studentCreatedEventValueObject =
 			new StudentCreatedEventValueObject();
