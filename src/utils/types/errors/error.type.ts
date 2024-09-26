@@ -23,7 +23,9 @@ export enum ErrorCodes {
 	invalidPassword = "INV_PASSWORD",
 	invalidRefreshToken = "INVALID_REFRESH_TOKEN",
 	internalError = "INTERNAL_ERROR",
-	messageEmptyInMessagingListener = "MESSAGE_EMPTY_IN_MESSAGING_LISTENER"
+	messageEmptyInMessagingListener = "MESSAGE_EMPTY_IN_MESSAGING_LISTENER",
+	studentNotFound = "STUDENT_NOT_FOUND",
+	studentVersionDidNotMatch = "STUDENT_VERSION_DID_NOT_MATCH"
 }
 
 export interface FormattedError {

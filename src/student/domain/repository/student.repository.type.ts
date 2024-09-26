@@ -1,5 +1,5 @@
 import { Repository } from "../../../utils";
-import { StudentCreatedEventValueObject } from "../value-object";
+import { StudentCreatedEventValueObject, StudentUpdatedEventValueObject } from "../value-object";
 
 
 export abstract class StudentRepository extends Repository {
@@ -8,6 +8,10 @@ export abstract class StudentRepository extends Repository {
 	): Promise<StudentCreatedEventValueObject | null>;
 
 	abstract saveStudentFromMessagingQueue(
-		studentCreatedEventData: StudentCreatedEventValueObject
+		studentCreatedEventValueObject: StudentCreatedEventValueObject
+	): Promise<void>;
+
+	abstract updateStudentFromMessagingQueue(
+		studentUpdatedEventValueObject: StudentUpdatedEventValueObject
 	): Promise<void>;
 }
