@@ -15,7 +15,7 @@ import {
 	Winston,
 	winstonLogger
 } from "./utils";
-import { StaffCreatedListener } from "./student";
+import { StudentCreatedListener, StudentUpdatedListener } from "./student";
 
 
 
@@ -27,7 +27,8 @@ class MessagingLoaderImpl {
 	private _consumerRunConfig: ConsumerRunConfig;
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	private _listeners: MessagingListener<{ topic: string, data: any }>[];
-	private _studentCreatedEventListener = new StaffCreatedListener();
+	private _studentCreatedListener = new StudentCreatedListener();
+	private _studentUpdatedListener = new StudentUpdatedListener();
 	private _winston: Winston;
 
 	constructor() {
@@ -40,7 +41,8 @@ class MessagingLoaderImpl {
 		this._clientId = "course-service";
 
 		this._listeners = [
-			this._studentCreatedEventListener
+			this._studentCreatedListener,
+			this._studentUpdatedListener
 		];
 
 		this._producerConfig = {
@@ -69,7 +71,16 @@ class MessagingLoaderImpl {
 						case MessagingTopics.studentCreatedEvent: {
 							this._winston.info("Student created event listener called :");
 
-							await this._studentCreatedEventListener
+							await this._studentCreatedListener
+								.listen(message);
+
+							break;
+						}
+
+						case MessagingTopics.studentUpdatedEvent: {
+							this._winston.info("Student updated event listener called :");
+
+							await this._studentUpdatedListener
 								.listen(message);
 
 							break;

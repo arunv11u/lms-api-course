@@ -1,6 +1,10 @@
 import { MongoDBRepository } from "@arunvaradharajalu/common.mongodb-api";
-import { StudentCreatedEventValueObject, StudentRepository } from "../../domain";
 import { ErrorCodes, GenericError } from "../../../utils";
+import {
+	StudentCreatedEventValueObject,
+	StudentRepository,
+	StudentUpdatedEventValueObject
+} from "../../domain";
 import { StudentORMEntity } from "./student.orm-entity";
 
 
@@ -23,19 +27,19 @@ export class StudentRepositoryImpl implements StudentRepository {
 
 		const student = await this._mongodbRepository
 			.get<StudentORMEntity>(this._collectionName, id);
-		
-		if(student) {
-			const studentCreatedEventValueObject = 
-				new StudentCreatedEventValueObject();
-			studentCreatedEventValueObject.email = student.email;
-			studentCreatedEventValueObject.firstName = student.firstName;
-			studentCreatedEventValueObject.id = student._id;
-			studentCreatedEventValueObject.lastName = student.lastName;
-			studentCreatedEventValueObject.userId = student.userId;
-			studentCreatedEventValueObject.version = student.version;
-		}
 
-		return null;
+		if (!student) return null;
+
+		const studentCreatedEventValueObject =
+			new StudentCreatedEventValueObject();
+		studentCreatedEventValueObject.email = student.email;
+		studentCreatedEventValueObject.firstName = student.firstName;
+		studentCreatedEventValueObject.id = student._id;
+		studentCreatedEventValueObject.lastName = student.lastName;
+		studentCreatedEventValueObject.userId = student.userId;
+		studentCreatedEventValueObject.version = student.version;
+
+		return studentCreatedEventValueObject;
 	}
 
 	async saveStudentFromMessagingQueue(
@@ -60,4 +64,33 @@ export class StudentRepositoryImpl implements StudentRepository {
 			.add<StudentORMEntity>(this._collectionName, studentORMEntity);
 	}
 
+	async updateStudentFromMessagingQueue(
+		studentUpdatedEventValueObject: StudentUpdatedEventValueObject
+	): Promise<void> {
+		if (!this._mongodbRepository)
+			throw new GenericError({
+				code: ErrorCodes.mongoDBRepositoryDoesNotExist,
+				error: new Error("MongoDB repository does not exist"),
+				errorCode: 500
+			});
+
+		const studentORMEntity = new StudentORMEntity();
+		studentORMEntity._id = studentUpdatedEventValueObject.id;
+		studentORMEntity.email = studentUpdatedEventValueObject.email;
+		studentORMEntity.firstName = studentUpdatedEventValueObject.firstName;
+		studentORMEntity.lastName = studentUpdatedEventValueObject.lastName;
+		studentORMEntity.profilePicture =
+			studentUpdatedEventValueObject.profilePicture;
+		studentORMEntity.userId = studentUpdatedEventValueObject.userId;
+		studentORMEntity.version = studentUpdatedEventValueObject.version;
+
+		await this._mongodbRepository
+			.update<StudentORMEntity>(
+				this._collectionName,
+				{ _id: studentUpdatedEventValueObject.id },
+				{
+					$set: studentORMEntity
+				}
+			);
+	}
 }

@@ -10,19 +10,20 @@ import {
 	MessagingTopics,
 	winstonLogger
 } from "../../../../utils";
-import { 
-	ProcessStudentCreatedEventUseCase, 
-	StudentCreatedEventRequestDTOImpl 
+import {
+	ProcessStudentCreatedEventUseCase,
+	StudentCreatedEventRequestDTOImpl
 } from "../../../application";
 import { StudentRepositoryImpl } from "../../persistence";
 import { StudentCreatedEvent } from "../event";
 
 
 
-export class StaffCreatedListener extends
+export class StudentCreatedListener extends
 	MessagingListener<StudentCreatedEvent> {
 
-	topic = MessagingTopics.studentCreatedEvent;
+	topic: MessagingTopics.studentCreatedEvent =
+		MessagingTopics.studentCreatedEvent;
 	fromBeginning: boolean | undefined = undefined;
 	private _messagingClient: MessagingClient;
 

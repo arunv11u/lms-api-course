@@ -1,8 +1,7 @@
 
 
-
-export class StudentORMEntity {
-	_id: string;
+class StudentUpdatedEventValueObject {
+	id: string;
 	userId: string;
 	firstName: string;
 	lastName: string;
@@ -10,3 +9,7 @@ export class StudentORMEntity {
 	email: string;
 	version: number;
 }
+
+export {
+	StudentUpdatedEventValueObject
+};
