@@ -1,4 +1,5 @@
 import { CourseFactory } from "./course";
+import { InstructorFactory } from "./instructor";
 import { StudentFactory } from "./student";
 
 
@@ -13,9 +14,14 @@ function getStudentFactory() {
 	return new StudentFactory();
 }
 
+function getInstructorFactory() {
+	return new InstructorFactory();
+}
+
 
 export {
 	defaultRoutePath,
 	getCourseFactory,
-	getStudentFactory
+	getStudentFactory,
+	getInstructorFactory
 };
