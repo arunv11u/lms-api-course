@@ -15,7 +15,11 @@ import {
 	Winston,
 	winstonLogger
 } from "./utils";
-import { StudentCreatedListener, StudentUpdatedListener } from "./student";
+import {
+	StudentCreatedListener,
+	StudentUpdatedListener
+} from "./student";
+import { InstructorCreatedListener } from "./instructor";
 
 
 
@@ -29,6 +33,7 @@ class MessagingLoaderImpl {
 	private _listeners: MessagingListener<{ topic: string, data: any }>[];
 	private _studentCreatedListener = new StudentCreatedListener();
 	private _studentUpdatedListener = new StudentUpdatedListener();
+	private _instructorCreatedListener = new InstructorCreatedListener();
 	private _winston: Winston;
 
 	constructor() {
@@ -42,7 +47,8 @@ class MessagingLoaderImpl {
 
 		this._listeners = [
 			this._studentCreatedListener,
-			this._studentUpdatedListener
+			this._studentUpdatedListener,
+			this._instructorCreatedListener
 		];
 
 		this._producerConfig = {
@@ -81,6 +87,15 @@ class MessagingLoaderImpl {
 							this._winston.info("Student updated event listener called :");
 
 							await this._studentUpdatedListener
+								.listen(message);
+
+							break;
+						}
+
+						case MessagingTopics.instructorCreatedEvent: {
+							this._winston.info("Instructor created event listener called :");
+
+							await this._instructorCreatedListener
 								.listen(message);
 
 							break;

@@ -1,1 +1,1 @@
-import "./course/interfaces/controller";
+import "./course/interfaces";
