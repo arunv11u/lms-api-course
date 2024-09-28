@@ -64,7 +64,7 @@ export class StudentUpdatedListener extends
 				});
 
 			if (student.version === value.version) {
-				winstonLogger.winston.info("Skipping student created event because the student already exists");
+				winstonLogger.winston.info("Skipping student updated event because the student already exists");
 
 				return;
 			}

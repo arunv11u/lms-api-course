@@ -1,5 +1,5 @@
 import { ErrorCodes, Factory, GenericError } from "../../utils";
-import { ProcessInstructorCreatedEventUseCaseImpl } from "../application";
+import { ProcessInstructorCreatedEventUseCaseImpl, ProcessInstructorUpdatedEventUseCaseImpl } from "../application";
 import { InstructorObject } from "../domain";
 import { InstructorRepositoryImpl } from "../infrastructure";
 
@@ -8,7 +8,8 @@ class InstructorFactory implements Factory {
 
 	private _objects: string[] = [
 		"InstructorRepository",
-		"ProcessInstructorCreatedEventUseCase"
+		"ProcessInstructorCreatedEventUseCase",
+		"ProcessInstructorUpdatedEventUseCase"
 	];
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -19,6 +20,9 @@ class InstructorFactory implements Factory {
 
 		if (objectName === "ProcessInstructorCreatedEventUseCase")
 			return new ProcessInstructorCreatedEventUseCaseImpl();
+
+		if (objectName === "ProcessInstructorUpdatedEventUseCase")
+			return new ProcessInstructorUpdatedEventUseCaseImpl();
 
 		throw new GenericError({
 			code: ErrorCodes.invalidFactoryObject,
