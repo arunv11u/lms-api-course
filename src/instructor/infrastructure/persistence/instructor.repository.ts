@@ -2,7 +2,8 @@ import { MongoDBRepository } from "@arunvaradharajalu/common.mongodb-api";
 import { ErrorCodes, GenericError } from "../../../utils";
 import {
 	InstructorCreatedEventValueObject,
-	InstructorRepository
+	InstructorRepository,
+	InstructorUpdatedEventValueObject
 } from "../../domain";
 import { InstructorORMEntity } from "./instructor.orm-entity";
 
@@ -63,6 +64,38 @@ export class InstructorRepositoryImpl implements InstructorRepository {
 			.add<InstructorORMEntity>(
 				this._collectionName,
 				instructorORMEntity
+			);
+	}
+
+	async updateInstructorFromMessagingQueue(
+		instructorUpdatedEventValueObject: InstructorUpdatedEventValueObject
+	): Promise<void> {
+		if (!this._mongodbRepository)
+			throw new GenericError({
+				code: ErrorCodes.mongoDBRepositoryDoesNotExist,
+				error: new Error("MongoDB repository does not exist"),
+				errorCode: 500
+			});
+
+		const instructorORMEntity = new InstructorORMEntity();
+		instructorORMEntity._id = instructorUpdatedEventValueObject.id;
+		instructorORMEntity.email = instructorUpdatedEventValueObject.email;
+		instructorORMEntity.firstName =
+			instructorUpdatedEventValueObject.firstName;
+		instructorORMEntity.lastName =
+			instructorUpdatedEventValueObject.lastName;
+		instructorORMEntity.profilePicture =
+			instructorUpdatedEventValueObject.profilePicture;
+		instructorORMEntity.userId = instructorUpdatedEventValueObject.userId;
+		instructorORMEntity.version = instructorUpdatedEventValueObject.version;
+
+		await this._mongodbRepository
+			.update<InstructorORMEntity>(
+				this._collectionName,
+				{ _id: instructorUpdatedEventValueObject.id },
+				{
+					$set: instructorORMEntity
+				}
 			);
 	}
 }

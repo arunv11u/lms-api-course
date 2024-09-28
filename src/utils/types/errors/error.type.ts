@@ -25,7 +25,8 @@ export enum ErrorCodes {
 	internalError = "INTERNAL_ERROR",
 	messageEmptyInMessagingListener = "MESSAGE_EMPTY_IN_MESSAGING_LISTENER",
 	studentNotFound = "STUDENT_NOT_FOUND",
-	studentVersionDidNotMatch = "STUDENT_VERSION_DID_NOT_MATCH"
+	studentVersionDidNotMatch = "STUDENT_VERSION_DID_NOT_MATCH",
+	instructorVersionDidNotMatch = "INSTRUCTOR_VERSION_DID_NOT_MATCH"
 }
 
 export interface FormattedError {
