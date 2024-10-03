@@ -15,4 +15,8 @@ export abstract class CourseRepository extends Repository {
 	abstract uploadCourseImage(
 		mimeType: string
 	): Promise<UploadPreSignedURLResponse>;
+
+	abstract uploadLectureVideo(
+		mimeType: string
+	): Promise<UploadPreSignedURLResponse>;
 }
