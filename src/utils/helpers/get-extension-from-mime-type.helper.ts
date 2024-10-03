@@ -6,13 +6,15 @@ import { ErrorCodes } from "../types";
 enum Extensions {
 	JPG = "jpg",
 	JPEG = "jpeg",
-	PNG = "png"
+	PNG = "png",
+	MP4 = "mp4"
 }
 
 enum MimeTypes {
 	JPG = "image/jpg",
 	JPEG = "image/jpeg",
-	PNG = "image/png"
+	PNG = "image/png",
+	MP4 = "video/mp4"
 }
 
 
@@ -32,6 +34,11 @@ function getExtensionFromMimeType(mimeType: string): string {
 
 		case MimeTypes.PNG: {
 			extension = Extensions.PNG;
+			break;
+		}
+
+		case MimeTypes.MP4: {
+			extension = Extensions.MP4;
 			break;
 		}
 

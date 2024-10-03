@@ -1,5 +1,9 @@
 import { ErrorCodes, Factory, GenericError } from "../../utils";
-import { GetAllCoursesUseCaseImpl, UploadCourseImageUseCaseImpl } from "../application";
+import {
+	GetAllCoursesUseCaseImpl,
+	UploadCourseImageUseCaseImpl,
+	UploadLectureVideoUseCaseImpl
+} from "../application";
 import {
 	CourseEntityImpl,
 	CoursePriceEntityImpl,
@@ -20,7 +24,8 @@ class CourseFactory implements Factory {
 		"CourseSectionEntity",
 		"CourseEntity",
 		"GetAllCoursesUseCase",
-		"UploadCourseImageUseCase"
+		"UploadCourseImageUseCase",
+		"UploadLectureVideoUseCase"
 	];
 
 	make(objectName: string) {
@@ -48,6 +53,9 @@ class CourseFactory implements Factory {
 
 		if (objectName === "UploadCourseImageUseCase")
 			return new UploadCourseImageUseCaseImpl();
+
+		if (objectName === "UploadLectureVideoUseCase")
+			return new UploadLectureVideoUseCaseImpl();
 
 		throw new GenericError({
 			code: ErrorCodes.invalidFactoryObject,

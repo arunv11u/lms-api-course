@@ -5,3 +5,7 @@ export * from "./get-all-courses.response.dto.type";
 export * from "./upload-course-image.response.dto";
 
 export * from "./upload-course-image.response.dto.type";
+
+export * from "./upload-lecture-video.response.dto";
+
+export * from "./upload-lecture-video.response.dto.type";

@@ -95,6 +95,24 @@ export class CourseRepositoryImpl implements CourseRepository, CourseObject {
 		return response;
 	}
 
+	async uploadLectureVideo(
+		mimeType: string
+	): Promise<UploadPreSignedURLResponse> {
+		const extension = getExtensionFromMimeType(mimeType);
+		const filename = `${getUUIDV4()}.${extension}`;
+		const filePath = `public/courses/raw-lectures/${filename}`;
+		const s3Storage = getS3Storage(nconf.get("s3BucketName"));
+
+		const response = await s3Storage
+			.getPreSignedUrlForUploading(
+				filePath, 
+				24 * 60 * 60,
+				2 * 1024 * 1024 * 1024
+			);
+
+		return response;
+	}
+
 	private async _getEntity(
 		courseORMEntity: CourseORMEntity
 	): Promise<CourseEntity> {
