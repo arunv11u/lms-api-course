@@ -26,7 +26,10 @@ export enum ErrorCodes {
 	messageEmptyInMessagingListener = "MESSAGE_EMPTY_IN_MESSAGING_LISTENER",
 	studentNotFound = "STUDENT_NOT_FOUND",
 	studentVersionDidNotMatch = "STUDENT_VERSION_DID_NOT_MATCH",
-	instructorVersionDidNotMatch = "INSTRUCTOR_VERSION_DID_NOT_MATCH"
+	instructorVersionDidNotMatch = "INSTRUCTOR_VERSION_DID_NOT_MATCH",
+	instructorNotFound = "INSTRUCTOR_NOT_FOUND",
+	invalidAuthorizationToken = "INVALID_AUTHORIZATION_TOKEN",
+	courseImageMimeTypeRequired = "COURSE_IMAGE_MIME_TYPEE_REQUIRED"
 }
 
 export interface FormattedError {

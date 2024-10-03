@@ -2,6 +2,7 @@ import { MongoDBRepository } from "@arunvaradharajalu/common.mongodb-api";
 import { ErrorCodes, GenericError } from "../../../utils";
 import {
 	InstructorCreatedEventValueObject,
+	InstructorObject,
 	InstructorRepository,
 	InstructorUpdatedEventValueObject
 } from "../../domain";
@@ -9,7 +10,8 @@ import { InstructorORMEntity } from "./instructor.orm-entity";
 
 
 
-export class InstructorRepositoryImpl implements InstructorRepository {
+export class InstructorRepositoryImpl implements 
+	InstructorRepository, InstructorObject {
 	private _collectionName = "instructors";
 	private _mongodbRepository: MongoDBRepository | null = null;
 
@@ -97,5 +99,32 @@ export class InstructorRepositoryImpl implements InstructorRepository {
 					$set: instructorORMEntity
 				}
 			);
+	}
+
+	async getInstructorProfileByUserId(
+		userId: string
+	): Promise<{ id: string }> {
+		if (!this._mongodbRepository)
+			throw new GenericError({
+				code: ErrorCodes.mongoDBRepositoryDoesNotExist,
+				error: new Error("MongoDB repository does not exist"),
+				errorCode: 500
+			});
+
+		const instructorORMEntity = await this._mongodbRepository
+			.findOne<InstructorORMEntity>(
+				this._collectionName,
+				{
+					userId: userId
+				}
+			);
+		if (!instructorORMEntity)
+			throw new GenericError({
+				code: ErrorCodes.instructorNotFound,
+				error: new Error("Instructor not found"),
+				errorCode: 404
+			});
+
+		return { id: instructorORMEntity._id };
 	}
 }

@@ -6,23 +6,13 @@ import { ErrorCodes } from "../types";
 enum Extensions {
 	JPG = "jpg",
 	JPEG = "jpeg",
-	PNG = "png",
-	AAC = "aac",
-	X_AAC = "x-aac",
-	DOC = "doc",
-	DOCX = "docx",
-	PDF = "pdf"
+	PNG = "png"
 }
 
 enum MimeTypes {
 	JPG = "image/jpg",
 	JPEG = "image/jpeg",
-	PNG = "image/png",
-	AAC = "audio/aac",
-	X_AAC = "audio/x-aac",
-	DOC = "application/msword",
-	DOCX = "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-	PDF = "application/pdf"
+	PNG = "image/png"
 }
 
 
@@ -42,31 +32,6 @@ function getExtensionFromMimeType(mimeType: string): string {
 
 		case MimeTypes.PNG: {
 			extension = Extensions.PNG;
-			break;
-		}
-
-		case MimeTypes.AAC: {
-			extension = Extensions.AAC;
-			break;
-		}
-
-		case MimeTypes.X_AAC: {
-			extension = Extensions.X_AAC;
-			break;
-		}
-
-		case MimeTypes.DOC: {
-			extension = Extensions.DOC;
-			break;
-		}
-
-		case MimeTypes.DOCX: {
-			extension = Extensions.DOCX;
-			break;
-		}
-
-		case MimeTypes.PDF: {
-			extension = Extensions.PDF;
 			break;
 		}
 

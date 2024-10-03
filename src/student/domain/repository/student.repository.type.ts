@@ -14,4 +14,8 @@ export abstract class StudentRepository extends Repository {
 	abstract updateStudentFromMessagingQueue(
 		studentUpdatedEventValueObject: StudentUpdatedEventValueObject
 	): Promise<void>;
+
+	abstract getStudentProfileByUserId(
+		userId: string
+	): Promise<{id: string}>;
 }
