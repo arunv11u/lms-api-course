@@ -1,9 +1,20 @@
+import nconf from "nconf";
 import { MongoDBRepository } from "@arunvaradharajalu/common.mongodb-api";
 import { ObjectId } from "mongodb";
-import { DocsCountList, DocsCountListImpl, ErrorCodes, GenericError } from "../../../utils";
+import {
+	DocsCountList,
+	DocsCountListImpl,
+	ErrorCodes,
+	GenericError,
+	getExtensionFromMimeType,
+	getS3Storage,
+	getUUIDV4,
+	UploadPreSignedURLResponse
+} from "../../../utils";
 import { getCourseFactory } from "../../../global-config";
 import {
 	CourseEntity,
+	CourseObject,
 	CoursePriceEntity,
 	CourseRatingEntity,
 	CourseRepository
@@ -22,7 +33,7 @@ import { CourseSectionLectureRepositoryImpl } from "./course-section-lecture.rep
 
 
 
-export class CourseRepositoryImpl implements CourseRepository {
+export class CourseRepositoryImpl implements CourseRepository, CourseObject {
 	private _collectionName = "courses";
 	private _mongodbRepository: MongoDBRepository | null = null;
 	private _courseFactory: CourseFactory;
@@ -68,6 +79,20 @@ export class CourseRepositoryImpl implements CourseRepository {
 		docsCountList.docs = courses;
 
 		return docsCountList;
+	}
+
+	async uploadCourseImage(
+		mimeType: string
+	): Promise<UploadPreSignedURLResponse> {
+		const extension = getExtensionFromMimeType(mimeType);
+		const filename = `${getUUIDV4()}.${extension}`;
+		const filePath = `public/courses/images/${filename}`;
+		const s3Storage = getS3Storage(nconf.get("s3BucketName"));
+
+		const response = await s3Storage
+			.getPreSignedUrlForUploading(filePath, 300, 2 * 1024 * 1024);
+
+		return response;
 	}
 
 	private async _getEntity(

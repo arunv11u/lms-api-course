@@ -10,7 +10,7 @@ function getS3Storage(
 ): CloudStorage {
 	const s3Storage = new S3Storage();
 	const s3ApiVersion = nconf.get("s3ApiVersion");
-	const s3hostName = nconf.get("s3hostName");
+	const s3HostName = nconf.get("s3HostName");
 	const s3Protocol = nconf.get("s3Protocol");
 	const s3SignatureVersion = nconf.get("s3SignatureVersion");
 	const s3RegionName = nconf.get("s3RegionName");
@@ -21,7 +21,7 @@ function getS3Storage(
 		errorCode: 500
 	});
 
-	if (!s3hostName) throw new GenericError({
+	if (!s3HostName) throw new GenericError({
 		code: ErrorCodes.internalError,
 		error: new Error("S3 storage, hostName must be set in configurations"),
 		errorCode: 500
@@ -46,19 +46,19 @@ function getS3Storage(
 	});
 
 
-	s3Storage.apiVersion = nconf.get("s3ApiVersion");
+	s3Storage.apiVersion = s3ApiVersion;
 	s3Storage.bucketName = bucketName;
 	s3Storage.forcePathStyle = true;
-	s3Storage.hostname = nconf.get("s3hostName");
-	s3Storage.protocol = nconf.get("s3Protocol");
-	s3Storage.signatureVersion = nconf.get("s3SignatureVersion");
-	s3Storage.regionName = nconf.get("s3RegionName");
+	s3Storage.hostname = s3HostName;
+	s3Storage.protocol = s3Protocol;
+	s3Storage.signatureVersion = s3SignatureVersion;
+	s3Storage.regionName = s3RegionName;
 
-	if (nconf.get("s3AccessKeyId"))
-		s3Storage.accessKeyId = nconf.get("s3AccessKeyId");
+	if (nconf.get("S3_ACCESS_KEY_ID"))
+		s3Storage.accessKeyId = nconf.get("S3_ACCESS_KEY_ID");
 
-	if (nconf.get("s3SecretAccessKey"))
-		s3Storage.secretAccessKey = nconf.get("s3SecretAccessKey");
+	if (nconf.get("S3_SECRET_ACCESS_KEY"))
+		s3Storage.secretAccessKey = nconf.get("S3_SECRET_ACCESS_KEY");
 
 	s3Storage.init();
 

@@ -2,6 +2,7 @@ import { MongoDBRepository } from "@arunvaradharajalu/common.mongodb-api";
 import { ErrorCodes, GenericError } from "../../../utils";
 import {
 	StudentCreatedEventValueObject,
+	StudentObject,
 	StudentRepository,
 	StudentUpdatedEventValueObject
 } from "../../domain";
@@ -9,7 +10,8 @@ import { StudentORMEntity } from "./student.orm-entity";
 
 
 
-export class StudentRepositoryImpl implements StudentRepository {
+export class StudentRepositoryImpl implements 
+	StudentRepository, StudentObject {
 	private _collectionName = "students";
 	private _mongodbRepository: MongoDBRepository | null = null;
 
@@ -92,5 +94,30 @@ export class StudentRepositoryImpl implements StudentRepository {
 					$set: studentORMEntity
 				}
 			);
+	}
+
+	async getStudentProfileByUserId(userId: string): Promise<{ id: string }> {
+		if (!this._mongodbRepository)
+			throw new GenericError({
+				code: ErrorCodes.mongoDBRepositoryDoesNotExist,
+				error: new Error("MongoDB repository does not exist"),
+				errorCode: 500
+			});
+
+		const studentORMEntity = await this._mongodbRepository
+			.findOne<StudentORMEntity>(
+				this._collectionName,
+				{
+					userId: userId
+				}
+			);
+		if (!studentORMEntity)
+			throw new GenericError({
+				code: ErrorCodes.studentNotFound,
+				error: new Error("Student not found"),
+				errorCode: 404
+			});
+
+		return { id: studentORMEntity._id };
 	}
 }
