@@ -6,6 +6,8 @@ import {
 	GetAllCoursesUseCase,
 	UploadCourseImageRequestDTOImpl,
 	UploadCourseImageUseCase,
+	UploadLectureSubtitleRequestDTOImpl,
+	UploadLectureSubtitleUseCase,
 	UploadLectureVideoRequestDTOImpl,
 	UploadLectureVideoUseCase
 } from "../../application";
@@ -153,6 +155,64 @@ export class CourseController {
 		} catch (error) {
 			winston.error(
 				"Error in uploading lecture video:",
+				error
+			);
+
+			next(error);
+		}
+	}
+
+	@Post("/upload-lecture-subtitle")
+	async uploadLectureSubtitle(
+		request: Request,
+		response: Response,
+		next: NextFunction
+	): Promise<void> {
+		const winston = winstonLogger.winston;
+		try {
+			winston.info("Uploading lecture subtitle");
+
+			const authorizationToken = request.header(authorizationTokenName);
+			if (!authorizationToken)
+				throw new GenericError({
+					code: ErrorCodes.invalidAuthorizationToken,
+					error: new Error("Invalid authorization token"),
+					errorCode: 400
+				});
+
+			if (!request.body.mimeType)
+				throw new GenericError({
+					code: ErrorCodes.courseImageMimeTypeRequired,
+					error: new Error("Mime type required"),
+					errorCode: 400
+				});
+
+			const courseFactory = getCourseFactory();
+			const responseHandler = getResponseHandler();
+
+			const uploadLectureSubtitleRequestDTO =
+				new UploadLectureSubtitleRequestDTOImpl();
+			uploadLectureSubtitleRequestDTO.authorizationToken =
+				authorizationToken;
+			uploadLectureSubtitleRequestDTO.mimeType =
+				request.body.mimeType;
+
+			const uploadLectureSubtitleUseCase = courseFactory.make("UploadLectureSubtitleUseCase") as UploadLectureSubtitleUseCase;
+			uploadLectureSubtitleUseCase
+				.uploadLectureSubtitleRequestDTO =
+				uploadLectureSubtitleRequestDTO;
+
+			const uploadLectureSubtitleResponseDTO =
+				await uploadLectureSubtitleUseCase
+					.execute();
+
+			responseHandler.ok(
+				response,
+				uploadLectureSubtitleResponseDTO
+			);
+		} catch (error) {
+			winston.error(
+				"Error in uploading lecture subtitle:",
 				error
 			);
 

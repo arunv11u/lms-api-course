@@ -90,7 +90,7 @@ export class CourseRepositoryImpl implements CourseRepository, CourseObject {
 		const s3Storage = getS3Storage(nconf.get("s3BucketName"));
 
 		const response = await s3Storage
-			.getPreSignedUrlForUploading(filePath, 300, 2 * 1024 * 1024);
+			.getPreSignedUrlForUploading(filePath, 5 * 60, 2 * 1024 * 1024);
 
 		return response;
 	}
@@ -105,9 +105,27 @@ export class CourseRepositoryImpl implements CourseRepository, CourseObject {
 
 		const response = await s3Storage
 			.getPreSignedUrlForUploading(
-				filePath, 
+				filePath,
 				24 * 60 * 60,
 				2 * 1024 * 1024 * 1024
+			);
+
+		return response;
+	}
+
+	async uploadLectureSubtitle(
+		mimeType: string
+	): Promise<UploadPreSignedURLResponse> {
+		const extension = getExtensionFromMimeType(mimeType);
+		const filename = `${getUUIDV4()}.${extension}`;
+		const filePath = `public/courses/raw-lectures/${filename}`;
+		const s3Storage = getS3Storage(nconf.get("s3BucketName"));
+
+		const response = await s3Storage
+			.getPreSignedUrlForUploading(
+				filePath,
+				5 * 60,
+				2 * 1024 * 1024
 			);
 
 		return response;
