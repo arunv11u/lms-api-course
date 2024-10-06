@@ -1,10 +1,11 @@
+import { CourseCreatorEntity } from "./course-creator.entity.type";
 import { CoursePriceEntity } from "./course-price.entity.type";
 import { CourseRatingEntity } from "./course-rating.entity.type";
 import { CourseSectionEntity } from "./course-section.entity.type";
-import { 
-	CourseEntity, 
-	CourseLanguages, 
-	CourseSubtitles 
+import {
+	CourseEntity,
+	CourseLanguages,
+	CourseSubtitles
 } from "./course.entity.type";
 
 
@@ -14,9 +15,10 @@ class CourseEntityImpl implements CourseEntity {
 	private _id: string;
 	private _title: string;
 	private _description: string;
+	private _category: string;
 	private _rating: CourseRatingEntity;
 	private _totalStudents: number;
-	private _creators: string[] = [];
+	private _creators: CourseCreatorEntity[] = [];
 	private _lastUpdatedOn: Date;
 	private _languages: CourseLanguages[] = [];
 	private _subtitles: CourseSubtitles[] = [];
@@ -50,6 +52,13 @@ class CourseEntityImpl implements CourseEntity {
 		this._description = description;
 	}
 
+	get category(): string {
+		return this._category;
+	}
+	set category(category: string) {
+		this._category = category;
+	}
+
 	get rating(): CourseRatingEntity {
 		return this._rating;
 	}
@@ -64,10 +73,10 @@ class CourseEntityImpl implements CourseEntity {
 		this._totalStudents = totalStudents;
 	}
 
-	get creators(): string[] {
+	get creators(): CourseCreatorEntity[] {
 		return this._creators;
 	}
-	set creators(creators: string[]) {
+	set creators(creators: CourseCreatorEntity[]) {
 		this._creators = creators;
 	}
 

@@ -28,4 +28,6 @@ export * from "./unit-of-work";
 
 export * from "./validators";
 
+export * from "./video-transcoder";
+
 export * from "./winston";

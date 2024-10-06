@@ -21,7 +21,7 @@ import {
 } from "../../domain";
 import { CourseFactory } from "../../factory";
 import { CourseORMEntity } from "./course.orm-entity";
-import { CourseCreatorRepositoryImpl } from "./course-creator.repository";
+// import { CourseCreatorRepositoryImpl } from "./course-creator.repository";
 import { CourseLanguageRepositoryImpl } from "./course-language.repository";
 import { CourseLearningRepositoryImpl } from "./course-learning.repository";
 import { CourseMaterialAndOfferRepositoryImpl } from "./course-material-and-offer.repository";
@@ -123,9 +123,9 @@ export class CourseRepositoryImpl implements CourseRepository, CourseObject {
 				errorCode: 500
 			});
 
-		const courseCreatorRepository = new CourseCreatorRepositoryImpl(
-			this._mongodbRepository
-		);
+		// const courseCreatorRepository = new CourseCreatorRepositoryImpl(
+		// 	this._mongodbRepository
+		// );
 		const courseLanguageRepository = new CourseLanguageRepositoryImpl(
 			this._mongodbRepository
 		);
@@ -159,8 +159,8 @@ export class CourseRepositoryImpl implements CourseRepository, CourseObject {
 		const coursePriceEntity = this._courseFactory.make("CoursePriceEntity") as CoursePriceEntity;
 		const courseRatingEntity = this._courseFactory.make("CourseRatingEntity") as CourseRatingEntity;
 
-		courseEntity.creators = await courseCreatorRepository
-			.getAllWithCourseId(courseId);
+		// courseEntity.creators = await courseCreatorRepository
+		// 	.getAllWithCourseId(courseId);
 		courseEntity.description = courseORMEntity.description;
 		courseEntity.id = courseORMEntity._id.toString();
 		courseEntity.image = courseORMEntity.image;

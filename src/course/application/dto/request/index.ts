@@ -1,3 +1,5 @@
+export * from "./create-course-by-instructor.request.dto.type";
+
 export * from "./upload-course-image.request.dto";
 
 export * from "./upload-course-image.request.dto.type";

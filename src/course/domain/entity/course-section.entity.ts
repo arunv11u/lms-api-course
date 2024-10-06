@@ -9,6 +9,7 @@ class CourseSectionEntityImpl implements CourseSectionEntity {
 	private _lectures: CourseSectionLectureEntity[] = [];
 	private _lecturesCount: number;
 	private _lecturesDuration: number;
+	private _order: number;
 
 	get id(): string {
 		return this._id;
@@ -43,6 +44,13 @@ class CourseSectionEntityImpl implements CourseSectionEntity {
 	}
 	set lecturesDuration(lecturesDuration: number) {
 		this._lecturesDuration = lecturesDuration;
+	}
+
+	get order(): number {
+		return this._order;
+	}
+	set order(order: number) {
+		this._order = order;
 	}
 }
 

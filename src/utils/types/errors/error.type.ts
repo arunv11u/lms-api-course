@@ -29,7 +29,10 @@ export enum ErrorCodes {
 	instructorVersionDidNotMatch = "INSTRUCTOR_VERSION_DID_NOT_MATCH",
 	instructorNotFound = "INSTRUCTOR_NOT_FOUND",
 	invalidAuthorizationToken = "INVALID_AUTHORIZATION_TOKEN",
-	courseImageMimeTypeRequired = "COURSE_IMAGE_MIME_TYPEE_REQUIRED"
+	courseImageMimeTypeRequired = "COURSE_IMAGE_MIME_TYPEE_REQUIRED",
+	videoTranscoderConnectionError = "VIDEO_TRANSCODER_CONNECTION",
+	hlsDurationFromUrl = "HLS_DURATION_FROM_URL",
+	languageIsInvalidFor2LetterIsoCode = "LANGUAGE_IS_INVALID_FOR_2_LETTER_ISO_CODE"
 }
 
 export interface FormattedError {

@@ -1,3 +1,4 @@
+import { CourseCreatorEntity } from "./course-creator.entity.type";
 import { CoursePriceEntity } from "./course-price.entity.type";
 import { CourseRatingEntity } from "./course-rating.entity.type";
 import { CourseSectionEntity } from "./course-section.entity.type";
@@ -23,14 +24,17 @@ abstract class CourseEntity {
 	abstract get description(): string;
 	abstract set description(description: string);
 
+	abstract get category(): string;
+	abstract set category(category: string);
+
 	abstract get rating(): CourseRatingEntity;
 	abstract set rating(rating: CourseRatingEntity);
 
 	abstract get totalStudents(): number;
 	abstract set totalStudents(totalStudents: number);
 
-	abstract get creators(): string[];
-	abstract set creators(creators: string[]);
+	abstract get creators(): CourseCreatorEntity[];
+	abstract set creators(creators: CourseCreatorEntity[]);
 
 	abstract get lastUpdatedOn(): Date;
 	abstract set lastUpdatedOn(lastUpdatedOn: Date);
