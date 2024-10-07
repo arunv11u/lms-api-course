@@ -9,5 +9,8 @@ export const devConfig = {
 	s3Protocol: "https",
 	s3SignatureVersion: "s3v4",
 	s3RegionName: "us-east-1",
-	s3BucketName: "learning-management-system-project"
+	s3BucketName: "learning-management-system-project",
+	elasticTranscoderPipelineId: "1719443759029-ew722s",
+	elasticTranscoderHls2MPresetId: "1351620000001-200010",
+	videoTranscoderRegionName: "us-east-1"
 };

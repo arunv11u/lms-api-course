@@ -1,6 +1,7 @@
-import { MongoDBRepository } from "@arunvaradharajalu/common.mongodb-api";
-import { CourseMaterialAndOfferORMEntity } from "./course-material-and-offer.orm-entity";
 import { ObjectId } from "mongodb";
+import { MongoDBRepository } from "@arunvaradharajalu/common.mongodb-api";
+import { CourseEntity } from "../../domain";
+import { CourseMaterialAndOfferORMEntity } from "./course-material-and-offer.orm-entity";
 
 
 
@@ -12,23 +13,28 @@ export class CourseMaterialAndOfferRepositoryImpl {
 		this._mongodbRepository = mongoDBRepository;
 	}
 
-	async getAllWithCourseId(
-		courseId: string
-	): Promise<string[]> {
-		const courseMaterialsAndOffersORMEntity = await this._mongodbRepository
-			.find<CourseMaterialAndOfferORMEntity>(
+	async addCourseMaterialsAndOffersByInstructor(
+		courseEntity: CourseEntity,
+		instructorId: string
+	): Promise<void> {
+		const courseMaterialsAndOffersORMEntity = courseEntity
+			.materialsAndOffers
+			.map<CourseMaterialAndOfferORMEntity>(materialAndOffer => ({
+				_id: new ObjectId(),
+				course: new ObjectId(courseEntity.id),
+				createdBy: instructorId,
+				creationDate: new Date(),
+				isDeleted: false,
+				lastModifiedBy: instructorId,
+				lastModifiedDate: new Date(),
+				materialAndOffer: materialAndOffer,
+				version: 1
+			}));
+
+		await this._mongodbRepository
+			.addRange<CourseMaterialAndOfferORMEntity>(
 				this._collectionName,
-				{
-					course: new ObjectId(courseId)
-				}
+				courseMaterialsAndOffersORMEntity
 			);
-
-		const courseMaterialsAndOffers = courseMaterialsAndOffersORMEntity
-			.map(
-				(courseMaterialAndOfferORMEntity) => {
-					return courseMaterialAndOfferORMEntity.materialAndOffer;
-				});
-
-		return courseMaterialsAndOffers;
 	}
 }

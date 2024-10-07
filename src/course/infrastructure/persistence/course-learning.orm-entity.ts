@@ -8,8 +8,8 @@ export class CourseLearningORMEntity {
 	learning: string;
 	creationDate: Date;
 	lastModifiedDate: Date;
-	createdBy: ObjectId;
-	lastModifiedBy: ObjectId;
+	createdBy: string;
+	lastModifiedBy: string;
 	isDeleted: boolean;
 	version: number;
 }

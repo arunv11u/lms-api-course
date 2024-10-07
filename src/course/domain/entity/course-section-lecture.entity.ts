@@ -1,3 +1,6 @@
+import { CourseSectionLectureSubtitleValueObject } from "../value-objects";
+import { CourseSectionLectureSubtitleEntityImpl } from "./course-section-lecture-subtitle.entity";
+import { CourseSectionLectureSubtitleEntity } from "./course-section-lecture-subtitle.entity.type";
 import { CourseSectionLectureEntity } from "./course-section-lecture.entity.type";
 
 
@@ -9,7 +12,9 @@ class CourseSectionLectureEntityImpl implements CourseSectionLectureEntity {
 	private _description: string;
 	private _duration: number;
 	private _link: string;
-	private _thumbnail: string;
+	private _thumbnail: string | null = null;
+	private _subtitles: CourseSectionLectureSubtitleEntity[] = [];
+	private _order: number;
 
 	get id(): string {
 		return this._id;
@@ -46,11 +51,30 @@ class CourseSectionLectureEntityImpl implements CourseSectionLectureEntity {
 		this._link = link;
 	}
 
-	get thumbnail(): string {
+	get subtitles(): CourseSectionLectureSubtitleEntity[] {
+		return this._subtitles;
+	}
+	addSubtitle(subtitle: CourseSectionLectureSubtitleValueObject): void {
+		const courseSectionLectureSubtitleEntity =
+			new CourseSectionLectureSubtitleEntityImpl();
+		courseSectionLectureSubtitleEntity.language = subtitle.language;
+		courseSectionLectureSubtitleEntity.url = subtitle.url;
+
+		this._subtitles.push(courseSectionLectureSubtitleEntity);
+	}
+
+	get thumbnail(): string | null {
 		return this._thumbnail;
 	}
-	set thumbnail(thumbnail: string) {
+	set thumbnail(thumbnail: string | null) {
 		this._thumbnail = thumbnail;
+	}
+
+	get order(): number {
+		return this._order;
+	}
+	set order(order: number) {
+		this._order = order;
 	}
 }
 

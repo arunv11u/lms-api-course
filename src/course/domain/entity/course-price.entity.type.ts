@@ -1,7 +1,5 @@
+import { CoursePriceCurrencies } from "./course.entity.type";
 
-enum CoursePriceCurrencies {
-	cad = "CAD"
-}
 
 abstract class CoursePriceEntity {
 

@@ -32,13 +32,20 @@ interface GetAllCoursesSectionResponseDTO {
 	lecturesDuration: number;
 }
 
+interface CourseCreatorResponseDTO {
+	firstName: string;
+	lastName: string;
+	profilePicture: string;
+	designation: string;
+}
+
 interface GetAllCoursesDocResponseDTO {
 	id: string;
 	title: string;
 	description: string;
 	rating: GetAllCoursesRatingResponseDTO;
 	totalStudents: number;
-	creators: string[];
+	creators: CourseCreatorResponseDTO[];
 	lastUpdatedOn: Date;
 	languages: CourseLanguages[];
 	subtitles: CourseSubtitles[];
@@ -62,6 +69,7 @@ export {
 	GetAllCoursesPriceResponseDTO,
 	GetAllCoursesSectionLectureResponseDTO,
 	GetAllCoursesSectionResponseDTO,
+	CourseCreatorResponseDTO,
 	GetAllCoursesDocResponseDTO,
 	GetAllCoursesResponseDTO
 };

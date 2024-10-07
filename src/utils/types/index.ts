@@ -22,6 +22,8 @@ export * from "./storage";
 
 export * from "./validators";
 
+export * from "./video-transcoder";
+
 export * from "./cron.type";
 
 export * from "./docs-count-list.type";

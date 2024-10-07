@@ -1,5 +1,6 @@
 import { ErrorCodes, Factory, GenericError } from "../../utils";
 import {
+	CreateCourseByInstructorUseCaseImpl,
 	GetAllCoursesUseCaseImpl,
 	UploadCourseImageUseCaseImpl,
 	UploadLectureSubtitleUseCaseImpl,
@@ -7,10 +8,7 @@ import {
 } from "../application";
 import {
 	CourseEntityImpl,
-	CoursePriceEntityImpl,
-	CourseRatingEntityImpl,
-	CourseSectionEntityImpl,
-	CourseSectionLectureEntityImpl
+	CourseObject
 } from "../domain";
 import { CourseRepositoryImpl } from "../infrastructure";
 
@@ -19,30 +17,15 @@ import { CourseRepositoryImpl } from "../infrastructure";
 class CourseFactory implements Factory {
 
 	private _objects: string[] = [
-		"CoursePriceEntity",
-		"CourseRatingEntity",
-		"CourseSectionLectureEntity",
-		"CourseSectionEntity",
 		"CourseEntity",
 		"GetAllCoursesUseCase",
 		"UploadCourseImageUseCase",
 		"UploadLectureVideoUseCase",
-		"UploadLectureSubtitleUseCase"
+		"UploadLectureSubtitleUseCase",
+		"CreateCourseByInstructorUseCase"
 	];
 
-	make(objectName: string) {
-
-		if (objectName === "CoursePriceEntity")
-			return new CoursePriceEntityImpl();
-
-		if (objectName === "CourseRatingEntity")
-			return new CourseRatingEntityImpl();
-
-		if (objectName === "CourseSectionLectureEntity")
-			return new CourseSectionLectureEntityImpl();
-
-		if (objectName === "CourseSectionEntity")
-			return new CourseSectionEntityImpl();
+	make(objectName: string): CourseObject {
 
 		if (objectName === "CourseEntity")
 			return new CourseEntityImpl();
@@ -61,6 +44,9 @@ class CourseFactory implements Factory {
 
 		if (objectName === "UploadLectureSubtitleUseCase")
 			return new UploadLectureSubtitleUseCaseImpl();
+
+		if (objectName === "CreateCourseByInstructorUseCase")
+			return new CreateCourseByInstructorUseCaseImpl();
 
 		throw new GenericError({
 			code: ErrorCodes.invalidFactoryObject,

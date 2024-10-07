@@ -1,5 +1,5 @@
 import { UnitOfWork, UnitOfWorkImpl } from "../../../utils";
-import { CourseRepository } from "../../domain";
+import { CourseObject, CourseRepository } from "../../domain";
 import { 
 	GetAllCoursesDocResponseDTOImpl,
 	GetAllCoursesResponseDTO, 
@@ -11,7 +11,8 @@ import { GetAllCoursesUseCase } from "./get-all-courses.use-case.type";
 
 
 
-export class GetAllCoursesUseCaseImpl implements GetAllCoursesUseCase {
+export class GetAllCoursesUseCaseImpl implements 
+	GetAllCoursesUseCase, CourseObject {
 	private _unitOfWork: UnitOfWork;
 	private _getAllCoursesResponseDTO: GetAllCoursesResponseDTO;
 
@@ -29,7 +30,7 @@ export class GetAllCoursesUseCaseImpl implements GetAllCoursesUseCase {
 		coursesEntity.docs.forEach(course => {
 			const getAllCoursesDocResponseDTO =
 				new GetAllCoursesDocResponseDTOImpl();
-			getAllCoursesDocResponseDTO.creators = course.creators;
+			// getAllCoursesDocResponseDTO.creators = course.creators;
 			getAllCoursesDocResponseDTO.description = course.description;
 			getAllCoursesDocResponseDTO.id = course.id;
 			getAllCoursesDocResponseDTO.image = course.image;
@@ -42,9 +43,9 @@ export class GetAllCoursesUseCaseImpl implements GetAllCoursesUseCase {
 			getAllCoursesDocResponseDTO.price.currency = course.price.currency;
 			getAllCoursesDocResponseDTO.price.value = course.price.value;
 
-			getAllCoursesDocResponseDTO.rating.totalCount =
-				course.rating.totalCount;
-			getAllCoursesDocResponseDTO.rating.value = course.rating.value;
+			// getAllCoursesDocResponseDTO.rating.totalCount =
+			// 	course.rating.totalCount;
+			// getAllCoursesDocResponseDTO.rating.value = course.rating.value;
 
 			course.sections.forEach(section => {
 				const getAllCoursesSectionResponseDTO =
@@ -60,8 +61,8 @@ export class GetAllCoursesUseCaseImpl implements GetAllCoursesUseCase {
 						lecture.duration;
 					getAllCoursesSectionLectureResponseDTO.id = lecture.id;
 					getAllCoursesSectionLectureResponseDTO.link = lecture.link;
-					getAllCoursesSectionLectureResponseDTO.thumbnail =
-						lecture.thumbnail;
+					// getAllCoursesSectionLectureResponseDTO.thumbnail =
+					// 	lecture.thumbnail;
 					getAllCoursesSectionLectureResponseDTO.title =
 						lecture.title;
 

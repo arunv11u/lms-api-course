@@ -1,10 +1,17 @@
-import { CoursePriceEntity } from "./course-price.entity.type";
+import { CourseCreatorValueObject, CourseSectionValueObject } from "../value-objects";
+import { CourseCreatorEntityImpl } from "./course-creator.entity";
+import { CourseCreatorEntity } from "./course-creator.entity.type";
+import { CoursePriceEntityImpl } from "./course-price.entity";
+import { CoursePriceCurrencies, CoursePriceEntity } from "./course-price.entity.type";
+import { CourseRatingEntityImpl } from "./course-rating.entity";
 import { CourseRatingEntity } from "./course-rating.entity.type";
+import { CourseSectionEntityImpl } from "./course-section.entity";
 import { CourseSectionEntity } from "./course-section.entity.type";
-import { 
-	CourseEntity, 
-	CourseLanguages, 
-	CourseSubtitles 
+import {
+	CourseEntity,
+	CourseLanguages,
+	CourseStatuses,
+	CourseSubtitles
 } from "./course.entity.type";
 
 
@@ -12,11 +19,13 @@ import {
 class CourseEntityImpl implements CourseEntity {
 
 	private _id: string;
+	private _status: CourseStatuses;
 	private _title: string;
 	private _description: string;
-	private _rating: CourseRatingEntity;
+	private _category: string;
+	private _rating: CourseRatingEntity | null = null;
 	private _totalStudents: number;
-	private _creators: string[] = [];
+	private _creators: CourseCreatorEntity[] = [];
 	private _lastUpdatedOn: Date;
 	private _languages: CourseLanguages[] = [];
 	private _subtitles: CourseSubtitles[] = [];
@@ -36,6 +45,13 @@ class CourseEntityImpl implements CourseEntity {
 		this._id = id;
 	}
 
+	get status(): CourseStatuses {
+		return this._status;
+	}
+	set status(status: CourseStatuses) {
+		this._status = status;
+	}
+
 	get title(): string {
 		return this._title;
 	}
@@ -50,11 +66,22 @@ class CourseEntityImpl implements CourseEntity {
 		this._description = description;
 	}
 
-	get rating(): CourseRatingEntity {
+	get category(): string {
+		return this._category;
+	}
+	set category(category: string) {
+		this._category = category;
+	}
+
+	get rating(): CourseRatingEntity | null {
 		return this._rating;
 	}
-	set rating(rating: CourseRatingEntity) {
-		this._rating = rating;
+	setRating(value: number, totalCount: number): void {
+		const courseRatingEntity = new CourseRatingEntityImpl();
+		courseRatingEntity.totalCount = totalCount;
+		courseRatingEntity.value = value;
+
+		this._rating = courseRatingEntity;
 	}
 
 	get totalStudents(): number {
@@ -64,11 +91,18 @@ class CourseEntityImpl implements CourseEntity {
 		this._totalStudents = totalStudents;
 	}
 
-	get creators(): string[] {
+	get creators(): CourseCreatorEntity[] {
 		return this._creators;
 	}
-	set creators(creators: string[]) {
-		this._creators = creators;
+	addCreator(creator: CourseCreatorValueObject): void {
+		const courseCreatorEntity = new CourseCreatorEntityImpl();
+		courseCreatorEntity.designation = creator.designation;
+		courseCreatorEntity.firstName = creator.firstName;
+		courseCreatorEntity.id = creator.id;
+		courseCreatorEntity.lastName = creator.lastName;
+		courseCreatorEntity.profilePicture = creator.profilePicture;
+
+		this._creators.push(courseCreatorEntity);
 	}
 
 	get lastUpdatedOn(): Date {
@@ -81,36 +115,40 @@ class CourseEntityImpl implements CourseEntity {
 	get languages(): CourseLanguages[] {
 		return this._languages;
 	}
-	set languages(languages: CourseLanguages[]) {
-		this._languages = languages;
+	addLanguage(language: CourseLanguages): void {
+		this._languages.push(language);
 	}
 
 	get subtitles(): CourseSubtitles[] {
 		return this._subtitles;
 	}
-	set subtitles(subtitles: CourseSubtitles[]) {
-		this._subtitles = subtitles;
+	addSubtitle(subtitle: CourseSubtitles): void {
+		this._subtitles.push(subtitle);
 	}
 
 	get learnings(): string[] {
 		return this._learnings;
 	}
-	set learnings(learnings: string[]) {
-		this._learnings = learnings;
+	addLearning(learning: string): void {
+		this._learnings.push(learning);
 	}
 
 	get materialsAndOffers(): string[] {
 		return this._materialsAndOffers;
 	}
-	set materialsAndOffers(materialsAndOffers: string[]) {
-		this._materialsAndOffers = materialsAndOffers;
+	addMaterialAndOffer(materialAndOffer: string): void {
+		this._materialsAndOffers.push(materialAndOffer);
 	}
 
 	get price(): CoursePriceEntity {
 		return this._price;
 	}
-	set price(price: CoursePriceEntity) {
-		this._price = price;
+	setPrice(currency: CoursePriceCurrencies, value: number): void {
+		const coursePriceEntity = new CoursePriceEntityImpl();
+		coursePriceEntity.currency = currency;
+		coursePriceEntity.value = value;
+
+		this._price = coursePriceEntity;
 	}
 
 	get image(): string {
@@ -123,8 +161,20 @@ class CourseEntityImpl implements CourseEntity {
 	get sections(): CourseSectionEntity[] {
 		return this._sections;
 	}
-	set sections(sections: CourseSectionEntity[]) {
-		this._sections = sections;
+	addSection(section: CourseSectionValueObject): void {
+		const courseSectionEntity = new CourseSectionEntityImpl();
+		
+		section.lectures.forEach(lecture => {
+			courseSectionEntity.addLecture(lecture);
+		});
+
+		courseSectionEntity.id = section.id;
+		courseSectionEntity.lecturesCount = section.lecturesCount;
+		courseSectionEntity.lecturesDuration = section.lecturesDuration;
+		courseSectionEntity.order = section.order;
+		courseSectionEntity.title = section.title;
+
+		this._sections.push(courseSectionEntity);
 	}
 
 	get totalSectionsCount(): number {

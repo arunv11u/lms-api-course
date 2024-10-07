@@ -5,6 +5,7 @@ import {
 	CourseSubtitles
 } from "../../../domain";
 import {
+	CourseCreatorResponseDTO,
 	GetAllCoursesDocResponseDTO,
 	GetAllCoursesPriceResponseDTO,
 	GetAllCoursesRatingResponseDTO,
@@ -45,9 +46,16 @@ class GetAllCoursesSectionResponseDTOImpl implements
 	title: string;
 }
 
+class CourseCreatorResponseDTOImpl implements CourseCreatorResponseDTO {
+	designation: string;
+	firstName: string;
+	lastName: string;
+	profilePicture: string;
+}
+
 class GetAllCoursesDocResponseDTOImpl implements
 	GetAllCoursesDocResponseDTO {
-	creators: string[] = [];
+	creators: CourseCreatorResponseDTO[] = [];
 	description: string;
 	id: string;
 	image: string;
@@ -74,6 +82,7 @@ class GetAllCoursesResponseDTOImpl implements GetAllCoursesResponseDTO {
 export {
 	GetAllCoursesSectionLectureResponseDTOImpl,
 	GetAllCoursesSectionResponseDTOImpl,
+	CourseCreatorResponseDTOImpl,
 	GetAllCoursesDocResponseDTOImpl,
 	GetAllCoursesResponseDTOImpl
 };

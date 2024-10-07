@@ -1,10 +1,9 @@
 import { MongoDBRepository } from "@arunvaradharajalu/common.mongodb-api";
-import { ObjectId } from "mongodb";
-import { CourseSectionLectureEntity } from "../../domain";
-import { ErrorCodes, GenericError } from "../../../utils";
-import { CourseFactory } from "../../factory";
 import { getCourseFactory } from "../../../global-config";
+import { CourseEntity } from "../../domain";
+import { CourseFactory } from "../../factory";
 import { CourseSectionLectureORMEntity } from "./course-section-lecture.orm-entity";
+import { ObjectId } from "mongodb";
 
 
 
@@ -20,131 +19,40 @@ export class CourseSectionLectureRepositoryImpl {
 	}
 
 	getId(): string {
-		throw new Error();
+		return new ObjectId().toString();
 	}
 
-	async getAllWithCourseIdAndSectionId(
-		courseId: string,
-		sectionId: string
-	): Promise<CourseSectionLectureEntity[]> {
-		const courseSectionLecturesORMEntity = await this._mongodbRepository
-			.find<CourseSectionLectureORMEntity>(
-				this._collectionName,
-				{
-					course: new ObjectId(courseId),
-					section: new ObjectId(sectionId)
-				}
-			);
+	async addLecturesByInstructor(
+		courseEntity: CourseEntity,
+		instructorId: string
+	): Promise<void> {
+		const courseSectionLecturesORMEntity:
+			CourseSectionLectureORMEntity[] = [];
 
-		const courseSectionLecturesPromises = courseSectionLecturesORMEntity
-			.map(async (courseSectionLectureORMEntity) => {
-				const courseSectionLecture =
-					await this._getEntity(courseSectionLectureORMEntity);
-
-				return courseSectionLecture;
+		courseEntity.sections.forEach(section => {
+			section.lectures.forEach(lecture => {
+				courseSectionLecturesORMEntity.push({
+					_id: new ObjectId(lecture.id),
+					course: new ObjectId(courseEntity.id),
+					createdBy: instructorId,
+					creationDate: new Date(),
+					description: lecture.description,
+					duration: 0,
+					isDeleted: false,
+					lastModifiedBy: instructorId,
+					lastModifiedDate: new Date(),
+					link: lecture.link,
+					section: new ObjectId(section.id),
+					thumbnail: null,
+					title: lecture.title,
+					version: 1
+				});
 			});
-
-		const courseSectionLectures =
-			await Promise.all(courseSectionLecturesPromises);
-
-		return courseSectionLectures;
-	}
-
-	async getLecturesCountWithCourseIdAndSectionId(
-		courseId: string,
-		sectionId: string
-	): Promise<number> {
-		const courseSectionLectures = await this._mongodbRepository
-			.find<CourseSectionLectureORMEntity>(
-				this._collectionName,
-				{
-					course: new ObjectId(courseId),
-					section: new ObjectId(sectionId)
-				}
-			);
-
-		return courseSectionLectures.length;
-	}
-
-	async getLecturesDurationWithCourseIdAndSectionId(
-		courseId: string,
-		sectionId: string
-	): Promise<number> {
-		const courseSectionLectures = await this._mongodbRepository
-			.find<CourseSectionLectureORMEntity>(
-				this._collectionName,
-				{
-					course: new ObjectId(courseId),
-					section: new ObjectId(sectionId)
-				}
-			);
-
-		let lecturesDuration = 0;
-
-		courseSectionLectures.forEach(courseSectionLecture => {
-			lecturesDuration += courseSectionLecture.duration;
 		});
 
-		return lecturesDuration;
-	}
-
-	async getTotalLecturesCountWithCourseId(
-		courseId: string
-	): Promise<number> {
-		const lectures = await this._mongodbRepository
-			.find<CourseSectionLectureORMEntity>(
-				this._collectionName,
-				{
-					course: new ObjectId(courseId)
-				}
-			);
-
-		return lectures.length;
-	}
-
-	async getTotalDurationWithCourseId(
-		courseId: string
-	): Promise<number> {
-		const lectures = await this._mongodbRepository
-			.find<CourseSectionLectureORMEntity>(
-				this._collectionName,
-				{
-					course: new ObjectId(courseId)
-				}
-			);
-
-		let totalDuration = 0;
-
-		lectures.forEach(lecture => {
-			totalDuration += lecture.duration;
-		});
-
-		return totalDuration;
-	}
-
-	private async _getEntity(
-		courseSectionLectureORMEntity: CourseSectionLectureORMEntity
-	): Promise<CourseSectionLectureEntity> {
-		if (!this._mongodbRepository)
-			throw new GenericError({
-				code: ErrorCodes.mongoDBRepositoryDoesNotExist,
-				error: new Error("MongoDB repository does not exist"),
-				errorCode: 500
-			});
-
-		const courseSectionLectureEntity = this._courseFactory
-			.make("CourseSectionLectureEntity") as CourseSectionLectureEntity;
-		courseSectionLectureEntity.description =
-			courseSectionLectureORMEntity.description;
-		courseSectionLectureEntity.duration =
-			courseSectionLectureORMEntity.duration;
-		courseSectionLectureEntity.id =
-			courseSectionLectureORMEntity._id.toString();
-		courseSectionLectureEntity.link = courseSectionLectureORMEntity.link;
-		courseSectionLectureEntity.thumbnail =
-			courseSectionLectureORMEntity.thumbnail;
-		courseSectionLectureEntity.title = courseSectionLectureORMEntity.title;
-
-		return courseSectionLectureEntity;
+		await this._mongodbRepository.addRange<CourseSectionLectureORMEntity>(
+			this._collectionName,
+			courseSectionLecturesORMEntity
+		);
 	}
 }

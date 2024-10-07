@@ -1,3 +1,5 @@
+import { CourseSectionLectureSubtitleValueObject } from "../value-objects";
+import { CourseSectionLectureSubtitleEntity } from "./course-section-lecture-subtitle.entity.type";
 
 
 abstract class CourseSectionLectureEntity {
@@ -16,8 +18,16 @@ abstract class CourseSectionLectureEntity {
 	abstract get link(): string;
 	abstract set link(link: string);
 
-	abstract get thumbnail(): string;
-	abstract set thumbnail(thumbnail: string);
+	abstract get thumbnail(): string | null;
+	abstract set thumbnail(thumbnail: string | null);
+
+	abstract get subtitles(): CourseSectionLectureSubtitleEntity[];
+	abstract addSubtitle(
+		subtitle: CourseSectionLectureSubtitleValueObject
+	): void;
+
+	abstract get order(): number;
+	abstract set order(order: number);
 }
 
 export {
