@@ -1,8 +1,9 @@
-import { CourseSectionLectureSubtitle } from "./course-section-lecture-subtitle.entity.type";
+import { CourseSectionLectureSubtitleEntity } from "./course-section-lecture-subtitle.entity.type";
 import { CourseSubtitles } from "./course.entity.type";
 
 
-class CourseSectionLectureSubtitleImpl implements CourseSectionLectureSubtitle {
+class CourseSectionLectureSubtitleEntityImpl implements
+	CourseSectionLectureSubtitleEntity {
 
 	private _language: CourseSubtitles;
 	private _url: string;
@@ -23,5 +24,5 @@ class CourseSectionLectureSubtitleImpl implements CourseSectionLectureSubtitle {
 }
 
 export {
-	CourseSectionLectureSubtitleImpl
+	CourseSectionLectureSubtitleEntityImpl
 };

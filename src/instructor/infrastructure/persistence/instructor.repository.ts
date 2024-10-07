@@ -4,13 +4,14 @@ import {
 	InstructorCreatedEventValueObject,
 	InstructorObject,
 	InstructorRepository,
-	InstructorUpdatedEventValueObject
+	InstructorUpdatedEventValueObject,
+	InstructorValueObject
 } from "../../domain";
 import { InstructorORMEntity } from "./instructor.orm-entity";
 
 
 
-export class InstructorRepositoryImpl implements 
+export class InstructorRepositoryImpl implements
 	InstructorRepository, InstructorObject {
 	private _collectionName = "instructors";
 	private _mongodbRepository: MongoDBRepository | null = null;
@@ -19,7 +20,7 @@ export class InstructorRepositoryImpl implements
 		this._mongodbRepository = mongoDBRepository;
 	}
 
-	async get(id: string): Promise<InstructorCreatedEventValueObject | null> {
+	async get(id: string): Promise<InstructorValueObject | null> {
 		if (!this._mongodbRepository)
 			throw new GenericError({
 				code: ErrorCodes.mongoDBRepositoryDoesNotExist,
@@ -32,16 +33,46 @@ export class InstructorRepositoryImpl implements
 
 		if (!instructor) return null;
 
-		const instructorCreatedEventValueObject =
-			new InstructorCreatedEventValueObject();
-		instructorCreatedEventValueObject.email = instructor.email;
-		instructorCreatedEventValueObject.firstName = instructor.firstName;
-		instructorCreatedEventValueObject.id = instructor._id;
-		instructorCreatedEventValueObject.lastName = instructor.lastName;
-		instructorCreatedEventValueObject.userId = instructor.userId;
-		instructorCreatedEventValueObject.version = instructor.version;
+		const instructorValueObject =
+			new InstructorValueObject();
+		instructorValueObject.email = instructor.email;
+		instructorValueObject.firstName = instructor.firstName;
+		instructorValueObject.id = instructor._id;
+		instructorValueObject.lastName = instructor.lastName;
+		instructorValueObject.userId = instructor.userId;
+		instructorValueObject.version = instructor.version;
 
-		return instructorCreatedEventValueObject;
+		return instructorValueObject;
+	}
+
+	async getWithId(id: string): Promise<InstructorValueObject> {
+		if (!this._mongodbRepository)
+			throw new GenericError({
+				code: ErrorCodes.mongoDBRepositoryDoesNotExist,
+				error: new Error("MongoDB repository does not exist"),
+				errorCode: 500
+			});
+
+		const instructor = await this._mongodbRepository
+			.get<InstructorORMEntity>(this._collectionName, id);
+
+		if (!instructor)
+			throw new GenericError({
+				code: ErrorCodes.instructorNotFound,
+				error: new Error("Instructor not found"),
+				errorCode: 404
+			});
+
+		const instructorValueObject =
+			new InstructorValueObject();
+		instructorValueObject.email = instructor.email;
+		instructorValueObject.firstName = instructor.firstName;
+		instructorValueObject.id = instructor._id;
+		instructorValueObject.lastName = instructor.lastName;
+		instructorValueObject.userId = instructor.userId;
+		instructorValueObject.version = instructor.version;
+
+		return instructorValueObject;
 	}
 
 	async saveInstructorFromMessagingQueue(

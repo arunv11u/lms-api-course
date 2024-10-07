@@ -33,13 +33,14 @@ interface CreateCourseByInstructorRequestDTO {
 	title: string;
 	description: string;
 	category: string;
-	languages: CourseLanguages;
-	subtitles: CourseSubtitles;
+	languages: CourseLanguages[];
+	subtitles: CourseSubtitles[];
 	learnings: string[];
 	materialsAndOffers: string[];
 	price: CreateCourseByInstructorPriceRequestDTO;
 	image: string;
 	sections: CreateCourseByInstructorSectionRequestDTO[];
+	authorizationToken: string;
 }
 
 export {

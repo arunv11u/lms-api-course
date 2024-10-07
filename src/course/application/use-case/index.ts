@@ -1,3 +1,7 @@
+export * from "./create-course-by-instructor.use-case";
+
+export * from "./create-course-by-instructor.use-case.type";
+
 export * from "./get-all-courses.use-case";
 
 export * from "./get-all-courses.use-case.type";

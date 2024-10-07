@@ -1,3 +1,5 @@
+import { CourseSectionLectureValueObject } from "../value-objects";
+import { CourseSectionLectureEntityImpl } from "./course-section-lecture.entity";
 import { CourseSectionLectureEntity } from "./course-section-lecture.entity.type";
 import { CourseSectionEntity } from "./course-section.entity.type";
 
@@ -28,8 +30,23 @@ class CourseSectionEntityImpl implements CourseSectionEntity {
 	get lectures(): CourseSectionLectureEntity[] {
 		return this._lectures;
 	}
-	set lectures(lectures: CourseSectionLectureEntity[]) {
-		this._lectures = lectures;
+	addLecture(lecture: CourseSectionLectureValueObject): void {
+		const courseSectionLectureEntity = new CourseSectionLectureEntityImpl();
+
+		courseSectionLectureEntity.description = lecture.description;
+		courseSectionLectureEntity.duration = lecture.duration;
+		courseSectionLectureEntity.id = lecture.id;
+		courseSectionLectureEntity.link = lecture.link;
+		courseSectionLectureEntity.order = lecture.order;
+
+		lecture.subtitles.forEach(subtitle => {
+			courseSectionLectureEntity.addSubtitle(subtitle);
+		});
+
+		courseSectionLectureEntity.thumbnail = lecture.thumbnail;
+		courseSectionLectureEntity.title = lecture.title;
+
+		this._lectures.push(courseSectionLectureEntity);
 	}
 
 	get lecturesCount(): number {

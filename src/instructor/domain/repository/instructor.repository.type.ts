@@ -1,14 +1,17 @@
 import { Repository } from "../../../utils";
 import {
 	InstructorCreatedEventValueObject,
-	InstructorUpdatedEventValueObject
+	InstructorUpdatedEventValueObject,
+	InstructorValueObject
 } from "../value-object";
 
 
 export abstract class InstructorRepository extends Repository {
 	abstract get(
 		id: string
-	): Promise<InstructorCreatedEventValueObject | null>;
+	): Promise<InstructorValueObject | null>;
+
+	abstract getWithId(id: string): Promise<InstructorValueObject>
 
 	abstract saveInstructorFromMessagingQueue(
 		instructorCreatedEventValueObject: InstructorCreatedEventValueObject

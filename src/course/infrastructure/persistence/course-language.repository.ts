@@ -1,7 +1,7 @@
-import { MongoDBRepository } from "@arunvaradharajalu/common.mongodb-api";
-import { CourseLanguages } from "../../domain";
-import { CourseLanguageORMEntity } from "./course-language.orm-entity";
 import { ObjectId } from "mongodb";
+import { MongoDBRepository } from "@arunvaradharajalu/common.mongodb-api";
+import { CourseEntity } from "../../domain";
+import { CourseLanguageORMEntity } from "./course-language.orm-entity";
 
 
 
@@ -13,23 +13,27 @@ export class CourseLanguageRepositoryImpl {
 		this._mongodbRepository = mongoDBRepository;
 	}
 
-	async getAllWithCourseId(
-		courseId: string
-	): Promise<CourseLanguages[]> {
-		const courseLanguagesORMEntity = await this._mongodbRepository
-			.find<CourseLanguageORMEntity>(
-				this._collectionName,
-				{
-					course: new ObjectId(courseId)
-				}
-			);
+	async addLanguagesByInstructor(
+		courseEntity: CourseEntity,
+		instructorId: string
+	): Promise<void> {
 
-		const courseLanguages = courseLanguagesORMEntity
-			.map(
-				(courseLanguageORMEntity) => {
-					return courseLanguageORMEntity.language;
-				});
+		const courseLanguagesORMEntity = courseEntity.languages
+			.map<CourseLanguageORMEntity>(language => ({
+				_id: new ObjectId(),
+				course: new ObjectId(courseEntity.id),
+				createdBy: instructorId,
+				creationDate: new Date(),
+				isDeleted: false,
+				language: language,
+				lastModifiedBy: instructorId,
+				lastModifiedDate: new Date(),
+				version: 1
+			}));
 
-		return courseLanguages;
+		await this._mongodbRepository.addRange(
+			this._collectionName,
+			courseLanguagesORMEntity
+		);
 	}
 }

@@ -1,6 +1,6 @@
-import { MongoDBRepository } from "@arunvaradharajalu/common.mongodb-api";
 import { ObjectId } from "mongodb";
-import { CourseSubtitles } from "../../domain";
+import { MongoDBRepository } from "@arunvaradharajalu/common.mongodb-api";
+import { CourseEntity } from "../../domain";
 import { CourseSubtitleORMEntity } from "./course-subtitle.orm-entity";
 
 
@@ -13,19 +13,26 @@ export class CourseSubtitleRepositoryImpl {
 		this._mongodbRepository = mongoDBRepository;
 	}
 
-	async getAllWithCourseId(
-		courseId: string
-	): Promise<CourseSubtitles[]> {
-		const subtitlesORMEntity = await this._mongodbRepository
-			.find<CourseSubtitleORMEntity>(
-				this._collectionName,
-				{ course: new ObjectId(courseId) }
-			);
+	async addSubtitlesByInstructor(
+		courseEntity: CourseEntity,
+		instructorId: string
+	): Promise<void> {
+		const courseSubtitlesORMEntity = courseEntity.subtitles
+			.map<CourseSubtitleORMEntity>(subtitle => ({
+				_id: new ObjectId(),
+				course: new ObjectId(courseEntity.id),
+				createdBy: instructorId,
+				creationDate: new Date(),
+				isDeleted: false,
+				lastModifiedBy: instructorId,
+				lastModifiedDate: new Date(),
+				subtitle: subtitle,
+				version: 1
+			}));
 
-		const subtitles = subtitlesORMEntity.map(subtitleORMEntity => {
-			return subtitleORMEntity.subtitle;
-		});
-
-		return subtitles;
+		await this._mongodbRepository.addRange<CourseSubtitleORMEntity>(
+			this._collectionName,
+			courseSubtitlesORMEntity
+		);
 	}
 }

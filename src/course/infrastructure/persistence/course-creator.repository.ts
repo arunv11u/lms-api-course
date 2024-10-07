@@ -1,6 +1,7 @@
-import { MongoDBRepository } from "@arunvaradharajalu/common.mongodb-api";
-import { CourseCreatorORMEntity } from "./course-creator.orm-entity";
 import { ObjectId } from "mongodb";
+import { MongoDBRepository } from "@arunvaradharajalu/common.mongodb-api";
+import { CourseEntity } from "../../domain";
+import { CourseCreatorORMEntity } from "./course-creator.orm-entity";
 
 
 
@@ -12,23 +13,27 @@ export class CourseCreatorRepositoryImpl {
 		this._mongodbRepository = mongoDBRepository;
 	}
 
-	async getAllWithCourseId(
-		courseId: string
-	): Promise<string[]> {
-		const courseCreatorsORMEntity = await this._mongodbRepository
-			.find<CourseCreatorORMEntity>(
-				this._collectionName,
-				{
-					course: new ObjectId(courseId)
-				}
-			);
+	async addCreatorsByInstructor(
+		courseEntity: CourseEntity,
+		instructorId: string
+	): Promise<void> {
 
-		const courseCreators = courseCreatorsORMEntity
-			.map(
-				(courseCreatorORMEntity) => {
-					return courseCreatorORMEntity.name;
-				});
+		const creatorsORMEntity = courseEntity.creators
+			.map<CourseCreatorORMEntity>(creator => ({
+				_id: new ObjectId(),
+				course: new ObjectId(courseEntity.id),
+				createdBy: instructorId,
+				creationDate: new Date(),
+				creator: creator.id,
+				isDeleted: false,
+				lastModifiedBy: instructorId,
+				lastModifiedDate: new Date(),
+				version: 1
+			}));
 
-		return courseCreators;
+		await this._mongodbRepository.addRange<CourseCreatorORMEntity>(
+			this._collectionName,
+			creatorsORMEntity
+		);
 	}
 }

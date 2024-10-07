@@ -1,18 +1,19 @@
 import { ErrorCodes, Factory, GenericError } from "../../utils";
 import { TranscoderObject } from "../domain";
+import { TranscoderRepositoryImpl } from "../infrastructure";
 
 
 class TranscoderFactory implements Factory {
 
 	private _objects: string[] = [
-		"TokenRepository"
+		"TranscoderRepository"
 	];
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	make(objectName: string): TranscoderObject {
 
-		// if (objectName === "TokenRepository")
-		// 	return new TokenRepositoryImpl();
+		if (objectName === "TranscoderRepository")
+			return new TranscoderRepositoryImpl();
 
 		throw new GenericError({
 			code: ErrorCodes.invalidFactoryObject,

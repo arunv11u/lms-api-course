@@ -1,8 +1,10 @@
-import { Controller, Get, Post } from "@arunvaradharajalu/common.decorators";
+import { Controller, Get, Post, Use } from "@arunvaradharajalu/common.decorators";
 import { Request, Response, NextFunction } from "express";
 import { ErrorCodes, GenericError, getResponseHandler, winstonLogger } from "../../../utils";
 import { authorizationTokenName, getCourseFactory } from "../../../global-config";
 import {
+	CreateCourseByInstructorRequestDTOImpl,
+	CreateCourseByInstructorUseCase,
 	GetAllCoursesUseCase,
 	UploadCourseImageRequestDTOImpl,
 	UploadCourseImageUseCase,
@@ -11,6 +13,7 @@ import {
 	UploadLectureVideoRequestDTOImpl,
 	UploadLectureVideoUseCase
 } from "../../application";
+import { createCourseByInstructorRequestValidator } from "../request-validator";
 
 
 
@@ -213,6 +216,63 @@ export class CourseController {
 		} catch (error) {
 			winston.error(
 				"Error in uploading lecture subtitle:",
+				error
+			);
+
+			next(error);
+		}
+	}
+
+	@Post("/create-by-instructor")
+	@Use(createCourseByInstructorRequestValidator)
+	async createCourseByInstructor(
+		request: Request,
+		response: Response,
+		next: NextFunction
+	): Promise<void> {
+		const winston = winstonLogger.winston;
+		try {
+			winston.info("Creating a course by instructor");
+
+			const courseFactory = getCourseFactory();
+			const responseHandler = getResponseHandler();
+
+			const createCourseByInstructorRequestDTO =
+				new CreateCourseByInstructorRequestDTOImpl();
+			createCourseByInstructorRequestDTO.authorizationToken =
+				request.header(authorizationTokenName) as string;
+			createCourseByInstructorRequestDTO.category = request.body.category;
+			createCourseByInstructorRequestDTO.description = 
+				request.body.description;
+			createCourseByInstructorRequestDTO.image = request.body.image;
+			createCourseByInstructorRequestDTO.languages = 
+				request.body.languages;
+			createCourseByInstructorRequestDTO.learnings = 
+				request.body.learnings;
+			createCourseByInstructorRequestDTO.materialsAndOffers = 
+				request.body.materialsAndOffers;
+			createCourseByInstructorRequestDTO.price = request.body.price;
+			createCourseByInstructorRequestDTO.sections = request.body.sections;
+			createCourseByInstructorRequestDTO.subtitles = 
+				request.body.subtitles;
+			createCourseByInstructorRequestDTO.title = request.body.title;
+
+			const createCourseByInstructorUseCase = courseFactory.make("CreateCourseByInstructorUseCase") as CreateCourseByInstructorUseCase;
+			createCourseByInstructorUseCase
+				.createCourseByInstructorRequestDTO =
+				createCourseByInstructorRequestDTO;
+
+			const createCourseByInstructorResponseDTO =
+				await createCourseByInstructorUseCase
+					.execute();
+
+			responseHandler.ok(
+				response,
+				createCourseByInstructorResponseDTO
+			);
+		} catch (error) {
+			winston.error(
+				"Error in creating a course by instructor:",
 				error
 			);
 

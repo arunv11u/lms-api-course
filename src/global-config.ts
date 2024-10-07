@@ -2,6 +2,7 @@ import { CourseFactory } from "./course";
 import { InstructorFactory } from "./instructor";
 import { StudentFactory } from "./student";
 import { TokenFactory } from "./token";
+import { TranscoderFactory } from "./transcoder";
 
 
 const defaultRoutePath = "/";
@@ -24,11 +25,16 @@ function getTokenFactory() {
 	return new TokenFactory();
 }
 
+function getTranscoderFactory() {
+	return new TranscoderFactory();
+}
+
 export {
 	defaultRoutePath,
 	authorizationTokenName,
 	getCourseFactory,
 	getStudentFactory,
 	getInstructorFactory,
-	getTokenFactory
+	getTokenFactory,
+	getTranscoderFactory
 };

@@ -8,11 +8,11 @@ function getVideoTranscoder(): VideoTranscoder {
 
 	transcoder.regionName = nconf.get("videoTranscoderRegionName");
 
-	if (nconf.get("VIDEO_TRANSCODER_ACCESS_KEY_ID"))
-		transcoder.accessKeyId = nconf.get("VIDEO_TRANSCODER_ACCESS_KEY_ID");
+	if (nconf.get("VIDEO_TRANSCODER_ACCESS_KEY"))
+		transcoder.accessKeyId = nconf.get("VIDEO_TRANSCODER_ACCESS_KEY");
 
-	if (nconf.get("VIDEO_TRANSCODER_SECRET_ACCESS_KEY_ID"))
-		transcoder.secretAccessKey = nconf.get("VIDEO_TRANSCODER_SECRET_ACCESS_KEY_ID");
+	if (nconf.get("VIDEO_TRANSCODER_SECRET_ACCESS_KEY"))
+		transcoder.secretAccessKey = nconf.get("VIDEO_TRANSCODER_SECRET_ACCESS_KEY");
 
 	transcoder.init();
 

@@ -9,7 +9,12 @@ import {
 } from "../types";
 import { getMongoDBRepository } from "../helpers";
 import { CourseRepository } from "../../course";
-import { getCourseFactory, getInstructorFactory, getStudentFactory, getTokenFactory } from "../../global-config";
+import { 
+	getCourseFactory, 
+	getInstructorFactory, 
+	getStudentFactory, 
+	getTokenFactory
+} from "../../global-config";
 import { StudentRepository } from "../../student";
 import { InstructorRepository } from "../../instructor";
 import { TokenRepository } from "../../token";

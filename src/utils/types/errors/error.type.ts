@@ -32,7 +32,26 @@ export enum ErrorCodes {
 	courseImageMimeTypeRequired = "COURSE_IMAGE_MIME_TYPEE_REQUIRED",
 	videoTranscoderConnectionError = "VIDEO_TRANSCODER_CONNECTION",
 	hlsDurationFromUrl = "HLS_DURATION_FROM_URL",
-	languageIsInvalidFor2LetterIsoCode = "LANGUAGE_IS_INVALID_FOR_2_LETTER_ISO_CODE"
+	languageIsInvalidFor2LetterIsoCode = "LANGUAGE_IS_INVALID_FOR_2_LETTER_ISO_CODE",
+	courseTitleAlreadyExists = "COURSE_TITLE_ALREADY_EXISTS",
+	courseCategoryRequired = "COURSE_CATEGORY_REQUIRED",
+	courseDescriptionRequired = "COURSE_DESCRIPTION_REQUIRED",
+	courseImageRequired = "COURSE_IMAGE_REQUIRED",
+	courseLanguagesRequired = "COURSE_LANGUAGES_REQUIRED",
+	courseLearningsRequired = "COURSE_LEARNINGS_REQUIRED",
+	courseMaterialsAndOffersRequired = "COURSE_MATERIALS_AND_OFFERS_REQUIRED",
+	coursePriceRequired = "COURSE_PRICE_REQUIRED",
+	courseSectionsRequired = "COURSE_SECTIONS_REQUIRED",
+	courseSubtitlesRequired = "COURSE_SUBTITLES_REQUIRED",
+	courseTitleRequired = "COURSE_TITLE_REQUIRED",
+	courseLanguagesTypeArray = "COURSE_LANGUAGES_TYPE_ARRAY",
+	courseLanguagesElementTypeString = "COURSE_LANGUAGES_ELEMENT_TYPE_STRING",
+	courseLearningsTypeArray = "COURSE_LEARNINGS_TYPE_ARRAY",
+	courseLearningsElementTypeString = "COURSE_LEARNINGS_ELEMENT_TYPE_STRING",
+	courseMaterialsAndOffersTypeArray = "COURSE_MATERIALS_AND_OFFERS_TYPE_ARRAY",
+	courseMaterialsAndOffersElementTypeString = "COURSE_MATERIALS_AND_OFFERS_ELEMENT_TYPE_STRING",
+	coursePriceCurrencyRequired = "COURSE_PRICE_CURRENCY_REQUIRED",
+	coursePriceValueRequired = "COURSE_PRICE_VALUE_REQUIRED"
 }
 
 export interface FormattedError {

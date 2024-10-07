@@ -5,11 +5,11 @@ import { ObjectId } from "mongodb";
 export class CourseCreatorORMEntity {
 	_id: ObjectId;
 	course: ObjectId;
-	name: string;
+	creator: string;
 	creationDate: Date;
 	lastModifiedDate: Date;
-	createdBy: ObjectId;
-	lastModifiedBy: ObjectId;
+	createdBy: string;
+	lastModifiedBy: string;
 	isDeleted: boolean;
 	version: number;
 }

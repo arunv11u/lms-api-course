@@ -1,7 +1,7 @@
 import { CourseSubtitles } from "./course.entity.type";
 
 
-abstract class CourseSectionLectureSubtitle {
+abstract class CourseSectionLectureSubtitleEntity {
 	abstract get language(): CourseSubtitles;
 	abstract set language(language: CourseSubtitles);
 
@@ -10,5 +10,5 @@ abstract class CourseSectionLectureSubtitle {
 }
 
 export {
-	CourseSectionLectureSubtitle
+	CourseSectionLectureSubtitleEntity
 };
