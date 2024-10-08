@@ -7,6 +7,7 @@ class InstructorUpdatedEventRequestDTOImpl implements
 	firstName: string;
 	id: string;
 	lastName: string;
+	designation: string | null = null;
 	profilePicture: string | null = null;
 	userId: string;
 	version: number;

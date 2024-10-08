@@ -86,6 +86,7 @@ export class InstructorUpdatedListener extends
 			instructorUpdatedEventRequestDTO.firstName = value.firstName;
 			instructorUpdatedEventRequestDTO.id = value.id;
 			instructorUpdatedEventRequestDTO.lastName = value.lastName;
+			instructorUpdatedEventRequestDTO.designation = value.designation;
 			instructorUpdatedEventRequestDTO.profilePicture =
 				value.profilePicture;
 			instructorUpdatedEventRequestDTO.userId = value.userId;

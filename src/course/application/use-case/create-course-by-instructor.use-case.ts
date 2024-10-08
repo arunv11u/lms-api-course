@@ -81,12 +81,14 @@ export class CreateCourseByInstructorUseCaseImpl implements
 
 			const courseCreatorValueObject = new CourseCreatorValueObject();
 
-			courseCreatorValueObject.designation = "";
+			courseCreatorValueObject.designation = 
+				instructorValueObject.designation;
 			courseCreatorValueObject.firstName =
 				instructorValueObject.firstName;
 			courseCreatorValueObject.id = instructorValueObject.id;
 			courseCreatorValueObject.lastName = instructorValueObject.lastName;
-			courseCreatorValueObject.profilePicture = "";
+			courseCreatorValueObject.profilePicture = 
+				instructorValueObject.profilePicture;
 			courseEntity.addCreator(courseCreatorValueObject);
 
 			this._createCourseByInstructorRequestDTO.languages
