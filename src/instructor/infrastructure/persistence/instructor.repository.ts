@@ -33,16 +33,7 @@ export class InstructorRepositoryImpl implements
 
 		if (!instructor) return null;
 
-		const instructorValueObject =
-			new InstructorValueObject();
-		instructorValueObject.email = instructor.email;
-		instructorValueObject.firstName = instructor.firstName;
-		instructorValueObject.id = instructor._id;
-		instructorValueObject.lastName = instructor.lastName;
-		instructorValueObject.userId = instructor.userId;
-		instructorValueObject.version = instructor.version;
-
-		return instructorValueObject;
+		return this._getInstructorValueObject(instructor);
 	}
 
 	async getWithId(id: string): Promise<InstructorValueObject> {
@@ -63,16 +54,7 @@ export class InstructorRepositoryImpl implements
 				errorCode: 404
 			});
 
-		const instructorValueObject =
-			new InstructorValueObject();
-		instructorValueObject.email = instructor.email;
-		instructorValueObject.firstName = instructor.firstName;
-		instructorValueObject.id = instructor._id;
-		instructorValueObject.lastName = instructor.lastName;
-		instructorValueObject.userId = instructor.userId;
-		instructorValueObject.version = instructor.version;
-
-		return instructorValueObject;
+		return this._getInstructorValueObject(instructor);
 	}
 
 	async saveInstructorFromMessagingQueue(
@@ -112,6 +94,8 @@ export class InstructorRepositoryImpl implements
 
 		const instructorORMEntity = new InstructorORMEntity();
 		instructorORMEntity._id = instructorUpdatedEventValueObject.id;
+		instructorORMEntity.designation =
+			instructorUpdatedEventValueObject.designation;
 		instructorORMEntity.email = instructorUpdatedEventValueObject.email;
 		instructorORMEntity.firstName =
 			instructorUpdatedEventValueObject.firstName;
@@ -157,5 +141,22 @@ export class InstructorRepositoryImpl implements
 			});
 
 		return { id: instructorORMEntity._id };
+	}
+
+	private _getInstructorValueObject(
+		instructorORMEntity: InstructorORMEntity
+	): InstructorValueObject {
+		const instructorValueObject = new InstructorValueObject();
+		instructorValueObject.designation = instructorORMEntity.designation;
+		instructorValueObject.email = instructorORMEntity.email;
+		instructorValueObject.firstName = instructorORMEntity.firstName;
+		instructorValueObject.id = instructorORMEntity._id;
+		instructorValueObject.lastName = instructorORMEntity.lastName;
+		instructorValueObject.profilePicture =
+			instructorORMEntity.profilePicture;
+		instructorValueObject.userId = instructorORMEntity.userId;
+		instructorValueObject.version = instructorORMEntity.version;
+
+		return instructorValueObject;
 	}
 }

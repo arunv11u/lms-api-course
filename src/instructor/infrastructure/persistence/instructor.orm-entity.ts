@@ -6,6 +6,7 @@ export class InstructorORMEntity {
 	userId: string;
 	firstName: string;
 	lastName: string;
+	designation: string | null = null;
 	profilePicture: string | null = null;
 	email: string;
 	version: number;

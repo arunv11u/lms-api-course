@@ -35,6 +35,8 @@ export class ProcessInstructorUpdatedEventUseCaseImpl implements
 			this._instructorUpdatedEventRequestDTO.id;
 		instructorUpdatedEventValueObject.lastName =
 			this._instructorUpdatedEventRequestDTO.lastName;
+		instructorUpdatedEventValueObject.designation = 
+			this._instructorUpdatedEventRequestDTO.designation;
 		instructorUpdatedEventValueObject.profilePicture =
 			this._instructorUpdatedEventRequestDTO.profilePicture;
 		instructorUpdatedEventValueObject.userId =
