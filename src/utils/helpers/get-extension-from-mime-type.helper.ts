@@ -8,7 +8,7 @@ enum Extensions {
 	JPEG = "jpeg",
 	PNG = "png",
 	MP4 = "mp4",
-	SRT = "srt"
+	WEBVTT = "vtt"
 }
 
 enum MimeTypes {
@@ -16,7 +16,7 @@ enum MimeTypes {
 	JPEG = "image/jpeg",
 	PNG = "image/png",
 	MP4 = "video/mp4",
-	SRT = "text/plain"
+	WEBVTT = "text/vtt"
 }
 
 
@@ -44,8 +44,8 @@ function getExtensionFromMimeType(mimeType: string): string {
 			break;
 		}
 
-		case MimeTypes.SRT: {
-			extension = Extensions.SRT;
+		case MimeTypes.WEBVTT: {
+			extension = Extensions.WEBVTT;
 			break;
 		}
 
