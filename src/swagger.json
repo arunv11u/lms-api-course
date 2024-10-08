@@ -289,12 +289,12 @@
 									"mimeType": {
 										"type": "string",
 										"enum": [
-											"text/plain"
+											"text/vtt"
 										]
 									}
 								},
 								"example": {
-									"mimeType": "text/plain"
+									"mimeType": "text/vtt"
 								},
 								"required": [
 									"mimeType"
