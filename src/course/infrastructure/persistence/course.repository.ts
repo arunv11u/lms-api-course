@@ -26,6 +26,7 @@ import { CourseMaterialAndOfferRepositoryImpl } from "./course-material-and-offe
 import { CourseSectionLectureRepositoryImpl } from "./course-section-lecture.repository";
 import { CourseSectionRepositoryImpl } from "./course-section.repository";
 import { CourseSubtitleRepositoryImpl } from "./course-subtitle.repository";
+import { CourseTranscodingCompletedRegistryRepositoryImpl } from "./course-transcoding-completed-registry.repository";
 
 
 
@@ -210,7 +211,6 @@ export class CourseRepositoryImpl implements CourseRepository, CourseObject {
 
 		const courseORMEntity = new CourseORMEntity();
 		courseORMEntity._id = new ObjectId(course.id);
-		courseORMEntity.status = course.status;
 		courseORMEntity.createdBy = instructorId;
 		courseORMEntity.creationDate = new Date();
 		courseORMEntity.currency = course.price.currency;
@@ -229,6 +229,53 @@ export class CourseRepositoryImpl implements CourseRepository, CourseObject {
 		);
 
 		return course;
+	}
+
+	// eslint-disable-next-line max-params
+	async completeTranscodingForLecture(
+		lectureId: string,
+		lectureUrl: string,
+		thumbnailUrl: string,
+		duration: number
+	): Promise<void> {
+		if (!this._mongodbRepository)
+			throw new GenericError({
+				code: ErrorCodes.mongoDBRepositoryDoesNotExist,
+				error: new Error("MongoDB repository does not exist"),
+				errorCode: 500
+			});
+
+		const courseSectionLectureRepository =
+			new CourseSectionLectureRepositoryImpl(this._mongodbRepository);
+
+		await courseSectionLectureRepository
+			.markLectureAsTranscoded(
+				lectureId,
+				lectureUrl,
+				thumbnailUrl,
+				duration
+			);
+	}
+
+	async addTranscodedLecturesToCourseTranscodingCompletedRegistry(
+		id: string, 
+		courseId: string, 
+		lectureIds: string[]
+	): Promise<void> {
+		if (!this._mongodbRepository)
+			throw new GenericError({
+				code: ErrorCodes.mongoDBRepositoryDoesNotExist,
+				error: new Error("MongoDB repository does not exist"),
+				errorCode: 500
+			});
+
+		const courseTranscodingCompletedRegistryRepository =
+			new CourseTranscodingCompletedRegistryRepositoryImpl(
+				this._mongodbRepository
+			);
+
+		await courseTranscodingCompletedRegistryRepository
+			.create(id, courseId, lectureIds);
 	}
 
 	private async _isCourseTitleAlreadyExists(title: string): Promise<boolean> {

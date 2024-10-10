@@ -1,11 +1,10 @@
 import { ObjectId } from "mongodb";
-import { CoursePriceCurrencies, CourseStatuses } from "../../domain";
+import { CoursePriceCurrencies } from "../../domain";
 
 
 
 export class CourseORMEntity {
 	_id: ObjectId;
-	status: CourseStatuses;
 	title: string;
 	description: string;
 	currency: CoursePriceCurrencies;

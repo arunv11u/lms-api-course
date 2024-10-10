@@ -8,6 +8,7 @@ import {
 	CourseEntity,
 	CourseObject,
 	CourseRepository,
+	CourseSectionLectureStatuses,
 	CourseSectionLectureSubtitleValueObject,
 	CourseSectionLectureValueObject,
 	CourseSectionValueObject,
@@ -123,6 +124,8 @@ export class CreateCourseByInstructorUseCaseImpl implements
 							courseRepository.getSectionLectureId();
 						courseSectionLectureValueObject.link = lecture.link;
 						courseSectionLectureValueObject.order = lecture.order;
+						courseSectionLectureValueObject.status = 
+							CourseSectionLectureStatuses.transcodingInProgress;
 
 						lecture.subtitles.forEach(subtitle => {
 							const courseSectionLectureSubtitleValueObject =
@@ -186,11 +189,15 @@ export class CreateCourseByInstructorUseCaseImpl implements
 				this._createCourseByInstructorRequestDTO.sections.length;
 			courseEntity.totalStudents = 0;
 
+
+
 			await courseRepository
 				.createCourseByInstructor(courseEntity, instructorId);
 
 			await transcoderRepository.transcodeVideoLectures(courseEntity);
 
+
+			
 			this._createCourseByInstructorResponseDTO.category =
 				courseEntity.category;
 

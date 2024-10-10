@@ -32,4 +32,17 @@ export abstract class CourseRepository extends Repository {
 		course: CourseEntity,
 		instructorId: string
 	): Promise<CourseEntity>;
+
+	abstract completeTranscodingForLecture(
+		lectureId: string,
+		lectureUrl: string,
+		thumbnailUrl: string,
+		duration: number
+	): Promise<void>;
+
+	abstract addTranscodedLecturesToCourseTranscodingCompletedRegistry(
+		id: string,
+		courseId: string,
+		lectureIds: string[]
+	): Promise<void>;
 }

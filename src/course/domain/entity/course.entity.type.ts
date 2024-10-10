@@ -23,6 +23,11 @@ enum CourseStatuses {
 	transcodingCompleted = "TRANSCODING_COMPLETED"
 }
 
+enum CourseSectionLectureStatuses {
+	transcodingInProgress = "TRANSCODING_IN_PROGRESS",
+	transcodingCompleted = "TRANSCODING_COMPLETED"
+}
+
 abstract class CourseEntity {
 
 	abstract get id(): string;
@@ -88,5 +93,6 @@ export {
 	CourseLanguages,
 	CourseSubtitles,
 	CoursePriceCurrencies,
-	CourseStatuses
+	CourseStatuses,
+	CourseSectionLectureStatuses
 };
