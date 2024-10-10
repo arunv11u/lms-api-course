@@ -6,6 +6,10 @@ export * from "./get-all-courses.use-case";
 
 export * from "./get-all-courses.use-case.type";
 
+export * from "./process-course-transcoding-completed-event.use-case";
+
+export * from "./process-course-transcoding-completed-event.use-case.type";
+
 export * from "./upload-course-image.use-case";
 
 export * from "./upload-course-image.use-case.type";

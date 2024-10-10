@@ -20,6 +20,7 @@ import {
 	StudentUpdatedListener
 } from "./student";
 import { InstructorCreatedListener, InstructorUpdatedListener } from "./instructor";
+import { CourseTranscodingCompletedListener } from "./course/infrastructure/messaging";
 
 
 
@@ -35,6 +36,8 @@ class MessagingLoaderImpl {
 	private _studentUpdatedListener = new StudentUpdatedListener();
 	private _instructorCreatedListener = new InstructorCreatedListener();
 	private _instructorUpdatedListener = new InstructorUpdatedListener();
+	private _courseTranscodingCompletedListener = 
+		new CourseTranscodingCompletedListener();
 	private _winston: Winston;
 
 	constructor() {
@@ -50,7 +53,8 @@ class MessagingLoaderImpl {
 			this._studentCreatedListener,
 			this._studentUpdatedListener,
 			this._instructorCreatedListener,
-			this._instructorUpdatedListener
+			this._instructorUpdatedListener,
+			this._courseTranscodingCompletedListener
 		];
 
 		this._producerConfig = {
@@ -114,6 +118,15 @@ class MessagingLoaderImpl {
 							this._winston.info("Instructor updated event listener called :");
 
 							await this._instructorUpdatedListener
+								.listen(message);
+
+							break;
+						}
+
+						case MessagingTopics.courseTranscodingCompletedEvent: {
+							this._winston.info("Course transcoding completed event listener called :");
+
+							await this._courseTranscodingCompletedListener
 								.listen(message);
 
 							break;

@@ -2,12 +2,14 @@ import { CourseSectionLectureSubtitleValueObject } from "../value-objects";
 import { CourseSectionLectureSubtitleEntityImpl } from "./course-section-lecture-subtitle.entity";
 import { CourseSectionLectureSubtitleEntity } from "./course-section-lecture-subtitle.entity.type";
 import { CourseSectionLectureEntity } from "./course-section-lecture.entity.type";
+import { CourseSectionLectureStatuses } from "./course.entity.type";
 
 
 
 class CourseSectionLectureEntityImpl implements CourseSectionLectureEntity {
 
 	private _id: string;
+	private _status: CourseSectionLectureStatuses;
 	private _title: string;
 	private _description: string;
 	private _duration: number;
@@ -21,6 +23,13 @@ class CourseSectionLectureEntityImpl implements CourseSectionLectureEntity {
 	}
 	set id(id: string) {
 		this._id = id;
+	}
+
+	get status(): CourseSectionLectureStatuses {
+		return this._status;
+	}
+	set status(status: CourseSectionLectureStatuses) {
+		this._status = status;
 	}
 
 	get title(): string {

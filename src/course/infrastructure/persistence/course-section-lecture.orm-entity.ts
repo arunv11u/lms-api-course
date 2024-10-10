@@ -1,8 +1,10 @@
 import { ObjectId } from "mongodb";
+import { CourseSectionLectureStatuses } from "../../domain";
 
 
 export class CourseSectionLectureORMEntity {
 	_id: ObjectId;
+	status: CourseSectionLectureStatuses;
 	course: ObjectId;
 	section: ObjectId;
 	title: string;

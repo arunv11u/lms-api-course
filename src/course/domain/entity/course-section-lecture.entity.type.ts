@@ -1,10 +1,14 @@
 import { CourseSectionLectureSubtitleValueObject } from "../value-objects";
 import { CourseSectionLectureSubtitleEntity } from "./course-section-lecture-subtitle.entity.type";
+import { CourseSectionLectureStatuses } from "./course.entity.type";
 
 
 abstract class CourseSectionLectureEntity {
 	abstract get id(): string;
 	abstract set id(id: string);
+
+	abstract get status(): CourseSectionLectureStatuses;
+	abstract set status(status: CourseSectionLectureStatuses);
 
 	abstract get title(): string;
 	abstract set title(title: string);
