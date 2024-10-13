@@ -14,7 +14,7 @@ export class CourseCategoryRepositoryImpl {
 		const courseCategoriesORMEntity = await this._mongodbRepository
 			.find<CourseCategoryORMEntity>(
 				this._collectionName,
-				{}
+				{isDeleted: false}
 			);
 
 		const courseCategories = courseCategoriesORMEntity

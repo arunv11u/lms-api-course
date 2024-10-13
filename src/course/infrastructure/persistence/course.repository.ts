@@ -323,7 +323,10 @@ export class CourseRepositoryImpl implements CourseRepository, CourseObject {
 				{
 					$and: [
 						...courseMatchQueries,
-						{ status: { $eq: CourseStatuses.transcodingCompleted } }
+						{ status: 
+							{ $eq: CourseStatuses.transcodingCompleted } 
+						},
+						{ isDeleted: {$eq: false} }
 					]
 				},
 				{
