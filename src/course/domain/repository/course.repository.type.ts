@@ -49,5 +49,7 @@ export abstract class CourseRepository extends Repository {
 		searchString: string | null,
 		categories: string[],
 		pagination: CoursePaginationValueObject
-	): Promise<DocsCountList<CourseEntity>>
+	): Promise<DocsCountList<CourseEntity>>;
+
+	abstract getAllCourseCategories(): Promise<DocsCountList<string>>;
 }

@@ -873,6 +873,39 @@
 					}
 				}
 			}
+		},
+		"/course/category": {
+			"get": {
+				"summary": "Get the list of course categories",
+				"tags": [
+					"Course"
+				],
+				"parameters": [],
+				"requestBody": {},
+				"responses": {
+					"200": {
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"data": {
+											"type": "array",
+											"items": {
+												"type": "string",
+												"example": "PROGRAMMING"
+											}
+										}
+									},
+									"required": [
+										"data"
+									]
+								}
+							}
+						}
+					}
+				}
+			}
 		}
 	},
 	"components": {

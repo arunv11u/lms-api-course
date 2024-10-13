@@ -2,6 +2,7 @@ import { ErrorCodes, Factory, GenericError } from "../../utils";
 import {
 	CreateCourseByInstructorUseCaseImpl,
 	ExploreAllCoursesUseCaseImpl,
+	GetAllCourseCategoriesUseCaseImpl,
 	ProcessCourseTranscodingCompletedEventUseCaseImpl,
 	UploadCourseImageUseCaseImpl,
 	UploadLectureSubtitleUseCaseImpl,
@@ -24,7 +25,8 @@ class CourseFactory implements Factory {
 		"UploadLectureSubtitleUseCase",
 		"CreateCourseByInstructorUseCase",
 		"ProcessCourseTranscodingCompletedEventUseCase",
-		"ExploreAllCoursesUseCase"
+		"ExploreAllCoursesUseCase",
+		"GetAllCourseCategoriesUseCase"
 	];
 
 	make(objectName: string): CourseObject {
@@ -52,6 +54,9 @@ class CourseFactory implements Factory {
 
 		if (objectName === "ExploreAllCoursesUseCase")
 			return new ExploreAllCoursesUseCaseImpl();
+
+		if (objectName === "GetAllCourseCategoriesUseCase")
+			return new GetAllCourseCategoriesUseCaseImpl();
 
 		throw new GenericError({
 			code: ErrorCodes.invalidFactoryObject,

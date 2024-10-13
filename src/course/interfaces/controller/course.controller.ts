@@ -7,6 +7,7 @@ import {
 	CreateCourseByInstructorUseCase,
 	ExploreAllCoursesRequestDTOImpl,
 	ExploreAllCoursesUseCase,
+	GetAllCourseCategoriesUseCase,
 	UploadCourseImageRequestDTOImpl,
 	UploadCourseImageUseCase,
 	UploadLectureSubtitleRequestDTOImpl,
@@ -214,18 +215,18 @@ export class CourseController {
 			createCourseByInstructorRequestDTO.authorizationToken =
 				request.header(authorizationTokenName) as string;
 			createCourseByInstructorRequestDTO.category = request.body.category;
-			createCourseByInstructorRequestDTO.description = 
+			createCourseByInstructorRequestDTO.description =
 				request.body.description;
 			createCourseByInstructorRequestDTO.image = request.body.image;
-			createCourseByInstructorRequestDTO.languages = 
+			createCourseByInstructorRequestDTO.languages =
 				request.body.languages;
-			createCourseByInstructorRequestDTO.learnings = 
+			createCourseByInstructorRequestDTO.learnings =
 				request.body.learnings;
-			createCourseByInstructorRequestDTO.materialsAndOffers = 
+			createCourseByInstructorRequestDTO.materialsAndOffers =
 				request.body.materialsAndOffers;
 			createCourseByInstructorRequestDTO.price = request.body.price;
 			createCourseByInstructorRequestDTO.sections = request.body.sections;
-			createCourseByInstructorRequestDTO.subtitles = 
+			createCourseByInstructorRequestDTO.subtitles =
 				request.body.subtitles;
 			createCourseByInstructorRequestDTO.title = request.body.title;
 
@@ -270,12 +271,12 @@ export class CourseController {
 
 			let categories = request.query.categories;
 
-			if(categories && !Array.isArray(categories))
+			if (categories && !Array.isArray(categories))
 				categories = [categories as string];
 
-			if(categories)	
+			if (categories)
 				exploreAllCoursesRequestDTO.categories = categories as string[];
-			exploreAllCoursesRequestDTO.searchString = 
+			exploreAllCoursesRequestDTO.searchString =
 				request.query.searchString as string;
 
 			const exploreAllCoursesUseCase = courseFactory.make("ExploreAllCoursesUseCase") as ExploreAllCoursesUseCase;
@@ -293,6 +294,39 @@ export class CourseController {
 		} catch (error) {
 			winston.error(
 				"Error in exploring all courses:",
+				error
+			);
+
+			next(error);
+		}
+	}
+
+	@Get("/category")
+	async getAllCourseCategories(
+		request: Request,
+		response: Response,
+		next: NextFunction
+	): Promise<void> {
+		const winston = winstonLogger.winston;
+		try {
+			winston.info("Get all course categories");
+
+			const courseFactory = getCourseFactory();
+			const responseHandler = getResponseHandler();
+
+			const getAllCourseCategoriesUseCase = courseFactory.make("GetAllCourseCategoriesUseCase") as GetAllCourseCategoriesUseCase;
+
+			const courseCategories =
+				await getAllCourseCategoriesUseCase
+					.execute();
+
+			responseHandler.ok<string[]>(
+				response,
+				courseCategories
+			);
+		} catch (error) {
+			winston.error(
+				"Error in getting all course categories:",
 				error
 			);
 
