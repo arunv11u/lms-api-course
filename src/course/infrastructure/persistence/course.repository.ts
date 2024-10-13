@@ -1,5 +1,7 @@
+/* eslint-disable max-lines */
 import nconf from "nconf";
 import { MongoDBRepository } from "@arunvaradharajalu/common.mongodb-api";
+import { MongoDBPaginatorImpl } from "@arunvaradharajalu/common.mongodb-paginator";
 import { ObjectId } from "mongodb";
 import {
 	DocsCountList,
@@ -13,12 +15,16 @@ import {
 } from "../../../utils";
 import { getCourseFactory } from "../../../global-config";
 import {
+	CourseCreatorValueObject,
 	CourseEntity,
 	CourseObject,
-	CourseRepository
+	CoursePaginationValueObject,
+	CourseRepository,
+	CourseSectionValueObject,
+	CourseStatuses
 } from "../../domain";
 import { CourseFactory } from "../../factory";
-import { CourseORMEntity } from "./course.orm-entity";
+import { CourseORMEntity, ViewCourseORMEntity } from "./course.orm-entity";
 import { CourseCreatorRepositoryImpl } from "./course-creator.repository";
 import { CourseLanguageRepositoryImpl } from "./course-language.repository";
 import { CourseLearningRepositoryImpl } from "./course-learning.repository";
@@ -32,6 +38,7 @@ import { CourseTranscodingCompletedRegistryRepositoryImpl } from "./course-trans
 
 export class CourseRepositoryImpl implements CourseRepository, CourseObject {
 	private _collectionName = "courses";
+	private _viewCollectionName = "view-courses";
 	private _mongodbRepository: MongoDBRepository | null = null;
 	private _courseFactory: CourseFactory;
 
@@ -73,37 +80,6 @@ export class CourseRepositoryImpl implements CourseRepository, CourseObject {
 			new CourseSectionLectureRepositoryImpl(this._mongodbRepository);
 
 		return courseSectionLectureRepository.getId();
-	}
-
-	async getAll(): Promise<DocsCountList<CourseEntity>> {
-		if (!this._mongodbRepository)
-			throw new GenericError({
-				code: ErrorCodes.mongoDBRepositoryDoesNotExist,
-				error: new Error("MongoDB repository does not exist"),
-				errorCode: 500
-			});
-
-		const coursesORMEntity = await this._mongodbRepository
-			.find<CourseORMEntity>(
-				this._collectionName,
-				{}
-			);
-
-
-		const coursesPromises = coursesORMEntity
-			.map(async (courseORMEntity) => {
-				const courseEntity = await this._getEntity(courseORMEntity);
-
-				return courseEntity;
-			});
-
-		const courses = await Promise.all(coursesPromises);
-
-		const docsCountList = new DocsCountListImpl<CourseEntity>();
-		docsCountList.count = courses.length;
-		docsCountList.docs = courses;
-
-		return docsCountList;
 	}
 
 	async uploadCourseImage(
@@ -211,6 +187,7 @@ export class CourseRepositoryImpl implements CourseRepository, CourseObject {
 
 		const courseORMEntity = new CourseORMEntity();
 		courseORMEntity._id = new ObjectId(course.id);
+		courseORMEntity.category = course.category;
 		courseORMEntity.createdBy = instructorId;
 		courseORMEntity.creationDate = new Date();
 		courseORMEntity.currency = course.price.currency;
@@ -258,8 +235,8 @@ export class CourseRepositoryImpl implements CourseRepository, CourseObject {
 	}
 
 	async addTranscodedLecturesToCourseTranscodingCompletedRegistry(
-		id: string, 
-		courseId: string, 
+		id: string,
+		courseId: string,
 		lectureIds: string[]
 	): Promise<void> {
 		if (!this._mongodbRepository)
@@ -276,6 +253,175 @@ export class CourseRepositoryImpl implements CourseRepository, CourseObject {
 
 		await courseTranscodingCompletedRegistryRepository
 			.create(id, courseId, lectureIds);
+	}
+
+	async exploreAllCourses(
+		searchString: string | null,
+		categories: string[],
+		pagination: CoursePaginationValueObject
+	): Promise<DocsCountList<CourseEntity>> {
+		if (!this._mongodbRepository)
+			throw new GenericError({
+				code: ErrorCodes.mongoDBRepositoryDoesNotExist,
+				error: new Error("MongoDB repository does not exist"),
+				errorCode: 500
+			});
+
+		const courseDocsCountList = new DocsCountListImpl<CourseEntity>();
+		const courseIds = [];
+
+		if(searchString) {
+			const coursesMatchesSearchString = await this._mongodbRepository
+				.aggregate(this._collectionName, [
+					{
+						$search: {
+							index: "courses_title_search_v1",
+							"autocomplete": {
+								"query": searchString,
+								"path": "title",
+								"fuzzy": {
+									"maxEdits": 1
+								}
+							}
+						}
+					},
+					{
+						$group: {
+							_id: null,
+							ids: { $addToSet: "$_id" }
+						}
+					}
+				]);
+	
+			if(coursesMatchesSearchString[0])
+				courseIds.push(...coursesMatchesSearchString[0].ids);
+
+			if(!courseIds.length) {
+				courseDocsCountList.docs = [];
+				courseDocsCountList.count = 0;
+	
+				return courseDocsCountList;
+			}
+		}
+
+		const paginationRepository = new MongoDBPaginatorImpl(
+			this._mongodbRepository
+		);
+
+		const courseMatchQueries = [];
+
+		if(courseIds.length)
+			courseMatchQueries.push({_id: {$in: courseIds}});
+
+		if(categories.length)
+			courseMatchQueries.push({category: {$in: categories}});
+
+		const courses = await paginationRepository
+			.find<ViewCourseORMEntity>(
+				this._viewCollectionName, 
+				{
+					$and: [
+						...courseMatchQueries,
+						{status: {$eq: CourseStatuses.transcodingCompleted}}
+					]
+				}, 
+				{
+					pageIndex: pagination.pageIndex,
+					pageSize: pagination.pageSize,
+					sortField: pagination.sortField,
+					sortType: pagination.sortType,
+					collationOptions: null
+				}
+			);
+
+		courses.docs.forEach(course => {
+			const courseEntity = getCourseFactory().make("CourseEntity") as CourseEntity;
+
+			course.creators.forEach(creator => {
+				const courseCreatorValueObject = new CourseCreatorValueObject();
+				courseCreatorValueObject.designation = creator.designation;
+				courseCreatorValueObject.firstName = creator.firstName;
+				courseCreatorValueObject.id = creator._id;
+				courseCreatorValueObject.lastName = creator.lastName;
+				courseCreatorValueObject.profilePicture = 
+					creator.profilePicture;
+
+				courseEntity.addCreator(courseCreatorValueObject);
+			});
+
+			course.languages.forEach(language => {
+				courseEntity.addLanguage(language.language);
+			});
+
+			course.learnings.forEach(learning => {
+				courseEntity.addLearning(learning.learning);
+			});
+
+			course.materialsAndOffers.forEach(materialAndOffer => {
+				courseEntity.addMaterialAndOffer(
+					materialAndOffer.materialAndOffer
+				);
+			});
+
+			let totalDuration = 0;
+			let totalLecturesCount = 0;
+			course.sections.forEach(section => {
+				const courseSectionValueObject = new CourseSectionValueObject();
+				courseSectionValueObject.id = section._id.toString();
+
+				let lectureDuration = 0;
+				section.lectures.forEach(lecture => {
+					lectureDuration += lecture.duration;
+
+					courseSectionValueObject.lectures.push({
+						description: lecture.description,
+						duration: lecture.duration,
+						id: lecture._id.toString(),
+						link: lecture.link,
+						order: lecture.order,
+						status: lecture.status,
+						subtitles: [],
+						thumbnail: lecture.thumbnail,
+						title: lecture.title
+					});
+				});
+
+				totalDuration += lectureDuration;
+				totalLecturesCount += section.lectures.length;
+
+				courseSectionValueObject.lecturesCount = 
+					section.lectures.length;
+				courseSectionValueObject.lecturesDuration = lectureDuration;
+				courseSectionValueObject.order = section.order;
+				courseSectionValueObject.title = section.title;
+
+				courseEntity.addSection(courseSectionValueObject);
+			});
+
+			course.subtitles.forEach(subtitle => {
+				courseEntity.addSubtitle(subtitle.subtitle);
+			});
+
+			courseEntity.category = course.category;
+			courseEntity.description = course.description;
+			courseEntity.id = course._id.toString();
+			courseEntity.image = course.image;
+			courseEntity.lastUpdatedOn = course.lastModifiedDate;
+
+			courseEntity.setPrice(course.currency, course.price);
+
+			courseEntity.status = CourseStatuses.transcodingCompleted;
+			courseEntity.title = course.title;
+			courseEntity.totalDuration = totalDuration;
+			courseEntity.totalLecturesCount = totalLecturesCount;
+			courseEntity.totalSectionsCount = course.sections.length;
+			courseEntity.totalStudents = 0;
+
+			courseDocsCountList.docs.push(courseEntity);
+		});
+		courseDocsCountList.count = courses.count;
+
+		return courseDocsCountList;
 	}
 
 	private async _isCourseTitleAlreadyExists(title: string): Promise<boolean> {

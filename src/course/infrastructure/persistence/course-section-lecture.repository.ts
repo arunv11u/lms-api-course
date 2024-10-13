@@ -40,6 +40,7 @@ export class CourseSectionLectureRepositoryImpl {
 					link: lecture.link,
 					section: new ObjectId(section.id),
 					thumbnail: null,
+					order: lecture.order,
 					title: lecture.title,
 					version: 1
 				});

@@ -1,0 +1,198 @@
+db.getCollection('courses').createView([
+  {
+    $lookup: {
+      from: 'course-sections',
+      let: {
+        courseId: '$_id'
+      },
+      pipeline: [
+        {
+          $match: {
+            $expr: {
+              $eq: [
+                '$$courseId',
+                '$course'
+              ]
+            }
+          }
+        },
+        {
+          $lookup: {
+            from: 'course-section-lectures',
+            let: {
+              courseId: '$_id',
+              sectionId: '$_id'
+            },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $eq: [
+                      '$$sectionId',
+                      '$section'
+                    ]
+                  }
+                }
+              }
+            ],
+            as: 'lectures'
+          }
+        }
+      ],
+      as: 'sections'
+    }
+  },
+  {
+    $lookup: {
+      from: 'course-creators',
+      let: {
+        courseId: '$_id'
+      },
+      pipeline: [
+        {
+          $match: {
+            $expr: {
+              $eq: [
+                '$$courseId',
+                '$course'
+              ]
+            }
+          }
+        },
+        {
+          $lookup: {
+            from: 'instructors',
+            let: {
+              instructorId: '$creator'
+            },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $eq: [
+                      '$$instructorId',
+                      '$_id'
+                    ]
+                  }
+                }
+              }
+            ],
+            as: 'creators'
+          }
+        }
+      ],
+      as: 'creators'
+    }
+  },
+  {
+    $lookup: {
+      from: 'course-languages',
+      localField: '_id',
+      foreignField: 'course',
+      as: 'languages'
+    }
+  },
+  {
+    $lookup: {
+      from: 'course-learnings',
+      localField: '_id',
+      foreignField: 'course',
+      as: 'learnings'
+    }
+  },
+  {
+    $lookup: {
+      from: 'course-materials-and-offers',
+      localField: '_id',
+      foreignField: 'course',
+      as: 'materialsAndOffers'
+    }
+  },
+  {
+    $lookup: {
+      from: 'course-subtitles',
+      localField: '_id',
+      foreignField: 'course',
+      as: 'subtitles'
+    }
+  },
+  {
+    from: "course-section-lectures",
+    let: {
+      courseId: "$_id"
+    },
+    pipeline: [
+      {
+        $match: {
+          $expr: {
+            $and: [
+              {
+                $eq: [
+                  "$course",
+                  "$$courseId"
+                ]
+              },
+              {
+                $eq: [
+                  "$status",
+                  "TRANSCODING_IN_PROGRESS"
+                ]
+              }
+            ]
+          }
+        }
+      }
+    ],
+    as: "transcodingLectures"
+  },
+  {
+    $project: {
+      _id: 1,
+      createdBy: 1,
+      creationDate: 1,
+      currency: 1,
+      description: 1,
+      image: 1,
+      isDeleted: 1,
+      lastModifiedBy: 1,
+      lastModifiedDate: 1,
+      price: 1,
+      title: 1,
+      version: 1,
+      sections: 1,
+      category: 1,
+      creators: {
+        $reduce: {
+          input: '$creators.creators',
+          initialValue: [
+            
+          ],
+          in: {
+            $concatArrays: [
+              '$$value',
+              '$$this'
+            ]
+          }
+        }
+      },
+      languages: 1,
+      learnings: 1,
+      materialsAndOffers: 1,
+      subtitles: 1,
+      status: {
+        $cond: [
+          {
+            $gt: [
+              {
+                $size: "$transcodingLectures"
+              },
+              0
+            ]
+          },
+          "TRANSCODING_IN_PROGRESS",
+          "TRANSCODING_COMPLETED"
+        ]
+      }
+    }
+  }
+]);
