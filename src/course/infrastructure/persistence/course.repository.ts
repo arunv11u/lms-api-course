@@ -33,6 +33,7 @@ import { CourseSectionLectureRepositoryImpl } from "./course-section-lecture.rep
 import { CourseSectionRepositoryImpl } from "./course-section.repository";
 import { CourseSubtitleRepositoryImpl } from "./course-subtitle.repository";
 import { CourseTranscodingCompletedRegistryRepositoryImpl } from "./course-transcoding-completed-registry.repository";
+import { CourseCategoryRepositoryImpl } from "./course-category.repository";
 
 
 
@@ -270,7 +271,7 @@ export class CourseRepositoryImpl implements CourseRepository, CourseObject {
 		const courseDocsCountList = new DocsCountListImpl<CourseEntity>();
 		const courseIds = [];
 
-		if(searchString) {
+		if (searchString) {
 			const coursesMatchesSearchString = await this._mongodbRepository
 				.aggregate(this._collectionName, [
 					{
@@ -292,14 +293,14 @@ export class CourseRepositoryImpl implements CourseRepository, CourseObject {
 						}
 					}
 				]);
-	
-			if(coursesMatchesSearchString[0])
+
+			if (coursesMatchesSearchString[0])
 				courseIds.push(...coursesMatchesSearchString[0].ids);
 
-			if(!courseIds.length) {
+			if (!courseIds.length) {
 				courseDocsCountList.docs = [];
 				courseDocsCountList.count = 0;
-	
+
 				return courseDocsCountList;
 			}
 		}
@@ -310,21 +311,21 @@ export class CourseRepositoryImpl implements CourseRepository, CourseObject {
 
 		const courseMatchQueries = [];
 
-		if(courseIds.length)
-			courseMatchQueries.push({_id: {$in: courseIds}});
+		if (courseIds.length)
+			courseMatchQueries.push({ _id: { $in: courseIds } });
 
-		if(categories.length)
-			courseMatchQueries.push({category: {$in: categories}});
+		if (categories.length)
+			courseMatchQueries.push({ category: { $in: categories } });
 
 		const courses = await paginationRepository
 			.find<ViewCourseORMEntity>(
-				this._viewCollectionName, 
+				this._viewCollectionName,
 				{
 					$and: [
 						...courseMatchQueries,
-						{status: {$eq: CourseStatuses.transcodingCompleted}}
+						{ status: { $eq: CourseStatuses.transcodingCompleted } }
 					]
-				}, 
+				},
 				{
 					pageIndex: pagination.pageIndex,
 					pageSize: pagination.pageSize,
@@ -335,7 +336,7 @@ export class CourseRepositoryImpl implements CourseRepository, CourseObject {
 			);
 
 		courses.docs.forEach(course => {
-			const courseEntity = getCourseFactory().make("CourseEntity") as CourseEntity;
+			const courseEntity = this._courseFactory.make("CourseEntity") as CourseEntity;
 
 			course.creators.forEach(creator => {
 				const courseCreatorValueObject = new CourseCreatorValueObject();
@@ -343,7 +344,7 @@ export class CourseRepositoryImpl implements CourseRepository, CourseObject {
 				courseCreatorValueObject.firstName = creator.firstName;
 				courseCreatorValueObject.id = creator._id;
 				courseCreatorValueObject.lastName = creator.lastName;
-				courseCreatorValueObject.profilePicture = 
+				courseCreatorValueObject.profilePicture =
 					creator.profilePicture;
 
 				courseEntity.addCreator(courseCreatorValueObject);
@@ -389,7 +390,7 @@ export class CourseRepositoryImpl implements CourseRepository, CourseObject {
 				totalDuration += lectureDuration;
 				totalLecturesCount += section.lectures.length;
 
-				courseSectionValueObject.lecturesCount = 
+				courseSectionValueObject.lecturesCount =
 					section.lectures.length;
 				courseSectionValueObject.lecturesDuration = lectureDuration;
 				courseSectionValueObject.order = section.order;
@@ -422,6 +423,26 @@ export class CourseRepositoryImpl implements CourseRepository, CourseObject {
 		courseDocsCountList.count = courses.count;
 
 		return courseDocsCountList;
+	}
+
+	async getAllCourseCategories(): Promise<DocsCountList<string>> {
+		if (!this._mongodbRepository)
+			throw new GenericError({
+				code: ErrorCodes.mongoDBRepositoryDoesNotExist,
+				error: new Error("MongoDB repository does not exist"),
+				errorCode: 500
+			});
+
+		const courseCategoriesDocsCountList = new DocsCountListImpl<string>();
+
+		const courseCategoryRepository =
+			new CourseCategoryRepositoryImpl(this._mongodbRepository);
+
+		const courseCategories = await courseCategoryRepository.getAll();
+		courseCategoriesDocsCountList.docs = courseCategories;
+		courseCategoriesDocsCountList.count = courseCategories.length;
+
+		return courseCategoriesDocsCountList;
 	}
 
 	private async _isCourseTitleAlreadyExists(title: string): Promise<boolean> {
