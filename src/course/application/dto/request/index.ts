@@ -2,6 +2,10 @@ export * from "./create-course-by-instructor.request.dto";
 
 export * from "./create-course-by-instructor.request.dto.type";
 
+export * from "./explore-all-courses.request.dto";
+
+export * from "./explore-all-courses.request.dto.type";
+
 export * from "./process-course-transcoding-completed-event.request.dto";
 
 export * from "./process-course-transcoding-completed-event.request.dto.type";

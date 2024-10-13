@@ -36,6 +36,7 @@ export class CourseSectionRepositoryImpl {
 				lastModifiedBy: instructorId,
 				lastModifiedDate: new Date(),
 				title: section.title,
+				order: section.order,
 				version: 1
 			}));
 

@@ -4,6 +4,7 @@ import {
 	UploadPreSignedURLResponse
 } from "../../../utils";
 import { CourseEntity } from "../entity";
+import { CoursePaginationValueObject } from "../value-objects";
 
 
 
@@ -13,8 +14,6 @@ export abstract class CourseRepository extends Repository {
 	abstract getSectionId(): string;
 
 	abstract getSectionLectureId(): string;
-
-	abstract getAll(): Promise<DocsCountList<CourseEntity>>;
 
 	abstract uploadCourseImage(
 		mimeType: string
@@ -45,4 +44,10 @@ export abstract class CourseRepository extends Repository {
 		courseId: string,
 		lectureIds: string[]
 	): Promise<void>;
+
+	abstract exploreAllCourses(
+		searchString: string | null,
+		categories: string[],
+		pagination: CoursePaginationValueObject
+	): Promise<DocsCountList<CourseEntity>>
 }

@@ -5,7 +5,8 @@ import { authorizationTokenName, getCourseFactory } from "../../../global-config
 import {
 	CreateCourseByInstructorRequestDTOImpl,
 	CreateCourseByInstructorUseCase,
-	GetAllCoursesUseCase,
+	ExploreAllCoursesRequestDTOImpl,
+	ExploreAllCoursesUseCase,
 	UploadCourseImageRequestDTOImpl,
 	UploadCourseImageUseCase,
 	UploadLectureSubtitleRequestDTOImpl,
@@ -19,35 +20,6 @@ import { createCourseByInstructorRequestValidator } from "../request-validator";
 
 @Controller("/course")
 export class CourseController {
-
-	@Get("/")
-	async getCourseList(
-		request: Request,
-		response: Response,
-		next: NextFunction
-	): Promise<void> {
-		const winston = winstonLogger.winston;
-		try {
-			winston.info("Get Course List");
-
-			const courseFactory = getCourseFactory();
-			const responseHandler = getResponseHandler();
-
-			const GetAllCoursesUsecase = courseFactory.make("GetAllCoursesUseCase") as GetAllCoursesUseCase;
-
-			const getAllCoursesResponseDTO =
-				await GetAllCoursesUsecase.execute();
-
-			responseHandler.ok(response, getAllCoursesResponseDTO);
-		} catch (error) {
-			winston.error(
-				"Error in get course list:",
-				error
-			);
-
-			next(error);
-		}
-	}
 
 	@Post("/upload-image")
 	async uploadCourseImage(
@@ -273,6 +245,54 @@ export class CourseController {
 		} catch (error) {
 			winston.error(
 				"Error in creating a course by instructor:",
+				error
+			);
+
+			next(error);
+		}
+	}
+
+	@Get("/explore")
+	async exploreAllCourses(
+		request: Request,
+		response: Response,
+		next: NextFunction
+	): Promise<void> {
+		const winston = winstonLogger.winston;
+		try {
+			winston.info("Explore all courses");
+
+			const courseFactory = getCourseFactory();
+			const responseHandler = getResponseHandler();
+
+			const exploreAllCoursesRequestDTO =
+				new ExploreAllCoursesRequestDTOImpl();
+
+			let categories = request.query.categories;
+
+			if(categories && !Array.isArray(categories))
+				categories = [categories as string];
+
+			if(categories)	
+				exploreAllCoursesRequestDTO.categories = categories as string[];
+			exploreAllCoursesRequestDTO.searchString = 
+				request.query.searchString as string;
+
+			const exploreAllCoursesUseCase = courseFactory.make("ExploreAllCoursesUseCase") as ExploreAllCoursesUseCase;
+			exploreAllCoursesUseCase
+				.exploreAllCoursesRequestDTO = exploreAllCoursesRequestDTO;
+
+			const exploreAllCoursesResponseDTO =
+				await exploreAllCoursesUseCase
+					.execute();
+
+			responseHandler.ok(
+				response,
+				exploreAllCoursesResponseDTO
+			);
+		} catch (error) {
+			winston.error(
+				"Error in exploring all courses:",
 				error
 			);
 

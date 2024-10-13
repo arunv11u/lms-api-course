@@ -76,9 +76,6 @@ export class CreateCourseByInstructorUseCaseImpl implements
 			const instructorId = instructorValueObject.id;
 
 			const courseEntity = this._courseFactory.make("CourseEntity") as CourseEntity;
-			courseEntity.category =
-				this._createCourseByInstructorRequestDTO.category;
-
 
 			const courseCreatorValueObject = new CourseCreatorValueObject();
 
@@ -197,7 +194,7 @@ export class CreateCourseByInstructorUseCaseImpl implements
 			await transcoderRepository.transcodeVideoLectures(courseEntity);
 
 
-			
+
 			this._createCourseByInstructorResponseDTO.category =
 				courseEntity.category;
 
