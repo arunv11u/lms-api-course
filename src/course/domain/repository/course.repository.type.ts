@@ -52,4 +52,8 @@ export abstract class CourseRepository extends Repository {
 	): Promise<DocsCountList<CourseEntity>>;
 
 	abstract getAllCourseCategories(): Promise<DocsCountList<string>>;
+
+	abstract exploreACourse(
+		courseId: string
+	): Promise<CourseEntity>;
 }

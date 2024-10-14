@@ -906,6 +906,326 @@
 					}
 				}
 			}
+		},
+		"/course/explore/{id}": {
+			"get": {
+				"summary": "Get the list of courses",
+				"tags": [
+					"Course"
+				],
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"description": "Course Id",
+						"required": true,
+						"schema": {
+							"type": "string",
+							"example": "6709c76bcf9f66036ddf28f2"
+						}
+					}
+				],
+				"requestBody": {},
+				"responses": {
+					"200": {
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"data": {
+											"type": "object",
+											"properties": {
+												"id": {
+													"type": "string",
+													"example": "667f14303cebd3afba47d623"
+												},
+												"status": {
+													"type": "array",
+													"items": {
+														"type": "string",
+														"enum": [
+															"TRANSCODING_IN_PROGRESS",
+															"TRANSCODING_COMPLETED"
+														],
+														"example": "TRANSCODING_IN_PROGRESS"
+													}
+												},
+												"title": {
+													"type": "string",
+													"example": "The Complete Python Bootcamp From Zero to Hero in Python"
+												},
+												"description": {
+													"type": "string",
+													"example": "Learn Python like a Professional Start from the basics and go all the way to creating your own applications and games"
+												},
+												"category": {
+													"type": "string",
+													"example": "PROGRAMMING"
+												},
+												"rating": {
+													"type": "object",
+													"properties": {
+														"value": {
+															"type": "number",
+															"example": 4.6
+														},
+														"totalCount": {
+															"type": "number",
+															"example": 509746
+														}
+													},
+													"required": [
+														"value",
+														"totalCount"
+													]
+												},
+												"totalStudents": {
+													"type": "number",
+													"example": 1925103
+												},
+												"creators": {
+													"type": "array",
+													"items": {
+														"type": "object",
+														"properties": {
+															"id": {
+																"type": "string",
+																"example": "667f14303cebd3afba47d624"
+															},
+															"firstName": {
+																"type": "string",
+																"example": "John"
+															},
+															"lastName": {
+																"type": "string",
+																"example": "Doe"
+															},
+															"profilePicture": {
+																"type": "string",
+																"example": "https://learning-management-system-project.s3.amazonaws.com/sample.png"
+															},
+															"designation": {
+																"type": "string",
+																"example": "Instructor"
+															}
+														},
+														"required": [
+															"id",
+															"firstName",
+															"lastName"
+														]
+													}
+												},
+												"lastUpdatedOn": {
+													"type": "string",
+													"example": "2024-06-28T20:23:05.316Z"
+												},
+												"languages": {
+													"type": "array",
+													"items": {
+														"type": "string",
+														"enum": [
+															"English"
+														],
+														"example": "English"
+													}
+												},
+												"subtitles": {
+													"type": "array",
+													"items": {
+														"type": "string",
+														"enum": [
+															"English",
+															"French",
+															"Germany"
+														],
+														"example": "English"
+													}
+												},
+												"learnings": {
+													"type": "array",
+													"items": {
+														"type": "string",
+														"example": "You will learn how to leverage the power of Python to solve tasks."
+													}
+												},
+												"materialsAndOffers": {
+													"type": "array",
+													"items": {
+														"type": "string",
+														"example": "22 hours on-demand video"
+													}
+												},
+												"price": {
+													"type": "object",
+													"properties": {
+														"currency": {
+															"type": "string",
+															"enum": [
+																"CAD"
+															],
+															"example": "CAD"
+														},
+														"value": {
+															"type": "number",
+															"example": 104.99
+														}
+													},
+													"required": [
+														"currency",
+														"value"
+													]
+												},
+												"image": {
+													"type": "string",
+													"example": "https://s3.us-east-1.amazonaws.com/learning-management-system-project/public/courses/images/37f3aa96-7968-428f-9203-67a0a4c9d7e0.jpg"
+												},
+												"sections": {
+													"type": "array",
+													"items": {
+														"type": "object",
+														"properties": {
+															"id": {
+																"type": "string",
+																"example": "667f14303cebd3afba47d624"
+															},
+															"title": {
+																"type": "string",
+																"example": "Course Overview"
+															},
+															"lectures": {
+																"type": "array",
+																"items": {
+																	"type": "object",
+																	"properties": {
+																		"id": {
+																			"type": "string",
+																			"example": "667f14303cebd3afba47d625"
+																		},
+																		"title": {
+																			"type": "string",
+																			"example": "Auto-Welcome Message"
+																		},
+																		"description": {
+																			"type": "string",
+																			"example": "Welcome to the Complete Python Bootcamp"
+																		},
+																		"duration": {
+																			"type": "number",
+																			"example": 399000
+																		},
+																		"thumbnail": {
+																			"type": "string",
+																			"example": "https://s3.us-east-1.amazonaws.com/learning-management-system-project/public/courses/images/37f3aa96-7968-428f-9203-67a0a4c9d7e0.jpg"
+																		},
+																		"subtitles": {
+																			"type": "array",
+																			"items": {
+																				"type": "object",
+																				"properties": {
+																					"language": {
+																						"type": "language",
+																						"enum": [
+																							"English",
+																							"French",
+																							"Germany"
+																						],
+																						"example": "English"
+																					},
+																					"url": {
+																						"type": "string",
+																						"example": "https://s3.us-east-1.amazonaws.com/learning-management-system-project/public/courses/raw-lectures/a4f8287d-2fa5-44c9-9223-4a2b292b98ad.srt"
+																					}
+																				},
+																				"required": [
+																					"language",
+																					"url"
+																				]
+																			}
+																		},
+																		"order": {
+																			"type": "number",
+																			"example": 1
+																		}
+																	},
+																	"required": [
+																		"id",
+																		"title",
+																		"description",
+																		"duration",
+																		"subtitles",
+																		"order"
+																	]
+																}
+															},
+															"lecturesCount": {
+																"type": "number",
+																"example": 5
+															},
+															"lecturesDuration": {
+																"type": "number",
+																"example": "1140000 (in milliseconds)"
+															},
+															"order": {
+																"type": "number",
+																"example": 1
+															}
+														},
+														"required": [
+															"id",
+															"title",
+															"lectures",
+															"lecturesCount",
+															"lecturesDuration",
+															"order"
+														]
+													}
+												},
+												"totalSectionsCount": {
+													"type": "number",
+													"example": 23
+												},
+												"totalLecturesCount": {
+													"type": "number",
+													"example": 156
+												},
+												"totalDuration": {
+													"type": "number",
+													"example": "79980000 (in milliseconds)"
+												}
+											},
+											"required": [
+												"id",
+												"status",
+												"title",
+												"description",
+												"category",
+												"totalStudents",
+												"creators",
+												"lastUpdatedOn",
+												"languages",
+												"subtitles",
+												"learnings",
+												"materialsAndOffers",
+												"price",
+												"image",
+												"sections",
+												"totalSectionsCount",
+												"totalLecturesCount",
+												"totalDuration"
+											]
+										}
+									},
+									"required": [
+										"data"
+									]
+								}
+							}
+						}
+					}
+				}
+			}
 		}
 	},
 	"components": {

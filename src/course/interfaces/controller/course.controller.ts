@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import { Controller, Get, Post, Use } from "@arunvaradharajalu/common.decorators";
 import { Request, Response, NextFunction } from "express";
 import { ErrorCodes, GenericError, getResponseHandler, winstonLogger } from "../../../utils";
@@ -5,6 +6,8 @@ import { authorizationTokenName, getCourseFactory } from "../../../global-config
 import {
 	CreateCourseByInstructorRequestDTOImpl,
 	CreateCourseByInstructorUseCase,
+	ExploreACourseRequestDTOImpl,
+	ExploreACourseUseCase,
 	ExploreAllCoursesRequestDTOImpl,
 	ExploreAllCoursesUseCase,
 	GetAllCourseCategoriesUseCase,
@@ -327,6 +330,53 @@ export class CourseController {
 		} catch (error) {
 			winston.error(
 				"Error in getting all course categories:",
+				error
+			);
+
+			next(error);
+		}
+	}
+
+	@Get("/explore/:id")
+	async exploreACourses(
+		request: Request,
+		response: Response,
+		next: NextFunction
+	): Promise<void> {
+		const winston = winstonLogger.winston;
+		try {
+			winston.info(`Explore a courses : ${request.params.id}`);
+
+			const courseFactory = getCourseFactory();
+			const responseHandler = getResponseHandler();
+
+			if (!request.params.id)
+				throw new GenericError({
+					code: ErrorCodes.courseIdRequired,
+					error: new Error("Course id is required"),
+					errorCode: 400
+				});
+
+			const exploreACourseRequestDTO =
+				new ExploreACourseRequestDTOImpl();
+
+			exploreACourseRequestDTO.courseId = request.params.id;
+
+			const exploreACourseUseCase = courseFactory.make("ExploreACourseUseCase") as ExploreACourseUseCase;
+			exploreACourseUseCase
+				.exploreACourseRequestDTO = exploreACourseRequestDTO;
+
+			const exploreACourseResponseDTO =
+				await exploreACourseUseCase
+					.execute();
+
+			responseHandler.ok(
+				response,
+				exploreACourseResponseDTO
+			);
+		} catch (error) {
+			winston.error(
+				"Error in exploring a course:",
 				error
 			);
 
