@@ -323,10 +323,11 @@ export class CourseRepositoryImpl implements CourseRepository, CourseObject {
 				{
 					$and: [
 						...courseMatchQueries,
-						{ status: 
-							{ $eq: CourseStatuses.transcodingCompleted } 
+						{
+							status:
+								{ $eq: CourseStatuses.transcodingCompleted }
 						},
-						{ isDeleted: {$eq: false} }
+						{ isDeleted: { $eq: false } }
 					]
 				},
 				{
@@ -460,7 +461,8 @@ export class CourseRepositoryImpl implements CourseRepository, CourseObject {
 			.findOne<CourseORMEntity>(
 				this._collectionName,
 				{
-					title: title
+					title: title,
+					isDeleted: false
 				}
 			);
 
