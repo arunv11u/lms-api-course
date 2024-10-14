@@ -2,6 +2,10 @@ export * from "./create-course-by-instructor.use-case";
 
 export * from "./create-course-by-instructor.use-case.type";
 
+export * from "./explore-a-course.use-case";
+
+export * from "./explore-a-course.use-case.type";
+
 export * from "./explore-all-courses.use-case";
 
 export * from "./explore-all-courses.use-case.type";

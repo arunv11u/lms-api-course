@@ -51,7 +51,9 @@ export enum ErrorCodes {
 	courseMaterialsAndOffersTypeArray = "COURSE_MATERIALS_AND_OFFERS_TYPE_ARRAY",
 	courseMaterialsAndOffersElementTypeString = "COURSE_MATERIALS_AND_OFFERS_ELEMENT_TYPE_STRING",
 	coursePriceCurrencyRequired = "COURSE_PRICE_CURRENCY_REQUIRED",
-	coursePriceValueRequired = "COURSE_PRICE_VALUE_REQUIRED"
+	coursePriceValueRequired = "COURSE_PRICE_VALUE_REQUIRED",
+	courseNotFound = "COURSE_NOT_FOUND",
+	courseIdRequired = "COURSE_ID_REQUIRED"
 }
 
 export interface FormattedError {

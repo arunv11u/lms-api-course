@@ -2,6 +2,10 @@ export * from "./create-course-by-instructor.response.dto";
 
 export * from "./create-course-by-instructor.response.dto.type";
 
+export * from "./explore-a-course.response.dto";
+
+export * from "./explore-a-course.response.dto.type";
+
 export * from "./explore-all-courses.response.dto";
 
 export * from "./explore-all-courses.response.dto.type";

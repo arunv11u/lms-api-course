@@ -4,6 +4,7 @@ import {
 	CourseLanguages,
 	CoursePriceCurrencies,
 	CourseSectionLectureStatuses,
+	CourseStatuses,
 	CourseSubtitles
 } from "../../domain";
 
@@ -119,6 +120,7 @@ interface ViewCourseCreatorORMEntity {
 
 interface ViewCourseORMEntity {
 	_id: ObjectId;
+	status: CourseStatuses;
 	title: string;
 	description: string;
 	category: string;
