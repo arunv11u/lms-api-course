@@ -19,7 +19,7 @@ class CartCourseRepositoryImpl {
 		courseId: string,
 		studentId: string
 	): Promise<void> {
-		if(await this._isCartCourseExistsForStudent(
+		if (await this._isCartCourseExistsForStudent(
 			cartId,
 			courseId,
 			studentId
@@ -62,7 +62,7 @@ class CartCourseRepositoryImpl {
 
 		const result = await this._mongodbRepository
 			.remove<CartCourseORMEntity>(
-				this._collectionName, 
+				this._collectionName,
 				{
 					cart: cartId,
 					course: new ObjectId(courseId),
@@ -70,12 +70,30 @@ class CartCourseRepositoryImpl {
 				}
 			);
 
-		if(result.deletedCount !== 1)
+		if (result.deletedCount !== 1)
 			throw new GenericError({
 				code: ErrorCodes.cartCourseNotFound,
 				error: new Error("Course does not exist in the cart"),
 				errorCode: 404
 			});
+	}
+
+	async isCartEmpty(
+		cartId: ObjectId,
+		studentId: string
+	): Promise<boolean> {
+		const cartCourses = await this._mongodbRepository
+			.find<CartCourseORMEntity>(
+				this._collectionName,
+				{
+					cart: cartId,
+					student: studentId
+				}
+			);
+
+		if (cartCourses.length) return false;
+
+		return true;
 	}
 
 	private async _isCartCourseExistsForStudent(

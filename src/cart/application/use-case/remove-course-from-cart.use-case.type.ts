@@ -7,5 +7,5 @@ export abstract class RemoveCourseFromCartUseCase implements UseCase {
 		removeCourseFromCartRequestDTO: RemoveCourseFromCartRequestDTO
 	);
 
-	abstract execute(): Promise<RemoveCourseFromCartResponseDTO>;
+	abstract execute(): Promise<RemoveCourseFromCartResponseDTO | null>;
 }

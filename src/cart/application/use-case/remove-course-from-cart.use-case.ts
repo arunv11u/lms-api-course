@@ -18,12 +18,10 @@ export class RemoveCourseFromCartUseCaseImpl implements
 	private _removeCourseFromCartRequestDTO:
 		RemoveCourseFromCartRequestDTO;
 	private _removeCourseFromCartResponseDTO:
-		RemoveCourseFromCartResponseDTO;
+		RemoveCourseFromCartResponseDTO | null = null;
 
 	constructor() {
 		this._unitOfWork = new UnitOfWorkImpl();
-		this._removeCourseFromCartResponseDTO =
-			new RemoveCourseFromCartResponseDTOImpl();
 	}
 
 	set removeCourseFromCartRequestDTO(
@@ -32,7 +30,7 @@ export class RemoveCourseFromCartUseCaseImpl implements
 		this._removeCourseFromCartRequestDTO = removeCourseFromCartRequestDTO;
 	}
 
-	async execute(): Promise<RemoveCourseFromCartResponseDTO> {
+	async execute(): Promise<RemoveCourseFromCartResponseDTO | null> {
 		const tokenRepository = this._unitOfWork
 			.getRepository("TokenRepository") as TokenRepository;
 		const cartRepository = this._unitOfWork
@@ -59,28 +57,36 @@ export class RemoveCourseFromCartUseCaseImpl implements
 				studentId
 			);
 
-		cartEntity.courses.forEach(course => {
-			const removeCourseFromCartCourseResponseDTO =
-				new RemoveCourseFromCartCourseResponseDTOImpl();
+		if (cartEntity) {
+			this._removeCourseFromCartResponseDTO =
+				new RemoveCourseFromCartResponseDTOImpl();
 
-			removeCourseFromCartCourseResponseDTO.category = course.category;
-			removeCourseFromCartCourseResponseDTO.currency = course.currency;
-			removeCourseFromCartCourseResponseDTO.description =
-				course.description;
-			removeCourseFromCartCourseResponseDTO.id = course.id;
-			removeCourseFromCartCourseResponseDTO.image = course.image;
-			removeCourseFromCartCourseResponseDTO.title = course.title;
-			removeCourseFromCartCourseResponseDTO.value = course.value;
+			cartEntity.courses.forEach(course => {
+				const removeCourseFromCartCourseResponseDTO =
+					new RemoveCourseFromCartCourseResponseDTOImpl();
 
-			this._removeCourseFromCartResponseDTO.courses
-				.push(removeCourseFromCartCourseResponseDTO);
-		});
+				removeCourseFromCartCourseResponseDTO
+					.category = course.category;
+				removeCourseFromCartCourseResponseDTO
+					.currency = course.currency;
+				removeCourseFromCartCourseResponseDTO.description =
+					course.description;
+				removeCourseFromCartCourseResponseDTO.id = course.id;
+				removeCourseFromCartCourseResponseDTO.image = course.image;
+				removeCourseFromCartCourseResponseDTO.title = course.title;
+				removeCourseFromCartCourseResponseDTO.value = course.value;
 
-		this._removeCourseFromCartResponseDTO.currency = cartEntity.currency;
-		this._removeCourseFromCartResponseDTO.id = cartEntity.id;
-		this._removeCourseFromCartResponseDTO.tax = cartEntity.tax;
-		this._removeCourseFromCartResponseDTO.totalvalue =
-			cartEntity.totalvalue;
+				this._removeCourseFromCartResponseDTO!.courses
+					.push(removeCourseFromCartCourseResponseDTO);
+			});
+
+			this._removeCourseFromCartResponseDTO
+				.currency = cartEntity.currency;
+			this._removeCourseFromCartResponseDTO.id = cartEntity.id;
+			this._removeCourseFromCartResponseDTO.tax = cartEntity.tax;
+			this._removeCourseFromCartResponseDTO.totalvalue =
+				cartEntity.totalvalue;
+		}
 
 		return this._removeCourseFromCartResponseDTO;
 	}

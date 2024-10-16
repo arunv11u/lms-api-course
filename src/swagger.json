@@ -1314,7 +1314,14 @@
 									"type": "object",
 									"properties": {
 										"data": {
-											"$ref": "#/components/schemas/Cart"
+											"oneOf": [
+												{
+													"$ref": "#/components/schemas/Cart"
+												},
+												{
+													"type": "null"
+												}
+											]
 										}
 									},
 									"required": [
