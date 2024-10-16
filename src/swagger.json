@@ -1333,6 +1333,40 @@
 					}
 				}
 			}
+		},
+		"/cart/clear-all-courses": {
+			"post": {
+				"summary": "Clear all courses from cart",
+				"tags": [
+					"Cart"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"requestBody": {},
+				"responses": {
+					"200": {
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"data": {
+											"type": "object",
+											"nullable": true
+										}
+									},
+									"required": [
+										"data"
+									]
+								}
+							}
+						}
+					}
+				}
+			}
 		}
 	},
 	"components": {
