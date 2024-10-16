@@ -1226,6 +1226,56 @@
 					}
 				}
 			}
+		},
+		"/cart/add-course": {
+			"post": {
+				"summary": "Add course to a cart",
+				"tags": [
+					"Cart"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"courseId": {
+										"type": "string",
+										"example": "667f14303cebd3afba47d623"
+									}
+								},
+								"required": [
+									"courseId"
+								]
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"data": {
+											"$ref": "#/components/schemas/Cart"
+										}
+									},
+									"required": [
+										"data"
+									]
+								}
+							}
+						}
+					}
+				}
+			}
 		}
 	},
 	"components": {
@@ -1555,6 +1605,85 @@
 					"totalSectionsCount",
 					"totalLecturesCount",
 					"totalDuration"
+				]
+			},
+			"Cart": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "string",
+						"example": "667f14303cebd3afba47d623"
+					},
+					"courses": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"id": {
+									"type": "string",
+									"example": "667f14303cebd3afba47d624"
+								},
+								"title": {
+									"type": "string",
+									"example": "The Complete Python Bootcamp From Zero to Hero in Python"
+								},
+								"description": {
+									"type": "string",
+									"example": "Learn Python like a Professional Start from the basics and go all the way to creating your own applications and games"
+								},
+								"category": {
+									"type": "string",
+									"example": "PROGRAMMING"
+								},
+								"image": {
+									"type": "string",
+									"example": "https://learning-management-system-project.s3.amazonaws.com/sample.png"
+								},
+								"currency": {
+									"type": "string",
+									"enum": [
+										"CAD"
+									],
+									"example": "CAD"
+								},
+								"value": {
+									"type": "number",
+									"example": 100
+								}
+							},
+							"required": [
+								"id",
+								"title",
+								"description",
+								"category",
+								"image",
+								"currency",
+								"value"
+							]
+						}
+					},
+					"currency": {
+						"type": "string",
+						"enum": [
+							"CAD"
+						],
+						"example": "CAD"
+					},
+					"totalvalue": {
+						"type": "number",
+						"example": 100
+					},
+					"tax": {
+						"type": "number",
+						"example": 13
+					}
+				},
+				"required": [
+					"id",
+					"courses",
+					"currency",
+					"totalvalue",
+					"tax"
 				]
 			}
 		}

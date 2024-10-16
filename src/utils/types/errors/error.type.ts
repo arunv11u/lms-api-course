@@ -53,7 +53,9 @@ export enum ErrorCodes {
 	coursePriceCurrencyRequired = "COURSE_PRICE_CURRENCY_REQUIRED",
 	coursePriceValueRequired = "COURSE_PRICE_VALUE_REQUIRED",
 	courseNotFound = "COURSE_NOT_FOUND",
-	courseIdRequired = "COURSE_ID_REQUIRED"
+	courseIdRequired = "COURSE_ID_REQUIRED",
+	cartNotFound = "CART_NOT_FOUND",
+	cartCourseAlreadyExists = "CART_COURSE_ALREADY_EXISTS"
 }
 
 export interface FormattedError {

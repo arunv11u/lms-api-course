@@ -559,6 +559,25 @@ export class CourseRepositoryImpl implements CourseRepository, CourseObject {
 		return courseEntity;
 	}
 
+	async isCourseExists(id: string): Promise<boolean> {
+		if (!this._mongodbRepository)
+			throw new GenericError({
+				code: ErrorCodes.mongoDBRepositoryDoesNotExist,
+				error: new Error("MongoDB repository does not exist"),
+				errorCode: 500
+			});
+
+		const course = await this._mongodbRepository
+			.findOne<CourseORMEntity>(
+				this._collectionName,
+				{ _id: new ObjectId(id) }
+			);
+
+		if (!course) return false;
+
+		return true;
+	}
+
 	private async _isCourseTitleAlreadyExists(title: string): Promise<boolean> {
 		if (!this._mongodbRepository)
 			throw new GenericError({

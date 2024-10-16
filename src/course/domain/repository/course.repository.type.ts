@@ -56,4 +56,6 @@ export abstract class CourseRepository extends Repository {
 	abstract exploreACourse(
 		courseId: string
 	): Promise<CourseEntity>;
+
+	abstract isCourseExists(id: string): Promise<boolean>;
 }
