@@ -91,7 +91,7 @@ class CartRepositoryImpl implements CartRepository {
 				errorCode: 500
 			});
 
-		if (!await this._isCartExistsForStudent)
+		if (!await this._isCartExistsForStudent(studentId))
 			throw new GenericError({
 				code: ErrorCodes.cartNotFound,
 				error: new Error("Cart not found"),
@@ -123,7 +123,7 @@ class CartRepositoryImpl implements CartRepository {
 				errorCode: 500
 			});
 
-		if (!await this._isCartExistsForStudent)
+		if (!await this._isCartExistsForStudent(studentId))
 			throw new GenericError({
 				code: ErrorCodes.cartNotFound,
 				error: new Error("Cart not found"),
@@ -138,6 +138,24 @@ class CartRepositoryImpl implements CartRepository {
 		await cartCourseRepository.clearCart(cartId);
 
 		await this._deleteStudentCart(cartId);
+	}
+
+	async getCart(studentId: string): Promise<CartEntity | null> {
+		if (!this._mongodbRepository)
+			throw new GenericError({
+				code: ErrorCodes.mongoDBRepositoryDoesNotExist,
+				error: new Error("MongoDB repository does not exist"),
+				errorCode: 500
+			});
+
+		if (!await this._isCartExistsForStudent(studentId))
+			return null;
+
+		const cartId = await this._getCartIdForStudent(studentId);
+
+		const cart = await this._getEntity(cartId);
+
+		return cart;
 	}
 
 	private async _deleteStudentCart(cartId: ObjectId): Promise<void> {

@@ -1,4 +1,4 @@
-import { Controller, Post } from "@arunvaradharajalu/common.decorators";
+import { Controller, Get, Post } from "@arunvaradharajalu/common.decorators";
 import { Request, Response, NextFunction } from "express";
 import { ErrorCodes, GenericError, getResponseHandler, winstonLogger } from "../../../utils";
 import { authorizationTokenName, getCartFactory } from "../../../global-config";
@@ -8,6 +8,9 @@ import {
 	AddCourseToCartUseCase,
 	ClearAllCoursesFromCartRequestDTOImpl,
 	ClearAllCoursesFromCartUseCase,
+	GetCartRequestDTOImpl,
+	GetCartResponseDTO,
+	GetCartUseCase,
 	RemoveCourseFromCartRequestDTOImpl,
 	RemoveCourseFromCartResponseDTO,
 	RemoveCourseFromCartUseCase
@@ -167,6 +170,53 @@ export class CartController {
 		} catch (error) {
 			winston.error(
 				"Error in clearing all courses from a cart:",
+				error
+			);
+
+			next(error);
+		}
+	}
+
+	@Get("/")
+	async getCart(
+		request: Request,
+		response: Response,
+		next: NextFunction
+	) {
+		const winston = winstonLogger.winston;
+		try {
+			winston.info("Getting cart details");
+
+			const authorizationToken = request.header(authorizationTokenName);
+			if (!authorizationToken)
+				throw new GenericError({
+					code: ErrorCodes.invalidAuthorizationToken,
+					error: new Error("Invalid authorization token"),
+					errorCode: 400
+				});
+
+			const cartFactory = getCartFactory();
+			const responseHandler = getResponseHandler();
+
+			const getCartRequestDTO =
+				new GetCartRequestDTOImpl();
+			getCartRequestDTO
+				.authorizationToken = authorizationToken;
+
+			const getCartUseCase = cartFactory.make("GetCartUseCase") as GetCartUseCase;
+			getCartUseCase.getCartRequestDTO =
+				getCartRequestDTO;
+
+			const getCartResonseDTO = await getCartUseCase
+				.execute() as GetCartResponseDTO;
+
+			responseHandler.ok<GetCartResponseDTO>(
+				response,
+				getCartResonseDTO
+			);
+		} catch (error) {
+			winston.error(
+				"Error in getting cart details :",
 				error
 			);
 

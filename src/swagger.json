@@ -1367,6 +1367,46 @@
 					}
 				}
 			}
+		},
+		"/cart": {
+			"get": {
+				"summary": "Get cart details",
+				"tags": [
+					"Cart"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"requestBody": {},
+				"responses": {
+					"200": {
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"data": {
+											"oneOf": [
+												{
+													"$ref": "#/components/schemas/Cart"
+												},
+												{
+													"type": "null"
+												}
+											]
+										}
+									},
+									"required": [
+										"data"
+									]
+								}
+							}
+						}
+					}
+				}
+			}
 		}
 	},
 	"components": {
