@@ -3,7 +3,7 @@ import { MongoDBRepository } from "@arunvaradharajalu/common.mongodb-api";
 import { getCartFactory, taxPercentage } from "../../../global-config";
 import { ErrorCodes, GenericError } from "../../../utils";
 import { CoursePriceCurrencies } from "../../../course";
-import { CartEntity, CartRepository } from "../../domain";
+import { AddCourseToCartValueObject, CartEntity, CartRepository } from "../../domain";
 import { CartORMEntity } from "./cart.orm-entity";
 import { CartCourseRepositoryImpl } from "./cart-course.repository";
 
@@ -83,7 +83,7 @@ class CartRepositoryImpl implements CartRepository {
 	async removeCourseFromCart(
 		courseId: string,
 		studentId: string
-	): Promise<CartEntity> {
+	): Promise<CartEntity | null> {
 		if (!this._mongodbRepository)
 			throw new GenericError({
 				code: ErrorCodes.mongoDBRepositoryDoesNotExist,
@@ -105,15 +105,28 @@ class CartRepositoryImpl implements CartRepository {
 
 		await cartCourseRepository.remove(cartId, courseId, studentId);
 
+		if(await cartCourseRepository.isCartEmpty(
+			cartId,
+			studentId
+		)) await this._deleteStudentCart(cartId);
+
 		const cart = await this._getEntity(cartId);
-		if (!cart)
-			throw new GenericError({
-				code: ErrorCodes.cartNotFound,
-				error: new Error("Cart not found"),
-				errorCode: 404
-			});
 
 		return cart;
+	}
+
+	private async _deleteStudentCart(cartId: ObjectId): Promise<void> {
+		if (!this._mongodbRepository)
+			throw new GenericError({
+				code: ErrorCodes.mongoDBRepositoryDoesNotExist,
+				error: new Error("MongoDB repository does not exist"),
+				errorCode: 500
+			});
+
+		await this._mongodbRepository.remove<CartORMEntity>(
+			this._collectionName,
+			{ _id: cartId }
+		);
 	}
 
 	private async _isCartExistsForStudent(
@@ -209,7 +222,16 @@ class CartRepositoryImpl implements CartRepository {
 		const cartEntity = getCartFactory().make("CartEntity") as CartEntity;
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		cart.courses.forEach((course: any) => {
-			cartEntity.addCourse(course);
+			const addCourseToCartValueObject = new AddCourseToCartValueObject();
+			addCourseToCartValueObject.category = course.category;
+			addCourseToCartValueObject.currency = course.currency;
+			addCourseToCartValueObject.description = course.description;
+			addCourseToCartValueObject.id = course._id.toString();
+			addCourseToCartValueObject.image = course.image;
+			addCourseToCartValueObject.title = course.title;
+			addCourseToCartValueObject.value = course.price;
+
+			cartEntity.addCourse(addCourseToCartValueObject);
 		});
 
 		cartEntity.calculateTotalValue();
