@@ -6,6 +6,8 @@ import {
 	AddCourseToCartRequestDTOImpl,
 	AddCourseToCartResponseDTO,
 	AddCourseToCartUseCase,
+	ClearAllCoursesFromCartRequestDTOImpl,
+	ClearAllCoursesFromCartUseCase,
 	RemoveCourseFromCartRequestDTOImpl,
 	RemoveCourseFromCartResponseDTO,
 	RemoveCourseFromCartUseCase
@@ -119,6 +121,52 @@ export class CartController {
 		} catch (error) {
 			winston.error(
 				"Error in removing course from a cart:",
+				error
+			);
+
+			next(error);
+		}
+	}
+
+	@Post("/clear-all-courses")
+	async clearAllCoursesFromCart(
+		request: Request,
+		response: Response,
+		next: NextFunction
+	) {
+		const winston = winstonLogger.winston;
+		try {
+			winston.info("Clearing all courses from cart");
+
+			const authorizationToken = request.header(authorizationTokenName);
+			if (!authorizationToken)
+				throw new GenericError({
+					code: ErrorCodes.invalidAuthorizationToken,
+					error: new Error("Invalid authorization token"),
+					errorCode: 400
+				});
+
+			const cartFactory = getCartFactory();
+			const responseHandler = getResponseHandler();
+
+			const clearAllCoursesFromCartRequestDTO =
+				new ClearAllCoursesFromCartRequestDTOImpl();
+			clearAllCoursesFromCartRequestDTO
+				.authorizationToken = authorizationToken;
+
+			const clearAllCoursesFromCartUseCase = cartFactory.make("ClearAllCoursesFromCartUseCase") as ClearAllCoursesFromCartUseCase;
+			clearAllCoursesFromCartUseCase.clearAllCoursesFromCartRequestDTO =
+				clearAllCoursesFromCartRequestDTO;
+
+			await clearAllCoursesFromCartUseCase
+				.execute();
+
+			responseHandler.ok<null>(
+				response
+			);
+		} catch (error) {
+			winston.error(
+				"Error in clearing all courses from a cart:",
 				error
 			);
 

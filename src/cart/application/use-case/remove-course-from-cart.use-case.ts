@@ -31,63 +31,73 @@ export class RemoveCourseFromCartUseCaseImpl implements
 	}
 
 	async execute(): Promise<RemoveCourseFromCartResponseDTO | null> {
-		const tokenRepository = this._unitOfWork
-			.getRepository("TokenRepository") as TokenRepository;
-		const cartRepository = this._unitOfWork
-			.getRepository("CartRepository") as CartRepository;
-		const courseRepository = this._unitOfWork
-			.getRepository("CourseRepository") as CourseRepository;
+		try {
+			await this._unitOfWork.start();
 
-		const { id: studentId } = await tokenRepository
-			.validateStudentAuthorizationToken(
-				this._removeCourseFromCartRequestDTO.authorizationToken
-			);
+			const tokenRepository = this._unitOfWork
+				.getRepository("TokenRepository") as TokenRepository;
+			const cartRepository = this._unitOfWork
+				.getRepository("CartRepository") as CartRepository;
+			const courseRepository = this._unitOfWork
+				.getRepository("CourseRepository") as CourseRepository;
 
-		if (!await courseRepository
-			.isCourseExists(this._removeCourseFromCartRequestDTO.courseId)
-		) throw new GenericError({
-			code: ErrorCodes.courseNotFound,
-			error: new Error("Course not found"),
-			errorCode: 404
-		});
+			const { id: studentId } = await tokenRepository
+				.validateStudentAuthorizationToken(
+					this._removeCourseFromCartRequestDTO.authorizationToken
+				);
 
-		const cartEntity = await cartRepository
-			.removeCourseFromCart(
-				this._removeCourseFromCartRequestDTO.courseId,
-				studentId
-			);
-
-		if (cartEntity) {
-			this._removeCourseFromCartResponseDTO =
-				new RemoveCourseFromCartResponseDTOImpl();
-
-			cartEntity.courses.forEach(course => {
-				const removeCourseFromCartCourseResponseDTO =
-					new RemoveCourseFromCartCourseResponseDTOImpl();
-
-				removeCourseFromCartCourseResponseDTO
-					.category = course.category;
-				removeCourseFromCartCourseResponseDTO
-					.currency = course.currency;
-				removeCourseFromCartCourseResponseDTO.description =
-					course.description;
-				removeCourseFromCartCourseResponseDTO.id = course.id;
-				removeCourseFromCartCourseResponseDTO.image = course.image;
-				removeCourseFromCartCourseResponseDTO.title = course.title;
-				removeCourseFromCartCourseResponseDTO.value = course.value;
-
-				this._removeCourseFromCartResponseDTO!.courses
-					.push(removeCourseFromCartCourseResponseDTO);
+			if (!await courseRepository
+				.isCourseExists(this._removeCourseFromCartRequestDTO.courseId)
+			) throw new GenericError({
+				code: ErrorCodes.courseNotFound,
+				error: new Error("Course not found"),
+				errorCode: 404
 			});
 
-			this._removeCourseFromCartResponseDTO
-				.currency = cartEntity.currency;
-			this._removeCourseFromCartResponseDTO.id = cartEntity.id;
-			this._removeCourseFromCartResponseDTO.tax = cartEntity.tax;
-			this._removeCourseFromCartResponseDTO.totalvalue =
-				cartEntity.totalvalue;
-		}
+			const cartEntity = await cartRepository
+				.removeCourseFromCart(
+					this._removeCourseFromCartRequestDTO.courseId,
+					studentId
+				);
 
-		return this._removeCourseFromCartResponseDTO;
+			if (cartEntity) {
+				this._removeCourseFromCartResponseDTO =
+					new RemoveCourseFromCartResponseDTOImpl();
+
+				cartEntity.courses.forEach(course => {
+					const removeCourseFromCartCourseResponseDTO =
+						new RemoveCourseFromCartCourseResponseDTOImpl();
+
+					removeCourseFromCartCourseResponseDTO
+						.category = course.category;
+					removeCourseFromCartCourseResponseDTO
+						.currency = course.currency;
+					removeCourseFromCartCourseResponseDTO.description =
+						course.description;
+					removeCourseFromCartCourseResponseDTO.id = course.id;
+					removeCourseFromCartCourseResponseDTO.image = course.image;
+					removeCourseFromCartCourseResponseDTO.title = course.title;
+					removeCourseFromCartCourseResponseDTO.value = course.value;
+
+					this._removeCourseFromCartResponseDTO!.courses
+						.push(removeCourseFromCartCourseResponseDTO);
+				});
+
+				this._removeCourseFromCartResponseDTO
+					.currency = cartEntity.currency;
+				this._removeCourseFromCartResponseDTO.id = cartEntity.id;
+				this._removeCourseFromCartResponseDTO.tax = cartEntity.tax;
+				this._removeCourseFromCartResponseDTO.totalvalue =
+					cartEntity.totalvalue;
+			}
+
+			await this._unitOfWork.complete();
+			
+			return this._removeCourseFromCartResponseDTO;
+		} catch (error) {
+			await this._unitOfWork.dispose();
+
+			throw error;
+		}
 	}
 }

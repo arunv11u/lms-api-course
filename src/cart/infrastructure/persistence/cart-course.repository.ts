@@ -70,7 +70,26 @@ class CartCourseRepositoryImpl {
 				}
 			);
 
-		if (result.deletedCount !== 1)
+		if (result.deletedCount === 0)
+			throw new GenericError({
+				code: ErrorCodes.cartCourseNotFound,
+				error: new Error("Course does not exist in the cart"),
+				errorCode: 404
+			});
+	}
+
+	async clearCart(
+		cartId: ObjectId
+	) {
+		const result = await this._mongodbRepository
+			.removeRange<CartCourseORMEntity>(
+				this._collectionName,
+				{
+					cart: cartId
+				}
+			);
+
+		if (result.deletedCount === 0)
 			throw new GenericError({
 				code: ErrorCodes.cartCourseNotFound,
 				error: new Error("Course does not exist in the cart"),
