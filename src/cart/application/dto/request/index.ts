@@ -6,6 +6,10 @@ export * from "./clear-all-courses-from-cart.request.dto";
 
 export * from "./clear-all-courses-from-cart.request.dto.type";
 
+export * from "./get-cart.request.dto";
+
+export * from "./get-cart.request.dto.type";
+
 export * from "./remove-course-from-cart.request.dto";
 
 export * from "./remove-course-from-cart.request.dto.type";
