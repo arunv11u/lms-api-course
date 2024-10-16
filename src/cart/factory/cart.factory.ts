@@ -1,5 +1,5 @@
 import { ErrorCodes, Factory, GenericError } from "../../utils";
-import { AddCourseToCartUseCaseImpl } from "../application";
+import { AddCourseToCartUseCaseImpl, RemoveCourseFromCartUseCaseImpl } from "../application";
 import { CartEntityImpl, CartObject } from "../domain";
 import { CartRepositoryImpl } from "../infrastructure";
 
@@ -9,7 +9,8 @@ class CartFactory implements Factory {
 	private _objects: string[] = [
 		"CartEntity",
 		"CartRepository",
-		"AddCourseToCartUseCase"
+		"AddCourseToCartUseCase",
+		"RemoveCourseFromCartUseCase"
 	];
 
 	make(objectName: string): CartObject {
@@ -22,6 +23,9 @@ class CartFactory implements Factory {
 
 		if (objectName === "AddCourseToCartUseCase")
 			return new AddCourseToCartUseCaseImpl();
+
+		if (objectName === "RemoveCourseFromCartUseCase")
+			return new RemoveCourseFromCartUseCaseImpl();
 
 		throw new GenericError({
 			code: ErrorCodes.invalidFactoryObject,
