@@ -1276,6 +1276,56 @@
 					}
 				}
 			}
+		},
+		"/cart/remove-course": {
+			"post": {
+				"summary": "Remove course from a cart",
+				"tags": [
+					"Cart"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"courseId": {
+										"type": "string",
+										"example": "667f14303cebd3afba47d623"
+									}
+								},
+								"required": [
+									"courseId"
+								]
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"data": {
+											"$ref": "#/components/schemas/Cart"
+										}
+									},
+									"required": [
+										"data"
+									]
+								}
+							}
+						}
+					}
+				}
+			}
 		}
 	},
 	"components": {

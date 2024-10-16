@@ -9,4 +9,9 @@ export abstract class CartRepository extends Repository {
 		courseId: string,
 		studentId: string
 	): Promise<CartEntity>;
+
+	abstract removeCourseFromCart(
+		courseId: string,
+		studentId: string
+	): Promise<CartEntity>;
 }

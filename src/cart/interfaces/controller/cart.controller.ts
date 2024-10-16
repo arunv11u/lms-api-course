@@ -5,7 +5,10 @@ import { authorizationTokenName, getCartFactory } from "../../../global-config";
 import {
 	AddCourseToCartRequestDTOImpl,
 	AddCourseToCartResponseDTO,
-	AddCourseToCartUseCase
+	AddCourseToCartUseCase,
+	RemoveCourseFromCartRequestDTOImpl,
+	RemoveCourseFromCartResponseDTO,
+	RemoveCourseFromCartUseCase
 } from "../../application";
 
 
@@ -20,7 +23,7 @@ export class CartController {
 	) {
 		const winston = winstonLogger.winston;
 		try {
-			winston.info("Uploading course image");
+			winston.info("Adding course to a cart");
 
 			const authorizationToken = request.header(authorizationTokenName);
 			if (!authorizationToken)
@@ -52,7 +55,7 @@ export class CartController {
 			const addCourseToCartResponseDTO =
 				await addCourseToCartUseCase
 					.execute() as AddCourseToCartResponseDTO;
-			
+
 			responseHandler.ok<AddCourseToCartResponseDTO>(
 				response,
 				addCourseToCartResponseDTO
@@ -60,6 +63,62 @@ export class CartController {
 		} catch (error) {
 			winston.error(
 				"Error in adding course to a cart:",
+				error
+			);
+
+			next(error);
+		}
+	}
+
+	@Post("/remove-course")
+	async removeCourseFromCart(
+		request: Request,
+		response: Response,
+		next: NextFunction
+	) {
+		const winston = winstonLogger.winston;
+		try {
+			winston.info("Removing a course from cart");
+
+			const authorizationToken = request.header(authorizationTokenName);
+			if (!authorizationToken)
+				throw new GenericError({
+					code: ErrorCodes.invalidAuthorizationToken,
+					error: new Error("Invalid authorization token"),
+					errorCode: 400
+				});
+
+			if (!request.body.courseId)
+				throw new GenericError({
+					code: ErrorCodes.courseIdRequired,
+					error: new Error("Course id is required"),
+					errorCode: 400
+				});
+
+			const cartFactory = getCartFactory();
+			const responseHandler = getResponseHandler();
+
+			const removeCourseFromCartRequestDTO =
+				new RemoveCourseFromCartRequestDTOImpl();
+			removeCourseFromCartRequestDTO
+				.authorizationToken = authorizationToken;
+			removeCourseFromCartRequestDTO.courseId = request.body.courseId;
+
+			const removeCourseFromCartUseCase = cartFactory.make("RemoveCourseFromCartUseCase") as RemoveCourseFromCartUseCase;
+			removeCourseFromCartUseCase.removeCourseFromCartRequestDTO =
+				removeCourseFromCartRequestDTO;
+
+			const removeCourseFromCartResponseDTO =
+				await removeCourseFromCartUseCase
+					.execute() as RemoveCourseFromCartResponseDTO;
+
+			responseHandler.ok<RemoveCourseFromCartResponseDTO>(
+				response,
+				removeCourseFromCartResponseDTO
+			);
+		} catch (error) {
+			winston.error(
+				"Error in removing course from a cart:",
 				error
 			);
 

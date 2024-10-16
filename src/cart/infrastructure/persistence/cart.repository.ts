@@ -80,6 +80,42 @@ class CartRepositoryImpl implements CartRepository {
 		return cart;
 	}
 
+	async removeCourseFromCart(
+		courseId: string,
+		studentId: string
+	): Promise<CartEntity> {
+		if (!this._mongodbRepository)
+			throw new GenericError({
+				code: ErrorCodes.mongoDBRepositoryDoesNotExist,
+				error: new Error("MongoDB repository does not exist"),
+				errorCode: 500
+			});
+
+		if (!await this._isCartExistsForStudent)
+			throw new GenericError({
+				code: ErrorCodes.cartNotFound,
+				error: new Error("Cart not found"),
+				errorCode: 404
+			});
+
+		const cartId = await this._getCartIdForStudent(studentId);
+
+		const cartCourseRepository =
+			new CartCourseRepositoryImpl(this._mongodbRepository);
+
+		await cartCourseRepository.remove(cartId, courseId, studentId);
+
+		const cart = await this._getEntity(cartId);
+		if (!cart)
+			throw new GenericError({
+				code: ErrorCodes.cartNotFound,
+				error: new Error("Cart not found"),
+				errorCode: 404
+			});
+
+		return cart;
+	}
+
 	private async _isCartExistsForStudent(
 		studentId: string
 	): Promise<boolean> {

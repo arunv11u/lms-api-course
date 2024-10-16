@@ -54,6 +54,30 @@ class CartCourseRepositoryImpl {
 		return cartCourseIds;
 	}
 
+	async remove(
+		cartId: ObjectId,
+		courseId: string,
+		studentId: string
+	): Promise<void> {
+
+		const result = await this._mongodbRepository
+			.remove<CartCourseORMEntity>(
+				this._collectionName, 
+				{
+					cart: cartId,
+					course: new ObjectId(courseId),
+					student: studentId
+				}
+			);
+
+		if(result.deletedCount !== 1)
+			throw new GenericError({
+				code: ErrorCodes.cartCourseNotFound,
+				error: new Error("Course does not exist in the cart"),
+				errorCode: 404
+			});
+	}
+
 	private async _isCartCourseExistsForStudent(
 		cartId: ObjectId,
 		courseId: string,
