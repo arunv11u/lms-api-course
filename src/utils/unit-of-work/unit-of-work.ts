@@ -10,6 +10,7 @@ import {
 import { getMongoDBRepository } from "../helpers";
 import { CourseRepository } from "../../course";
 import { 
+	getCartFactory,
 	getCourseFactory, 
 	getInstructorFactory, 
 	getStudentFactory, 
@@ -18,6 +19,7 @@ import {
 import { StudentRepository } from "../../student";
 import { InstructorRepository } from "../../instructor";
 import { TokenRepository } from "../../token";
+import { CartRepository } from "../../cart";
 
 
 //! Do not export this Repositories enum at any cost.
@@ -25,7 +27,8 @@ enum Repositories {
 	courseRepository = "CourseRepository",
 	studentRepository = "StudentRepository",
 	instructorRepository = "InstructorRepository",
-	tokenRepository = "TokenRepository"
+	tokenRepository = "TokenRepository",
+	cartRepository = "CartRepository"
 }
 
 class UnitOfWorkImpl implements UnitOfWork {
@@ -34,7 +37,8 @@ class UnitOfWorkImpl implements UnitOfWork {
 		Repositories.courseRepository,
 		Repositories.studentRepository,
 		Repositories.instructorRepository,
-		Repositories.tokenRepository
+		Repositories.tokenRepository,
+		Repositories.cartRepository
 	];
 
 	private _mongoDBRepository: MongoDBRepository;
@@ -42,6 +46,7 @@ class UnitOfWorkImpl implements UnitOfWork {
 	private _studentRepository: StudentRepository;
 	private _instructorRepository: InstructorRepository;
 	private _tokenRepository: TokenRepository;
+	private _cartRepository: CartRepository;
 
 	constructor() {
 		this._mongoDBRepository = getMongoDBRepository();
@@ -57,6 +62,9 @@ class UnitOfWorkImpl implements UnitOfWork {
 
 		this._tokenRepository = getTokenFactory().make("TokenRepository") as TokenRepository;
 		this._tokenRepository.mongoDBRepository = this._mongoDBRepository;
+
+		this._cartRepository = getCartFactory().make("CartRepository") as CartRepository;
+		this._cartRepository.mongoDBRepository = this._mongoDBRepository;
 	}
 
 	async start() {
@@ -80,6 +88,9 @@ class UnitOfWorkImpl implements UnitOfWork {
 
 		if (repositoryName === Repositories.tokenRepository)
 			return this._tokenRepository;
+
+		if (repositoryName === Repositories.cartRepository)
+			return this._cartRepository;
 
 		throw new GenericError({
 			code: ErrorCodes.internalError,

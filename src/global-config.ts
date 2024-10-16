@@ -1,3 +1,4 @@
+import { CartFactory } from "./cart/factory";
 import { CourseFactory } from "./course";
 import { InstructorFactory } from "./instructor";
 import { StudentFactory } from "./student";
@@ -7,6 +8,7 @@ import { TranscoderFactory } from "./transcoder";
 
 const defaultRoutePath = "/";
 const authorizationTokenName = "authorization";
+const taxPercentage = 13;
 
 
 function getCourseFactory() {
@@ -29,12 +31,19 @@ function getTranscoderFactory() {
 	return new TranscoderFactory();
 }
 
+function getCartFactory() {
+	return new CartFactory();
+}
+
+
 export {
 	defaultRoutePath,
 	authorizationTokenName,
+	taxPercentage,
 	getCourseFactory,
 	getStudentFactory,
 	getInstructorFactory,
 	getTokenFactory,
-	getTranscoderFactory
+	getTranscoderFactory,
+	getCartFactory
 };
