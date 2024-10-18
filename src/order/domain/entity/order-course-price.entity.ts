@@ -1,23 +1,16 @@
-import { OrderCoursePriceCurrencies, OrderCoursePriceEntity } from "./order-course-price.entity.type";
+import { CoursePriceCurrencies } from "../../../course";
+import { OrderCoursePriceEntity } from "./order-course-price.entity.type";
 
 
-abstract class OrderCoursePriceEntityImpl implements OrderCoursePriceEntity {
+class OrderCoursePriceEntityImpl implements OrderCoursePriceEntity {
 
-	private _id: string;
-	private _currency: OrderCoursePriceCurrencies;
+	private _currency: CoursePriceCurrencies;
 	private _value: number;
 
-	get id(): string {
-		return this._id;
-	}
-	set id(id: string) {
-		this._id = id;
-	}
-
-	get currency(): OrderCoursePriceCurrencies {
+	get currency(): CoursePriceCurrencies {
 		return this._currency;
 	}
-	set currency(currency: OrderCoursePriceCurrencies) {
+	set currency(currency: CoursePriceCurrencies) {
 		this._currency = currency;
 	}
 

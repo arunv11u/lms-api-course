@@ -1,6 +1,8 @@
 import { CartFactory } from "./cart/factory";
 import { CourseFactory } from "./course";
 import { InstructorFactory } from "./instructor";
+import { OrderFactory } from "./order";
+import { PaymentFactory } from "./payment";
 import { StudentFactory } from "./student";
 import { TokenFactory } from "./token";
 import { TranscoderFactory } from "./transcoder";
@@ -35,6 +37,14 @@ function getCartFactory() {
 	return new CartFactory();
 }
 
+function getOrderFactory() {
+	return new OrderFactory();
+}
+
+function getPaymentFactory() {
+	return new PaymentFactory();
+}
+
 
 export {
 	defaultRoutePath,
@@ -45,5 +55,7 @@ export {
 	getInstructorFactory,
 	getTokenFactory,
 	getTranscoderFactory,
-	getCartFactory
+	getCartFactory,
+	getOrderFactory,
+	getPaymentFactory
 };

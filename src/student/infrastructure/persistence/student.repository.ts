@@ -4,7 +4,8 @@ import {
 	StudentCreatedEventValueObject,
 	StudentObject,
 	StudentRepository,
-	StudentUpdatedEventValueObject
+	StudentUpdatedEventValueObject,
+	StudentValueObject
 } from "../../domain";
 import { StudentORMEntity } from "./student.orm-entity";
 
@@ -19,7 +20,7 @@ export class StudentRepositoryImpl implements
 		this._mongodbRepository = mongoDBRepository;
 	}
 
-	async get(id: string): Promise<StudentCreatedEventValueObject | null> {
+	async get(id: string): Promise<StudentValueObject | null> {
 		if (!this._mongodbRepository)
 			throw new GenericError({
 				code: ErrorCodes.mongoDBRepositoryDoesNotExist,
@@ -32,16 +33,17 @@ export class StudentRepositoryImpl implements
 
 		if (!student) return null;
 
-		const studentCreatedEventValueObject =
-			new StudentCreatedEventValueObject();
-		studentCreatedEventValueObject.email = student.email;
-		studentCreatedEventValueObject.firstName = student.firstName;
-		studentCreatedEventValueObject.id = student._id;
-		studentCreatedEventValueObject.lastName = student.lastName;
-		studentCreatedEventValueObject.userId = student.userId;
-		studentCreatedEventValueObject.version = student.version;
+		const studentValueObject =
+			new StudentValueObject();
+		studentValueObject.email = student.email;
+		studentValueObject.firstName = student.firstName;
+		studentValueObject.id = student._id;
+		studentValueObject.lastName = student.lastName;
+		studentValueObject.profilePicture = student.profilePicture;
+		studentValueObject.userId = student.userId;
+		studentValueObject.version = student.version;
 
-		return studentCreatedEventValueObject;
+		return studentValueObject;
 	}
 
 	async saveStudentFromMessagingQueue(

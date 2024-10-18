@@ -27,7 +27,7 @@ class PaymentRepositoryImpl implements PaymentRepository {
 						},
 						unit_amount: course.price.value * 100
 					},
-					quantity: course.quantity
+					quantity: 1
 				})
 			);
 

@@ -1,11 +1,11 @@
 import { Repository } from "../../../utils";
-import { StudentCreatedEventValueObject, StudentUpdatedEventValueObject } from "../value-object";
+import { StudentCreatedEventValueObject, StudentUpdatedEventValueObject, StudentValueObject } from "../value-object";
 
 
 export abstract class StudentRepository extends Repository {
 	abstract get(
 		id: string
-	): Promise<StudentCreatedEventValueObject | null>;
+	): Promise<StudentValueObject | null>;
 
 	abstract saveStudentFromMessagingQueue(
 		studentCreatedEventValueObject: StudentCreatedEventValueObject
@@ -17,5 +17,5 @@ export abstract class StudentRepository extends Repository {
 
 	abstract getStudentProfileByUserId(
 		userId: string
-	): Promise<{id: string}>;
+	): Promise<{ id: string }>;
 }

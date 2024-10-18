@@ -1407,6 +1407,70 @@
 					}
 				}
 			}
+		},
+		"/cart/checkout": {
+			"post": {
+				"summary": "Checkout the cart",
+				"tags": [
+					"Cart"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"cancelUrl": {
+										"type": "string",
+										"example": "http://localhost:3000/"
+									},
+									"successUrl": {
+										"type": "string",
+										"example": "http://localhost:3000/"
+									}
+								},
+								"required": [
+									"cancelUrl",
+									"successUrl"
+								]
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"data": {
+											"type": "object",
+											"properties": {
+												"sessionId": {
+													"type": "string",
+													"example": "cs_test_a1Vh2JcozlxoRCeYMADQf0iOX2wimP9RUVkhJ44rfYwCpesPW9NagPBm6b"
+												}
+											},
+											"required": [
+												"sessionId"
+											]
+										}
+									},
+									"required": [
+										"data"
+									]
+								}
+							}
+						}
+					}
+				}
+			}
 		}
 	},
 	"components": {

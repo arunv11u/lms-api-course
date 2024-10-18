@@ -6,6 +6,9 @@ import {
 	AddCourseToCartRequestDTOImpl,
 	AddCourseToCartResponseDTO,
 	AddCourseToCartUseCase,
+	CheckoutCartRequestDTOImpl,
+	CheckoutCartResponseDTO,
+	CheckoutCartUseCase,
 	ClearAllCoursesFromCartRequestDTOImpl,
 	ClearAllCoursesFromCartUseCase,
 	GetCartRequestDTOImpl,
@@ -170,6 +173,69 @@ export class CartController {
 		} catch (error) {
 			winston.error(
 				"Error in clearing all courses from a cart:",
+				error
+			);
+
+			next(error);
+		}
+	}
+
+	@Post("/checkout")
+	async cartCheckout(
+		request: Request,
+		response: Response,
+		next: NextFunction
+	) {
+		const winston = winstonLogger.winston;
+		try {
+			winston.info("Checking out the cart");
+
+			const authorizationToken = request.header(authorizationTokenName);
+			if (!authorizationToken)
+				throw new GenericError({
+					code: ErrorCodes.invalidAuthorizationToken,
+					error: new Error("Invalid authorization token"),
+					errorCode: 400
+				});
+
+			if (!request.body.cancelUrl)
+				throw new GenericError({
+					code: ErrorCodes.cartCheckoutCancelUrlRequired,
+					error: new Error("Cancel url is required"),
+					errorCode: 400
+				});
+
+			if (!request.body.successUrl)
+				throw new GenericError({
+					code: ErrorCodes.cartCheckoutSuccessUrlRequired,
+					error: new Error("Success url is required"),
+					errorCode: 400
+				});
+
+			const cartFactory = getCartFactory();
+			const responseHandler = getResponseHandler();
+
+			const checkoutCartRequestDTO =
+				new CheckoutCartRequestDTOImpl();
+			checkoutCartRequestDTO
+				.authorizationToken = authorizationToken;
+			checkoutCartRequestDTO.cancelUrl = request.body.cancelUrl;
+			checkoutCartRequestDTO.successUrl = request.body.successUrl;
+
+			const checkoutCartUseCase = cartFactory.make("CheckoutCartUseCase") as CheckoutCartUseCase;
+			checkoutCartUseCase.checkoutCartRequestDTO =
+				checkoutCartRequestDTO;
+
+			const responseDTO = await checkoutCartUseCase
+				.execute() as CheckoutCartResponseDTO;
+
+			responseHandler.ok<CheckoutCartResponseDTO>(
+				response,
+				responseDTO
+			);
+		} catch (error) {
+			winston.error(
+				"Error in checking out the cart:",
 				error
 			);
 
