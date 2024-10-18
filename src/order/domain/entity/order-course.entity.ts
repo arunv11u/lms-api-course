@@ -1,3 +1,5 @@
+import { SetCoursePriceToOrderValueObject } from "../value-object";
+import { OrderCoursePriceEntityImpl } from "./order-course-price.entity";
 import { OrderCoursePriceEntity } from "./order-course-price.entity.type";
 import { OrderCourseEntity } from "./order-course.entity.type";
 
@@ -8,7 +10,6 @@ class OrderCourseEntityImpl implements OrderCourseEntity {
 	private _image: string;
 	private _price: OrderCoursePriceEntity;
 	private _title: string;
-	private _quantity: number;
 
 	get id(): string {
 		return this._id;
@@ -27,7 +28,13 @@ class OrderCourseEntityImpl implements OrderCourseEntity {
 	get price(): OrderCoursePriceEntity {
 		return this._price;
 	}
-	set price(price: OrderCoursePriceEntity) {
+	setPrice(
+		setCoursePriceToOrderValueObject: SetCoursePriceToOrderValueObject
+	): void {
+		const price = new OrderCoursePriceEntityImpl();
+		price.currency = setCoursePriceToOrderValueObject.currency;
+		price.value = setCoursePriceToOrderValueObject.value;
+
 		this._price = price;
 	}
 
@@ -36,13 +43,6 @@ class OrderCourseEntityImpl implements OrderCourseEntity {
 	}
 	set title(title: string) {
 		this._title = title;
-	}
-
-	get quantity(): number {
-		return this._quantity;
-	}
-	set quantity(quantity: number) {
-		this._quantity = quantity;
 	}
 }
 
