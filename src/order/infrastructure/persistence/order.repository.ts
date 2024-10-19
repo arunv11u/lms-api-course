@@ -55,6 +55,25 @@ class OrderRepositoryImpl implements OrderRepository {
 
 		return order;
 	}
+
+	async markOrderStatusAsCompletedWithId(orderId: string): Promise<void> {
+		if (!this._mongodbRepository)
+			throw new GenericError({
+				code: ErrorCodes.mongoDBRepositoryDoesNotExist,
+				error: new Error("MongoDB repository does not exist"),
+				errorCode: 500
+			});
+
+		await this._mongodbRepository.update<OrderORMEntity>(
+			this._collectionName,
+			{
+				_id: new ObjectId(orderId)
+			},
+			{
+				status: OrderStatuses.completed
+			}
+		);
+	}
 }
 
 export {

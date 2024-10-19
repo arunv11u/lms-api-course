@@ -5,7 +5,8 @@ enum MessagingTopics {
 	studentUpdatedEvent = "student-updated-event",
 	instructorCreatedEvent = "instructor-created-event",
 	instructorUpdatedEvent = "instructor-updated-event",
-	courseTranscodingCompletedEvent = "course-transcoding-completed-event"
+	courseTranscodingCompletedEvent = "course-transcoding-completed-event",
+	stripeCheckoutCompletedEvent = "stripe-checkout-completed-event"
 }
 
 export {

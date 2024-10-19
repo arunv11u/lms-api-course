@@ -1,14 +1,23 @@
 import Stripe from "stripe";
+import { MongoDBRepository } from "@arunvaradharajalu/common.mongodb-api";
+import { OrderEntity, OrderRepository } from "../../../order";
+import { ErrorCodes, GenericError, Repository } from "../../../utils";
 import { PaymentRepository } from "../../domain";
-import { OrderEntity } from "../../../order";
+import { StripeCheckoutCompletedRegistryRepositoryImpl } from "./stripe-checkout-completed-registry.repository";
+import { getOrderFactory } from "../../../global-config";
 
 
-class PaymentRepositoryImpl implements PaymentRepository {
+class PaymentRepositoryImpl implements PaymentRepository, Repository {
 
 	private _stripe: Stripe;
+	private _mongodbRepository: MongoDBRepository | null = null;
 
 	constructor(apiKey: string) {
 		this._stripe = new Stripe(apiKey);
+	}
+
+	set mongoDBRepository(mongoDBRepository: MongoDBRepository) {
+		this._mongodbRepository = mongoDBRepository;
 	}
 
 	async createCheckoutSession(
@@ -43,6 +52,32 @@ class PaymentRepositoryImpl implements PaymentRepository {
 		});
 
 		return { sessionId: session.id };
+	}
+
+	async markCheckoutAsCompleted(
+		id: string,
+		orderId: string,
+		version: number
+	): Promise<void> {
+		if (!this._mongodbRepository)
+			throw new GenericError({
+				code: ErrorCodes.mongoDBRepositoryDoesNotExist,
+				error: new Error("MongoDB repository does not exist"),
+				errorCode: 500
+			});
+
+		const orderRepository = getOrderFactory().make("OrderRepository") as OrderRepository;
+		orderRepository.mongoDBRepository = this._mongodbRepository;
+
+		await orderRepository.markOrderStatusAsCompletedWithId(orderId);
+
+		const stripeCheckoutCompletedRegistryRepository =
+			new StripeCheckoutCompletedRegistryRepositoryImpl(
+				this._mongodbRepository
+			);
+
+		await stripeCheckoutCompletedRegistryRepository
+			.create(id, orderId, version);
 	}
 }
 
