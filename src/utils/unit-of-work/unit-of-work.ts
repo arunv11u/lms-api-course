@@ -14,6 +14,7 @@ import {
 	getCourseFactory, 
 	getInstructorFactory, 
 	getOrderFactory, 
+	getPaymentFactory, 
 	getStudentFactory, 
 	getTokenFactory
 } from "../../global-config";
@@ -22,6 +23,7 @@ import { InstructorRepository } from "../../instructor";
 import { TokenRepository } from "../../token";
 import { CartRepository } from "../../cart";
 import { OrderRepository } from "../../order";
+import { PaymentRepository } from "../../payment";
 
 
 //! Do not export this Repositories enum at any cost.
@@ -31,7 +33,8 @@ enum Repositories {
 	instructorRepository = "InstructorRepository",
 	tokenRepository = "TokenRepository",
 	cartRepository = "CartRepository",
-	orderRepository = "OrderRepository"
+	orderRepository = "OrderRepository",
+	paymentRepository = "PaymentRepository"
 }
 
 class UnitOfWorkImpl implements UnitOfWork {
@@ -42,7 +45,8 @@ class UnitOfWorkImpl implements UnitOfWork {
 		Repositories.instructorRepository,
 		Repositories.tokenRepository,
 		Repositories.cartRepository,
-		Repositories.orderRepository
+		Repositories.orderRepository,
+		Repositories.paymentRepository
 	];
 
 	private _mongoDBRepository: MongoDBRepository;
@@ -52,6 +56,7 @@ class UnitOfWorkImpl implements UnitOfWork {
 	private _tokenRepository: TokenRepository;
 	private _cartRepository: CartRepository;
 	private _orderRepository: OrderRepository;
+	private _paymentRepository: PaymentRepository;
 
 	constructor() {
 		this._mongoDBRepository = getMongoDBRepository();
@@ -73,6 +78,9 @@ class UnitOfWorkImpl implements UnitOfWork {
 
 		this._orderRepository = getOrderFactory().make("OrderRepository") as OrderRepository;
 		this._orderRepository.mongoDBRepository = this._mongoDBRepository;
+
+		this._paymentRepository = getPaymentFactory().make("PaymentRepository") as PaymentRepository;
+		this._paymentRepository.mongoDBRepository = this._mongoDBRepository;
 	}
 
 	async start() {
@@ -102,6 +110,9 @@ class UnitOfWorkImpl implements UnitOfWork {
 
 		if (repositoryName === Repositories.orderRepository)
 			return this._orderRepository;
+
+		if (repositoryName === Repositories.paymentRepository)
+			return this._paymentRepository;
 
 		throw new GenericError({
 			code: ErrorCodes.internalError,

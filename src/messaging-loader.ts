@@ -19,8 +19,12 @@ import {
 	StudentCreatedListener,
 	StudentUpdatedListener
 } from "./student";
-import { InstructorCreatedListener, InstructorUpdatedListener } from "./instructor";
-import { CourseTranscodingCompletedListener } from "./course/infrastructure/messaging";
+import { 
+	InstructorCreatedListener, 
+	InstructorUpdatedListener 
+} from "./instructor";
+import { CourseTranscodingCompletedListener } from "./course";
+import { StripeCheckoutCompletedListener } from "./payment";
 
 
 
@@ -38,6 +42,8 @@ class MessagingLoaderImpl {
 	private _instructorUpdatedListener = new InstructorUpdatedListener();
 	private _courseTranscodingCompletedListener = 
 		new CourseTranscodingCompletedListener();
+	private _stripeCheckoutCompletedListener = 
+		new StripeCheckoutCompletedListener();
 	private _winston: Winston;
 
 	constructor() {
@@ -54,7 +60,8 @@ class MessagingLoaderImpl {
 			this._studentUpdatedListener,
 			this._instructorCreatedListener,
 			this._instructorUpdatedListener,
-			this._courseTranscodingCompletedListener
+			this._courseTranscodingCompletedListener,
+			this._stripeCheckoutCompletedListener
 		];
 
 		this._producerConfig = {
@@ -127,6 +134,15 @@ class MessagingLoaderImpl {
 							this._winston.info("Course transcoding completed event listener called :");
 
 							await this._courseTranscodingCompletedListener
+								.listen(message);
+
+							break;
+						}
+
+						case MessagingTopics.stripeCheckoutCompletedEvent: {
+							this._winston.info("Stripe checkout completed event listener called :");
+
+							await this._stripeCheckoutCompletedListener
 								.listen(message);
 
 							break;

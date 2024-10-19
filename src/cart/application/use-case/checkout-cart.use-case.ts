@@ -1,4 +1,4 @@
-import { getOrderFactory, getPaymentFactory } from "../../../global-config";
+import { getOrderFactory } from "../../../global-config";
 import { AddCourseToOrderValueObject, OrderEntity, OrderRepository } from "../../../order";
 import { PaymentRepository } from "../../../payment";
 import { StudentRepository } from "../../../student";
@@ -38,7 +38,8 @@ export class CheckoutCartUseCaseImpl implements
 				.getRepository("TokenRepository") as TokenRepository;
 			const studentRepository = this._unitOfWork
 				.getRepository("StudentRepository") as StudentRepository;
-			const paymentRepository = getPaymentFactory().make("PaymentRepository") as PaymentRepository;
+			const paymentRepository = this._unitOfWork
+				.getRepository("PaymentRepository") as PaymentRepository;
 
 			const { id: studentId } = await tokenRepository
 				.validateStudentAuthorizationToken(
