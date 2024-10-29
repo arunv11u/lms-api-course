@@ -13,4 +13,8 @@ export abstract class OrderRepository extends Repository {
 	abstract markOrderStatusAsCompletedWithId(
 		orderId: string
 	): Promise<void>;
+
+	abstract getOrder(
+		id: string
+	): Promise<OrderEntity>;
 }

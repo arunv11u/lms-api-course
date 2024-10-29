@@ -1,0 +1,75 @@
+db.getCollection('courses').createView([
+  {
+    $lookup: {
+      from: "order-courses",
+      let: {
+        orderId: "$_id"
+      },
+      pipeline: [
+        {
+          $match: {
+            $expr: {
+              $eq: [
+                "$order",
+                "$$orderId"
+              ]
+            }
+          }
+        }
+      ],
+      as: "courses"
+    }
+  },
+  {
+    $lookup: {
+      from: "courses",
+      let: {
+        courseIds: "$courses.course"
+      },
+      pipeline: [
+        {
+          $match: {
+            $expr: {
+              $in: [
+                "$_id",
+                "$$courseIds"
+              ]
+            }
+          }
+        }
+      ],
+      as: "courses"
+    }
+  },
+  {
+    $lookup: {
+      from: "students",
+      let: {
+        studentId: "$student"
+      },
+      pipeline: [
+        {
+          $match: {
+            $expr: {
+              $eq: [
+                "$_id",
+                "$$studentId"
+              ]
+            }
+          }
+        }
+      ],
+      as: "student"
+    }
+  },
+  {
+    $addFields: {
+      student: {
+        $arrayElemAt: [
+          "$student",
+          0
+        ]
+      }
+    }
+  }
+]);
