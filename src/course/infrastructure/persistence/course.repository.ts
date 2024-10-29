@@ -578,6 +578,215 @@ export class CourseRepositoryImpl implements CourseRepository, CourseObject {
 		return true;
 	}
 
+	async updateCourseByInstructor(
+		course: CourseEntity,
+		instructorId: string
+	): Promise<CourseEntity> {
+		if (!this._mongodbRepository)
+			throw new GenericError({
+				code: ErrorCodes.mongoDBRepositoryDoesNotExist,
+				error: new Error("MongoDB repository does not exist"),
+				errorCode: 500
+			});
+
+		const oldCourse = await this._getCourseWithId(course.id);
+		if (oldCourse.status === CourseStatuses.transcodingInProgress)
+			throw new GenericError({
+				code: ErrorCodes.courseTranscodingInprogress,
+				error: new Error("Course transcoding is still inprogress, so can't update the course now, please try later"),
+				errorCode: 403
+			});
+
+		const courseORMEntity = new CourseORMEntity();
+		courseORMEntity._id = new ObjectId(course.id);
+
+		if (oldCourse.category !== course.category)
+			courseORMEntity.category = course.category;
+
+		if (oldCourse.price.currency !== course.price.currency)
+			courseORMEntity.currency = course.price.currency;
+
+		if (oldCourse.description !== course.description)
+			courseORMEntity.description = course.description;
+
+		if (oldCourse.image !== course.image)
+			courseORMEntity.image = course.image;
+
+		courseORMEntity.lastModifiedBy = instructorId;
+		courseORMEntity.lastModifiedDate = new Date();
+
+		if (oldCourse.price.value !== course.price.value)
+			courseORMEntity.price = course.price.value;
+
+		if (oldCourse.title !== course.title)
+			courseORMEntity.title = course.title;
+
+		const courseLanguageRepository = 
+			new CourseLanguageRepositoryImpl(this._mongodbRepository);
+		const courseLearningRepository = 
+			new CourseLearningRepositoryImpl(this._mongodbRepository);
+		const courseMaterialAndOfferRepository = 
+			new CourseMaterialAndOfferRepositoryImpl(this._mongodbRepository);
+		const courseSectionLectureRepository = 
+			new CourseSectionLectureRepositoryImpl(this._mongodbRepository);
+		const courseSectionRepository = 
+			new CourseSectionRepositoryImpl(this._mongodbRepository);
+		const courseSubtitleRepository = 
+			new CourseSubtitleRepositoryImpl(this._mongodbRepository);
+
+		await courseLanguageRepository
+			.updateLanguagesByInstructor(oldCourse, course, instructorId);
+
+		await courseLearningRepository
+			.updateLearningsByInstructor(oldCourse, course, instructorId);
+
+		await courseMaterialAndOfferRepository
+			.updateCourseMaterialsAndOffersByInstructor(
+				oldCourse, 
+				course, 
+				instructorId
+			);
+
+		await courseSectionLectureRepository
+			.updateLecturesByInstructor(oldCourse, course, instructorId);
+
+		await courseSectionRepository
+			.updateSectionsByInstructor(oldCourse, course, instructorId);
+
+		await courseSubtitleRepository
+			.updateSubtitlesByInstructor(oldCourse, course, instructorId);
+
+		await this._mongodbRepository.update<CourseORMEntity>(
+			this._collectionName,
+			{
+				_id: new ObjectId(course.id)
+			},
+			{
+				$set: courseORMEntity,
+				$inc: { version: 1 }
+			}
+		);
+
+		const updatedCourse = await this._getCourseWithId(course.id);
+
+		return updatedCourse;
+	}
+
+	async getCourseWithId(courseId: string): Promise<CourseEntity> {
+		const course = await this._getCourseWithId(courseId);
+
+		return course;
+	}
+
+	private async _getCourseWithId(courseId: string): Promise<CourseEntity> {
+		if (!this._mongodbRepository)
+			throw new GenericError({
+				code: ErrorCodes.mongoDBRepositoryDoesNotExist,
+				error: new Error("MongoDB repository does not exist"),
+				errorCode: 500
+			});
+
+		const course = await this._mongodbRepository
+			.findOne<ViewCourseORMEntity>(
+				this._viewCollectionName,
+				{
+					_id: new ObjectId(courseId),
+					isDeleted: false
+				}
+			);
+
+		if (!course)
+			throw new GenericError({
+				code: ErrorCodes.courseNotFound,
+				error: new Error("Course not found"),
+				errorCode: 404
+			});
+
+		const courseEntity = this._courseFactory.make("CourseEntity") as CourseEntity;
+
+		course.creators.forEach(creator => {
+			const courseCreatorValueObject = new CourseCreatorValueObject();
+			courseCreatorValueObject.designation = creator.designation;
+			courseCreatorValueObject.firstName = creator.firstName;
+			courseCreatorValueObject.id = creator._id;
+			courseCreatorValueObject.lastName = creator.lastName;
+			courseCreatorValueObject.profilePicture =
+				creator.profilePicture;
+
+			courseEntity.addCreator(courseCreatorValueObject);
+		});
+
+		course.languages.forEach(language => {
+			courseEntity.addLanguage(language.language);
+		});
+
+		course.learnings.forEach(learning => {
+			courseEntity.addLearning(learning.learning);
+		});
+
+		course.materialsAndOffers.forEach(materialAndOffer => {
+			courseEntity.addMaterialAndOffer(
+				materialAndOffer.materialAndOffer
+			);
+		});
+
+		let totalDuration = 0;
+		let totalLecturesCount = 0;
+		course.sections.forEach(section => {
+			const courseSectionValueObject = new CourseSectionValueObject();
+			courseSectionValueObject.id = section._id.toString();
+
+			let lectureDuration = 0;
+			section.lectures.forEach(lecture => {
+				lectureDuration += lecture.duration;
+
+				courseSectionValueObject.lectures.push({
+					description: lecture.description,
+					duration: lecture.duration,
+					id: lecture._id.toString(),
+					link: lecture.link,
+					order: lecture.order,
+					status: lecture.status,
+					subtitles: [],
+					thumbnail: lecture.thumbnail,
+					title: lecture.title
+				});
+			});
+
+			totalDuration += lectureDuration;
+			totalLecturesCount += section.lectures.length;
+
+			courseSectionValueObject.lecturesCount =
+				section.lectures.length;
+			courseSectionValueObject.lecturesDuration = lectureDuration;
+			courseSectionValueObject.order = section.order;
+			courseSectionValueObject.title = section.title;
+
+			courseEntity.addSection(courseSectionValueObject);
+		});
+
+		course.subtitles.forEach(subtitle => {
+			courseEntity.addSubtitle(subtitle.subtitle);
+		});
+
+		courseEntity.category = course.category;
+		courseEntity.description = course.description;
+		courseEntity.id = course._id.toString();
+		courseEntity.image = course.image;
+		courseEntity.lastUpdatedOn = course.lastModifiedDate;
+
+		courseEntity.setPrice(course.currency, course.price);
+
+		courseEntity.status = CourseStatuses.transcodingCompleted;
+		courseEntity.title = course.title;
+		courseEntity.totalDuration = totalDuration;
+		courseEntity.totalLecturesCount = totalLecturesCount;
+		courseEntity.totalSectionsCount = course.sections.length;
+		courseEntity.totalStudents = 0;
+
+		return courseEntity;
+	}
+
 	private async _isCourseTitleAlreadyExists(title: string): Promise<boolean> {
 		if (!this._mongodbRepository)
 			throw new GenericError({

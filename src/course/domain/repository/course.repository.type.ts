@@ -58,4 +58,13 @@ export abstract class CourseRepository extends Repository {
 	): Promise<CourseEntity>;
 
 	abstract isCourseExists(id: string): Promise<boolean>;
+
+	abstract updateCourseByInstructor(
+		course: CourseEntity,
+		instructorId: string
+	): Promise<CourseEntity>;
+
+	abstract getCourseWithId(
+		courseId: string
+	): Promise<CourseEntity>;
 }

@@ -107,7 +107,7 @@ export class CreateCourseByInstructorUseCaseImpl implements
 			this._createCourseByInstructorRequestDTO.sections
 				.forEach(section => {
 					const courseSectionValueObject =
-						new CourseSectionValueObject;
+						new CourseSectionValueObject();
 					courseSectionValueObject.id =
 						courseRepository.getSectionId();
 
@@ -192,7 +192,6 @@ export class CreateCourseByInstructorUseCaseImpl implements
 				.createCourseByInstructor(courseEntity, instructorId);
 
 			await transcoderRepository.transcodeVideoLectures(courseEntity);
-
 
 
 			this._createCourseByInstructorResponseDTO.category =

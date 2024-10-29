@@ -10,6 +10,10 @@ export * from "./explore-all-courses.response.dto";
 
 export * from "./explore-all-courses.response.dto.type";
 
+export * from "./update-course-by-instructor.response.dto";
+
+export * from "./update-course-by-instructor.response.dto.type";
+
 export * from "./upload-course-image.response.dto";
 
 export * from "./upload-course-image.response.dto.type";

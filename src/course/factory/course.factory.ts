@@ -5,6 +5,7 @@ import {
 	ExploreAllCoursesUseCaseImpl,
 	GetAllCourseCategoriesUseCaseImpl,
 	ProcessCourseTranscodingCompletedEventUseCaseImpl,
+	UpdateCourseByInstructorUseCaseImpl,
 	UploadCourseImageUseCaseImpl,
 	UploadLectureSubtitleUseCaseImpl,
 	UploadLectureVideoUseCaseImpl
@@ -28,7 +29,8 @@ class CourseFactory implements Factory {
 		"ProcessCourseTranscodingCompletedEventUseCase",
 		"ExploreAllCoursesUseCase",
 		"GetAllCourseCategoriesUseCase",
-		"ExploreACourseUseCase"
+		"ExploreACourseUseCase",
+		"UpdateCourseByInstructorUseCase"
 	];
 
 	make(objectName: string): CourseObject {
@@ -62,6 +64,9 @@ class CourseFactory implements Factory {
 
 		if (objectName === "ExploreACourseUseCase")
 			return new ExploreACourseUseCaseImpl();
+
+		if (objectName === "UpdateCourseByInstructorUseCase")
+			return new UpdateCourseByInstructorUseCaseImpl();
 
 		throw new GenericError({
 			code: ErrorCodes.invalidFactoryObject,

@@ -11,7 +11,7 @@ export class CourseSectionLectureORMEntity {
 	description: string;
 	duration: number;
 	link: string;
-	thumbnail: string | null = null;
+	thumbnail: string | null;
 	order: number;
 	creationDate: Date;
 	lastModifiedDate: Date;

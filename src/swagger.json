@@ -1471,6 +1471,225 @@
 					}
 				}
 			}
+		},
+		"/course/update-by-instructor": {
+			"put": {
+				"summary": "Update course by instructor",
+				"tags": [
+					"Course"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"id": {
+										"type": "string",
+										"example": "667f14303cebd3afba47d624"
+									},
+									"title": {
+										"type": "string",
+										"example": "The Complete Python Bootcamp From Zero to Hero in Python"
+									},
+									"description": {
+										"type": "string",
+										"example": "Learn Python like a Professional Start from the basics and go all the way to creating your own applications and games"
+									},
+									"category": {
+										"type": "string",
+										"example": "PROGRAMMING"
+									},
+									"languages": {
+										"type": "array",
+										"items": {
+											"type": "string",
+											"enum": [
+												"English"
+											],
+											"example": "English"
+										}
+									},
+									"subtitles": {
+										"type": "array",
+										"items": {
+											"type": "string",
+											"enum": [
+												"English",
+												"French",
+												"Germany"
+											],
+											"example": "English"
+										}
+									},
+									"learnings": {
+										"type": "array",
+										"items": {
+											"type": "string",
+											"example": "You will learn how to leverage the power of Python to solve tasks."
+										}
+									},
+									"materialsAndOffers": {
+										"type": "array",
+										"items": {
+											"type": "string",
+											"example": "22 hours on-demand video"
+										}
+									},
+									"price": {
+										"type": "object",
+										"properties": {
+											"currency": {
+												"type": "string",
+												"enum": [
+													"CAD"
+												],
+												"example": "CAD"
+											},
+											"value": {
+												"type": "number",
+												"example": 100
+											}
+										},
+										"required": [
+											"currency",
+											"value"
+										]
+									},
+									"image": {
+										"type": "string",
+										"example": "https://s3.us-east-1.amazonaws.com/learning-management-system-project/public/courses/images/37f3aa96-7968-428f-9203-67a0a4c9d7e0.jpg"
+									},
+									"sections": {
+										"type": "array",
+										"items": {
+											"type": "object",
+											"properties": {
+												"id": {
+													"type": "string",
+													"example": "667f14303cebd3afba47d623"
+												},
+												"title": {
+													"type": "string",
+													"example": "Course Overview"
+												},
+												"lectures": {
+													"type": "array",
+													"items": {
+														"type": "object",
+														"properties": {
+															"id": {
+																"type": "string",
+																"example": "667f14303cebd3afba47d623"
+															},
+															"title": {
+																"type": "string",
+																"example": "Auto-Welcome Message"
+															},
+															"description": {
+																"type": "string",
+																"example": "Welcome to the Complete Python Bootcamp"
+															},
+															"link": {
+																"type": "string",
+																"example": "https://s3.us-east-1.amazonaws.com/learning-management-system-project/public/courses/raw-lectures/a4f8287d-2fa5-44c9-9223-4a2b292b98ad.mp4"
+															},
+															"subtitles": {
+																"type": "array",
+																"items": {
+																	"type": "object",
+																	"properties": {
+																		"language": {
+																			"type": "string",
+																			"enum": [
+																				"English",
+																				"French",
+																				"Germany"
+																			],
+																			"example": "English"
+																		},
+																		"url": {
+																			"type": "string",
+																			"example": "https://s3.us-east-1.amazonaws.com/learning-management-system-project/public/courses/raw-lectures/84036c24-17ca-4405-bbfd-ffb679ceb9d0.srt"
+																		}
+																	},
+																	"required": [
+																		"language",
+																		"url"
+																	]
+																}
+															},
+															"order": {
+																"type": "number",
+																"example": 1
+															}
+														},
+														"required": [
+															"id",
+															"title",
+															"description",
+															"link",
+															"subtitles",
+															"order"
+														]
+													}
+												},
+												"order": {
+													"type": "number",
+													"example": 1
+												}
+											},
+											"required": [
+												"id",
+												"title",
+												"lectures",
+												"order"
+											]
+										}
+									}
+								},
+								"required": [
+									"id",
+									"title",
+									"description",
+									"category",
+									"languages",
+									"subtitles",
+									"learnings",
+									"materialsAndOffers",
+									"price",
+									"image",
+									"sections"
+								]
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"data": {
+											"$ref": "#/components/schemas/Course"
+										}
+									},
+									"required": [
+										"data"
+									]
+								}
+							}
+						}
+					}
+				}
+			}
 		}
 	},
 	"components": {
