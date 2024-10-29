@@ -60,7 +60,8 @@ export enum ErrorCodes {
 	cartEmpty = "CART_EMPTY",
 	cartCheckoutCancelUrlRequired = "CART_CHECKOUT_CANCEL_URL_REQUIRED",
 	cartCheckoutSuccessUrlRequired = "CART_CHECKOUT_SUCCESS_URL_REQUIRED",
-	courseTranscodingInprogress = "COURSE_TRANSCODING_INPROGRESS"
+	courseTranscodingInprogress = "COURSE_TRANSCODING_INPROGRESS",
+	orderNotFound = "ORDER_NOT_FOUND"
 }
 
 export interface FormattedError {

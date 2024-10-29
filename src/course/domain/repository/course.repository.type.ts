@@ -67,4 +67,9 @@ export abstract class CourseRepository extends Repository {
 	abstract getCourseWithId(
 		courseId: string
 	): Promise<CourseEntity>;
+
+	abstract enrollStudentForCourses(
+		studentId: string,
+		courseIds: string[]
+	): Promise<void>;
 }

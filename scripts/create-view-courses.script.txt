@@ -146,6 +146,53 @@ db.getCollection('courses').createView([
     as: "transcodingLectures"
   },
   {
+    $lookup: {
+      from: "course-students",
+      let: {
+        courseId: "$_id"
+      },
+      pipeline: [
+        {
+          $match: {
+            $expr: {
+              $eq: [
+                "$course",
+                "$$courseId"
+              ]
+            }
+          }
+        },
+        {
+          $count: "totalStudents"
+        }
+      ],
+      as: "totalStudents"
+    }
+  },
+  {
+    $addFields: {
+      totalStudents: {
+        $cond: [
+          {
+            $gt: [
+              {
+                $size: "$totalStudents"
+              },
+              0
+            ]
+          },
+          {
+            $arrayElemAt: [
+              "$totalStudents.totalStudents",
+              0
+            ]
+          },
+          0
+        ]
+      }
+    }
+  },
+  {
     $project: {
       _id: 1,
       createdBy: 1,
@@ -192,7 +239,8 @@ db.getCollection('courses').createView([
           "TRANSCODING_IN_PROGRESS",
           "TRANSCODING_COMPLETED"
         ]
-      }
+      },
+      totalStudents: 1
     }
   }
 ]);

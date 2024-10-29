@@ -34,6 +34,7 @@ import { CourseSectionRepositoryImpl } from "./course-section.repository";
 import { CourseSubtitleRepositoryImpl } from "./course-subtitle.repository";
 import { CourseTranscodingCompletedRegistryRepositoryImpl } from "./course-transcoding-completed-registry.repository";
 import { CourseCategoryRepositoryImpl } from "./course-category.repository";
+import { CourseStudentRepositoryImpl } from "./course-student.repository";
 
 
 
@@ -420,7 +421,7 @@ export class CourseRepositoryImpl implements CourseRepository, CourseObject {
 			courseEntity.totalDuration = totalDuration;
 			courseEntity.totalLecturesCount = totalLecturesCount;
 			courseEntity.totalSectionsCount = course.sections.length;
-			courseEntity.totalStudents = 0;
+			courseEntity.totalStudents = course.totalStudents;
 
 			courseDocsCountList.docs.push(courseEntity);
 		});
@@ -554,7 +555,7 @@ export class CourseRepositoryImpl implements CourseRepository, CourseObject {
 		courseEntity.totalDuration = totalDuration;
 		courseEntity.totalLecturesCount = totalLecturesCount;
 		courseEntity.totalSectionsCount = course.sections.length;
-		courseEntity.totalStudents = 0;
+		courseEntity.totalStudents = course.totalStudents;
 
 		return courseEntity;
 	}
@@ -621,17 +622,17 @@ export class CourseRepositoryImpl implements CourseRepository, CourseObject {
 		if (oldCourse.title !== course.title)
 			courseORMEntity.title = course.title;
 
-		const courseLanguageRepository = 
+		const courseLanguageRepository =
 			new CourseLanguageRepositoryImpl(this._mongodbRepository);
-		const courseLearningRepository = 
+		const courseLearningRepository =
 			new CourseLearningRepositoryImpl(this._mongodbRepository);
-		const courseMaterialAndOfferRepository = 
+		const courseMaterialAndOfferRepository =
 			new CourseMaterialAndOfferRepositoryImpl(this._mongodbRepository);
-		const courseSectionLectureRepository = 
+		const courseSectionLectureRepository =
 			new CourseSectionLectureRepositoryImpl(this._mongodbRepository);
-		const courseSectionRepository = 
+		const courseSectionRepository =
 			new CourseSectionRepositoryImpl(this._mongodbRepository);
-		const courseSubtitleRepository = 
+		const courseSubtitleRepository =
 			new CourseSubtitleRepositoryImpl(this._mongodbRepository);
 
 		await courseLanguageRepository
@@ -642,8 +643,8 @@ export class CourseRepositoryImpl implements CourseRepository, CourseObject {
 
 		await courseMaterialAndOfferRepository
 			.updateCourseMaterialsAndOffersByInstructor(
-				oldCourse, 
-				course, 
+				oldCourse,
+				course,
 				instructorId
 			);
 
@@ -676,6 +677,31 @@ export class CourseRepositoryImpl implements CourseRepository, CourseObject {
 		const course = await this._getCourseWithId(courseId);
 
 		return course;
+	}
+
+	async enrollStudentForCourses(
+		studentId: string,
+		courseIds: string[]
+	): Promise<void> {
+		if (!this._mongodbRepository)
+			throw new GenericError({
+				code: ErrorCodes.mongoDBRepositoryDoesNotExist,
+				error: new Error("MongoDB repository does not exist"),
+				errorCode: 500
+			});
+
+		const courseStudentRepository = new CourseStudentRepositoryImpl(
+			this._mongodbRepository
+		);
+
+		const courseObjectIds = courseIds.map(
+			courseId => new ObjectId(courseId)
+		);
+
+		await courseStudentRepository.enrollStudentForCourses(
+			new ObjectId(studentId),
+			courseObjectIds
+		);
 	}
 
 	private async _getCourseWithId(courseId: string): Promise<CourseEntity> {
@@ -782,7 +808,7 @@ export class CourseRepositoryImpl implements CourseRepository, CourseObject {
 		courseEntity.totalDuration = totalDuration;
 		courseEntity.totalLecturesCount = totalLecturesCount;
 		courseEntity.totalSectionsCount = course.sections.length;
-		courseEntity.totalStudents = 0;
+		courseEntity.totalStudents = course.totalStudents;
 
 		return courseEntity;
 	}

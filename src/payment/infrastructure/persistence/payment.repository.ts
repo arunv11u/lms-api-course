@@ -4,7 +4,8 @@ import { OrderEntity, OrderRepository } from "../../../order";
 import { ErrorCodes, GenericError, Repository } from "../../../utils";
 import { PaymentRepository } from "../../domain";
 import { StripeCheckoutCompletedRegistryRepositoryImpl } from "./stripe-checkout-completed-registry.repository";
-import { getOrderFactory } from "../../../global-config";
+import { getCourseFactory, getOrderFactory } from "../../../global-config";
+import { CourseRepository } from "../../../course";
 
 
 class PaymentRepositoryImpl implements PaymentRepository, Repository {
@@ -69,7 +70,18 @@ class PaymentRepositoryImpl implements PaymentRepository, Repository {
 		const orderRepository = getOrderFactory().make("OrderRepository") as OrderRepository;
 		orderRepository.mongoDBRepository = this._mongodbRepository;
 
+		const courseRepository = getCourseFactory().make("CourseRepository") as CourseRepository;
+		courseRepository.mongoDBRepository = this._mongodbRepository;
+
 		await orderRepository.markOrderStatusAsCompletedWithId(orderId);
+
+		const orderEntity = await orderRepository.getOrder(orderId);
+
+		const orderCourseIds = orderEntity.courses.map(course => course.id);
+		await courseRepository.enrollStudentForCourses(
+			orderEntity.student.id,
+			orderCourseIds
+		);
 
 		const stripeCheckoutCompletedRegistryRepository =
 			new StripeCheckoutCompletedRegistryRepositoryImpl(
