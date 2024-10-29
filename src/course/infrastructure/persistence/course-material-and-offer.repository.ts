@@ -37,4 +37,78 @@ export class CourseMaterialAndOfferRepositoryImpl {
 				courseMaterialsAndOffersORMEntity
 			);
 	}
+
+	async updateCourseMaterialsAndOffersByInstructor(
+		oldCourse: CourseEntity,
+		course: CourseEntity,
+		instructorId: string
+	) {
+		const oldCourseMaterialsAndOffersMap =
+			new Set<string>(oldCourse.materialsAndOffers);
+		const courseMaterialsAndOffersMap =
+			new Set<string>(course.materialsAndOffers);
+		const materialsAndOffersToBeDeleted: string[] = [];
+		const materialsAndOffersToBeAdded: string[] = [];
+
+		oldCourse.materialsAndOffers.forEach(materialAndOffer => {
+			if (!courseMaterialsAndOffersMap.has(materialAndOffer))
+				materialsAndOffersToBeDeleted.push(materialAndOffer);
+		});
+
+		course.materialsAndOffers.forEach(materialAndOffer => {
+			if (!oldCourseMaterialsAndOffersMap.has(materialAndOffer))
+				materialsAndOffersToBeAdded.push(materialAndOffer);
+		});
+
+		if(materialsAndOffersToBeDeleted.length)
+			await this._deleteCourseMaterialsAndOffers(
+				new ObjectId(course.id),
+				materialsAndOffersToBeDeleted
+			);
+
+		if(materialsAndOffersToBeAdded.length)
+			await this._addCourseMaterialsAndOffers(
+				new ObjectId(course.id),
+				materialsAndOffersToBeAdded,
+				instructorId
+			);
+	}
+
+	private async _deleteCourseMaterialsAndOffers(
+		courseId: ObjectId,
+		materialsAndOffers: string[]
+	) {
+		await this._mongodbRepository
+			.removeRange<CourseMaterialAndOfferORMEntity>(
+				this._collectionName,
+				{
+					course: courseId,
+					materialAndOffer: { $in: materialsAndOffers }
+				}
+			);
+	}
+
+	private async _addCourseMaterialsAndOffers(
+		courseId: ObjectId,
+		materialsAndOffers: string[],
+		instructorId: string
+	) {
+		const courseMaterialsAndOffersORMEntity = materialsAndOffers
+			.map<CourseMaterialAndOfferORMEntity>(materialAndOffer => ({
+				_id: new ObjectId(),
+				course: courseId,
+				createdBy: instructorId,
+				creationDate: new Date(),
+				isDeleted: false,
+				materialAndOffer: materialAndOffer,
+				lastModifiedBy: instructorId,
+				lastModifiedDate: new Date(),
+				version: 1
+			}));
+
+		await this._mongodbRepository.addRange<CourseMaterialAndOfferORMEntity>(
+			this._collectionName,
+			courseMaterialsAndOffersORMEntity
+		);
+	}
 }

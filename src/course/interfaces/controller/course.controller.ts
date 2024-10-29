@@ -1,5 +1,5 @@
 /* eslint-disable max-lines */
-import { Controller, Get, Post, Use } from "@arunvaradharajalu/common.decorators";
+import { Controller, Get, Post, Put, Use } from "@arunvaradharajalu/common.decorators";
 import { Request, Response, NextFunction } from "express";
 import { ErrorCodes, GenericError, getResponseHandler, winstonLogger } from "../../../utils";
 import { authorizationTokenName, getCourseFactory } from "../../../global-config";
@@ -11,6 +11,8 @@ import {
 	ExploreAllCoursesRequestDTOImpl,
 	ExploreAllCoursesUseCase,
 	GetAllCourseCategoriesUseCase,
+	UpdateCourseByInstructorRequestDTOImpl,
+	UpdateCourseByInstructorUseCase,
 	UploadCourseImageRequestDTOImpl,
 	UploadCourseImageUseCase,
 	UploadLectureSubtitleRequestDTOImpl,
@@ -18,12 +20,62 @@ import {
 	UploadLectureVideoRequestDTOImpl,
 	UploadLectureVideoUseCase
 } from "../../application";
-import { createCourseByInstructorRequestValidator } from "../request-validator";
+import {
+	createCourseByInstructorRequestValidator,
+	updateCourseByInstructorRequestValidator
+} from "../request-validator";
 
 
 
 @Controller("/course")
 export class CourseController {
+
+	@Get("/explore/:id")
+	async exploreACourses(
+		request: Request,
+		response: Response,
+		next: NextFunction
+	): Promise<void> {
+		const winston = winstonLogger.winston;
+		try {
+			winston.info(`Explore a courses : ${request.params.id}`);
+
+			const courseFactory = getCourseFactory();
+			const responseHandler = getResponseHandler();
+
+			if (!request.params.id)
+				throw new GenericError({
+					code: ErrorCodes.courseIdRequired,
+					error: new Error("Course id is required"),
+					errorCode: 400
+				});
+
+			const exploreACourseRequestDTO =
+				new ExploreACourseRequestDTOImpl();
+
+			exploreACourseRequestDTO.courseId = request.params.id;
+
+			const exploreACourseUseCase = courseFactory.make("ExploreACourseUseCase") as ExploreACourseUseCase;
+			exploreACourseUseCase
+				.exploreACourseRequestDTO = exploreACourseRequestDTO;
+
+			const exploreACourseResponseDTO =
+				await exploreACourseUseCase
+					.execute();
+
+			responseHandler.ok(
+				response,
+				exploreACourseResponseDTO
+			);
+		} catch (error) {
+			winston.error(
+				"Error in exploring a course:",
+				error
+			);
+
+			next(error);
+		}
+	}
 
 	@Post("/upload-image")
 	async uploadCourseImage(
@@ -337,46 +389,57 @@ export class CourseController {
 		}
 	}
 
-	@Get("/explore/:id")
-	async exploreACourses(
+	@Put("/update-by-instructor")
+	@Use(updateCourseByInstructorRequestValidator)
+	async updateCourseByInstructor(
 		request: Request,
 		response: Response,
 		next: NextFunction
 	): Promise<void> {
 		const winston = winstonLogger.winston;
 		try {
-			winston.info(`Explore a courses : ${request.params.id}`);
+			winston.info("Updating a course by instructor");
 
 			const courseFactory = getCourseFactory();
 			const responseHandler = getResponseHandler();
 
-			if (!request.params.id)
-				throw new GenericError({
-					code: ErrorCodes.courseIdRequired,
-					error: new Error("Course id is required"),
-					errorCode: 400
-				});
+			const updateCourseByInstructorRequestDTO =
+				new UpdateCourseByInstructorRequestDTOImpl();
+			updateCourseByInstructorRequestDTO.authorizationToken =
+				request.header(authorizationTokenName) as string;
+			updateCourseByInstructorRequestDTO.category = request.body.category;
+			updateCourseByInstructorRequestDTO.description =
+				request.body.description;
+			updateCourseByInstructorRequestDTO.id = request.body.id;
+			updateCourseByInstructorRequestDTO.image = request.body.image;
+			updateCourseByInstructorRequestDTO.languages =
+				request.body.languages;
+			updateCourseByInstructorRequestDTO.learnings =
+				request.body.learnings;
+			updateCourseByInstructorRequestDTO.materialsAndOffers =
+				request.body.materialsAndOffers;
+			updateCourseByInstructorRequestDTO.price = request.body.price;
+			updateCourseByInstructorRequestDTO.sections = request.body.sections;
+			updateCourseByInstructorRequestDTO.subtitles =
+				request.body.subtitles;
+			updateCourseByInstructorRequestDTO.title = request.body.title;
 
-			const exploreACourseRequestDTO =
-				new ExploreACourseRequestDTOImpl();
+			const updateCourseByInstructorUseCase = courseFactory.make("UpdateCourseByInstructorUseCase") as UpdateCourseByInstructorUseCase;
+			updateCourseByInstructorUseCase
+				.updateCourseByInstructorRequestDTO =
+				updateCourseByInstructorRequestDTO;
 
-			exploreACourseRequestDTO.courseId = request.params.id;
-
-			const exploreACourseUseCase = courseFactory.make("ExploreACourseUseCase") as ExploreACourseUseCase;
-			exploreACourseUseCase
-				.exploreACourseRequestDTO = exploreACourseRequestDTO;
-
-			const exploreACourseResponseDTO =
-				await exploreACourseUseCase
+			const updateCourseByInstructorResponseDTO =
+				await updateCourseByInstructorUseCase
 					.execute();
 
 			responseHandler.ok(
 				response,
-				exploreACourseResponseDTO
+				updateCourseByInstructorResponseDTO
 			);
 		} catch (error) {
 			winston.error(
-				"Error in exploring a course:",
+				"Error in updating a course by instructor:",
 				error
 			);
 

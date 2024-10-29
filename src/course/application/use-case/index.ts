@@ -18,6 +18,10 @@ export * from "./process-course-transcoding-completed-event.use-case";
 
 export * from "./process-course-transcoding-completed-event.use-case.type";
 
+export * from "./update-course-by-instructor.use-case";
+
+export * from "./update-course-by-instructor.use-case.type";
+
 export * from "./upload-course-image.use-case";
 
 export * from "./upload-course-image.use-case.type";

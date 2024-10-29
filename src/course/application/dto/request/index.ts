@@ -14,6 +14,10 @@ export * from "./process-course-transcoding-completed-event.request.dto";
 
 export * from "./process-course-transcoding-completed-event.request.dto.type";
 
+export * from "./update-course-by-instructor.request.dto";
+
+export * from "./update-course-by-instructor.request.dto.type";
+
 export * from "./upload-course-image.request.dto";
 
 export * from "./upload-course-image.request.dto.type";
