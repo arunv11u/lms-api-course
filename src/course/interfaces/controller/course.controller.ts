@@ -11,6 +11,8 @@ import {
 	ExploreAllCoursesRequestDTOImpl,
 	ExploreAllCoursesUseCase,
 	GetAllCourseCategoriesUseCase,
+	GetMyLearningsRequestDTOImpl,
+	GetMyLearningsUseCase,
 	UpdateCourseByInstructorRequestDTOImpl,
 	UpdateCourseByInstructorUseCase,
 	UploadCourseImageRequestDTOImpl,
@@ -440,6 +442,47 @@ export class CourseController {
 		} catch (error) {
 			winston.error(
 				"Error in updating a course by instructor:",
+				error
+			);
+
+			next(error);
+		}
+	}
+
+	@Get("/my-learnings")
+	async getMyLearnings(
+		request: Request,
+		response: Response,
+		next: NextFunction
+	): Promise<void> {
+		const winston = winstonLogger.winston;
+		try {
+			winston.info("Retrieving my learnings of a student");
+
+			const courseFactory = getCourseFactory();
+			const responseHandler = getResponseHandler();
+
+			const getMyLearningsRequestDTO =
+				new GetMyLearningsRequestDTOImpl();
+
+			getMyLearningsRequestDTO.authorizationToken =
+				request.header(authorizationTokenName) as string;
+
+			const getMyLearningsUseCase = courseFactory.make("GetMyLearningsUseCase") as GetMyLearningsUseCase;
+			getMyLearningsUseCase
+				.getMyLearningsRequestDTO = getMyLearningsRequestDTO;
+
+			const getMyLearningsResponseDTO =
+				await getMyLearningsUseCase
+					.execute();
+
+			responseHandler.ok(
+				response,
+				getMyLearningsResponseDTO
+			);
+		} catch (error) {
+			winston.error(
+				"Error in retrieving my learnings of a student:",
 				error
 			);
 

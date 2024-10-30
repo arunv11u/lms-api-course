@@ -13,7 +13,7 @@ export class CourseStudentRepositoryImpl {
 	}
 
 	async enrollStudentForCourses(
-		studentId: ObjectId,
+		studentId: string,
 		courseIds: ObjectId[]
 	): Promise<void> {
 		const courseStudentsORMEntity = courseIds.map(courseId => {
@@ -36,5 +36,22 @@ export class CourseStudentRepositoryImpl {
 			this._collectionName,
 			courseStudentsORMEntity
 		);
+	}
+
+	async getEnrolledCourseIdsOfStudent(
+		studentId: string
+	): Promise<ObjectId[]> {
+		const courseStudentsORMEntity = await this._mongodbRepository
+			.find<CourseStudentORMEntity>(
+				this._collectionName,
+				{
+					student: studentId
+				}
+			);
+
+		const courseIds = courseStudentsORMEntity
+			.map(courseStudent => courseStudent.course);
+
+		return courseIds;
 	}
 }

@@ -5,7 +5,7 @@ import { ObjectId } from "mongodb";
 export class CourseStudentORMEntity {
 	_id: ObjectId;
 	course: ObjectId;
-	student: ObjectId;
+	student: string;
 	creationDate: Date;
 	lastModifiedDate: Date;
 	createdBy: string;

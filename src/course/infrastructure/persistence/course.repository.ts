@@ -699,9 +699,121 @@ export class CourseRepositoryImpl implements CourseRepository, CourseObject {
 		);
 
 		await courseStudentRepository.enrollStudentForCourses(
-			new ObjectId(studentId),
+			studentId,
 			courseObjectIds
 		);
+	}
+
+	async getMyLearnings(studentId: string): Promise<CourseEntity[]> {
+		if (!this._mongodbRepository)
+			throw new GenericError({
+				code: ErrorCodes.mongoDBRepositoryDoesNotExist,
+				error: new Error("MongoDB repository does not exist"),
+				errorCode: 500
+			});
+
+		const courseStudentRepository = new CourseStudentRepositoryImpl(
+			this._mongodbRepository
+		);
+
+		const courseIds = await courseStudentRepository
+			.getEnrolledCourseIdsOfStudent(studentId);
+
+		const coursesORMEntity = await this._mongodbRepository
+			.find<ViewCourseORMEntity>(
+				this._viewCollectionName,
+				{
+					_id: {$in: courseIds}
+				}
+			);
+
+		const coursesEntity = coursesORMEntity.map<CourseEntity>(course => {
+			const courseEntity = this._courseFactory.make("CourseEntity") as CourseEntity;
+
+			course.creators.forEach(creator => {
+				const courseCreatorValueObject = new CourseCreatorValueObject();
+				courseCreatorValueObject.designation = creator.designation;
+				courseCreatorValueObject.firstName = creator.firstName;
+				courseCreatorValueObject.id = creator._id;
+				courseCreatorValueObject.lastName = creator.lastName;
+				courseCreatorValueObject.profilePicture =
+					creator.profilePicture;
+
+				courseEntity.addCreator(courseCreatorValueObject);
+			});
+
+			course.languages.forEach(language => {
+				courseEntity.addLanguage(language.language);
+			});
+
+			course.learnings.forEach(learning => {
+				courseEntity.addLearning(learning.learning);
+			});
+
+			course.materialsAndOffers.forEach(materialAndOffer => {
+				courseEntity.addMaterialAndOffer(
+					materialAndOffer.materialAndOffer
+				);
+			});
+
+			let totalDuration = 0;
+			let totalLecturesCount = 0;
+			course.sections.forEach(section => {
+				const courseSectionValueObject = new CourseSectionValueObject();
+				courseSectionValueObject.id = section._id.toString();
+
+				let lectureDuration = 0;
+				section.lectures.forEach(lecture => {
+					lectureDuration += lecture.duration;
+
+					courseSectionValueObject.lectures.push({
+						description: lecture.description,
+						duration: lecture.duration,
+						id: lecture._id.toString(),
+						link: lecture.link,
+						order: lecture.order,
+						status: lecture.status,
+						subtitles: [],
+						thumbnail: lecture.thumbnail,
+						title: lecture.title
+					});
+				});
+
+				totalDuration += lectureDuration;
+				totalLecturesCount += section.lectures.length;
+
+				courseSectionValueObject.lecturesCount =
+					section.lectures.length;
+				courseSectionValueObject.lecturesDuration = lectureDuration;
+				courseSectionValueObject.order = section.order;
+				courseSectionValueObject.title = section.title;
+
+				courseEntity.addSection(courseSectionValueObject);
+			});
+
+			course.subtitles.forEach(subtitle => {
+				courseEntity.addSubtitle(subtitle.subtitle);
+			});
+
+			courseEntity.category = course.category;
+			courseEntity.description = course.description;
+			courseEntity.id = course._id.toString();
+			courseEntity.image = course.image;
+			courseEntity.lastUpdatedOn = course.lastModifiedDate;
+
+			courseEntity.setPrice(course.currency, course.price);
+
+			courseEntity.status = CourseStatuses.transcodingCompleted;
+			courseEntity.title = course.title;
+			courseEntity.totalDuration = totalDuration;
+			courseEntity.totalLecturesCount = totalLecturesCount;
+			courseEntity.totalSectionsCount = course.sections.length;
+			courseEntity.totalStudents = course.totalStudents;
+
+			return courseEntity;
+		});
+
+		return coursesEntity;
 	}
 
 	private async _getCourseWithId(courseId: string): Promise<CourseEntity> {
