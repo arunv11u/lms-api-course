@@ -11,7 +11,11 @@ import {
 	ExploreAllCoursesRequestDTOImpl,
 	ExploreAllCoursesUseCase,
 	GetAllCourseCategoriesUseCase,
+	GetMyCourseRequestDTOImpl,
+	GetMyCourseResponseDTO,
+	GetMyCourseUseCase,
 	GetMyLearningsRequestDTOImpl,
+	GetMyLearningsResponseDTO,
 	GetMyLearningsUseCase,
 	UpdateCourseByInstructorRequestDTOImpl,
 	UpdateCourseByInstructorUseCase,
@@ -465,8 +469,15 @@ export class CourseController {
 			const getMyLearningsRequestDTO =
 				new GetMyLearningsRequestDTOImpl();
 
-			getMyLearningsRequestDTO.authorizationToken =
-				request.header(authorizationTokenName) as string;
+			const authorizationToken = request.header(authorizationTokenName);
+			if (!authorizationToken)
+				throw new GenericError({
+					code: ErrorCodes.invalidAuthorizationToken,
+					error: new Error("Invalid authorization token"),
+					errorCode: 400
+				});
+
+			getMyLearningsRequestDTO.authorizationToken = authorizationToken;
 
 			const getMyLearningsUseCase = courseFactory.make("GetMyLearningsUseCase") as GetMyLearningsUseCase;
 			getMyLearningsUseCase
@@ -476,13 +487,69 @@ export class CourseController {
 				await getMyLearningsUseCase
 					.execute();
 
-			responseHandler.ok(
+			responseHandler.ok<GetMyLearningsResponseDTO[]>(
 				response,
 				getMyLearningsResponseDTO
 			);
 		} catch (error) {
 			winston.error(
 				"Error in retrieving my learnings of a student:",
+				error
+			);
+
+			next(error);
+		}
+	}
+
+	@Get("/my-course")
+	async getMyCourse(
+		request: Request,
+		response: Response,
+		next: NextFunction
+	): Promise<void> {
+		const winston = winstonLogger.winston;
+		try {
+			winston.info("Retrieving my course of a student");
+
+			const courseFactory = getCourseFactory();
+			const responseHandler = getResponseHandler();
+
+			const authorizationToken = request.header(authorizationTokenName);
+			if (!authorizationToken)
+				throw new GenericError({
+					code: ErrorCodes.invalidAuthorizationToken,
+					error: new Error("Invalid authorization token"),
+					errorCode: 400
+				});
+
+			if (!request.query.courseId)
+				throw new GenericError({
+					code: ErrorCodes.courseIdRequired,
+					error: new Error("Course id is required"),
+					errorCode: 400
+				});
+
+			const getMyCourseRequestDTO =
+				new GetMyCourseRequestDTOImpl();
+
+			getMyCourseRequestDTO.authorizationToken = authorizationToken;
+			getMyCourseRequestDTO.courseId = request.query.courseId as string;
+
+			const getMyCourseUseCase = courseFactory.make("GetMyCourseUseCase") as GetMyCourseUseCase;
+			getMyCourseUseCase
+				.getMyCourseRequestDTO = getMyCourseRequestDTO;
+
+			const getMyCourseResponseDTO =
+				await getMyCourseUseCase
+					.execute();
+
+			responseHandler.ok<GetMyCourseResponseDTO>(
+				response,
+				getMyCourseResponseDTO
+			);
+		} catch (error) {
+			winston.error(
+				"Error in retrieving my course of a student:",
 				error
 			);
 
