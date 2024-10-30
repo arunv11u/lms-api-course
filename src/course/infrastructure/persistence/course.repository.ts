@@ -857,7 +857,133 @@ export class CourseRepositoryImpl implements CourseRepository, CourseObject {
 				}
 			);
 
-		if(!course)
+		if (!course)
+			throw new GenericError({
+				code: ErrorCodes.courseNotFound,
+				error: new Error("Course not found"),
+				errorCode: 404
+			});
+
+		const courseEntity = this._courseFactory.make("CourseEntity") as CourseEntity;
+
+		course.creators.forEach(creator => {
+			const courseCreatorValueObject = new CourseCreatorValueObject();
+			courseCreatorValueObject.designation = creator.designation;
+			courseCreatorValueObject.firstName = creator.firstName;
+			courseCreatorValueObject.id = creator._id;
+			courseCreatorValueObject.lastName = creator.lastName;
+			courseCreatorValueObject.profilePicture =
+				creator.profilePicture;
+
+			courseEntity.addCreator(courseCreatorValueObject);
+		});
+
+		course.languages.forEach(language => {
+			courseEntity.addLanguage(language.language);
+		});
+
+		course.learnings.forEach(learning => {
+			courseEntity.addLearning(learning.learning);
+		});
+
+		course.materialsAndOffers.forEach(materialAndOffer => {
+			courseEntity.addMaterialAndOffer(
+				materialAndOffer.materialAndOffer
+			);
+		});
+
+		let totalDuration = 0;
+		let totalLecturesCount = 0;
+		course.sections.forEach(section => {
+			const courseSectionValueObject = new CourseSectionValueObject();
+			courseSectionValueObject.id = section._id.toString();
+
+			let lectureDuration = 0;
+			section.lectures.forEach(lecture => {
+				lectureDuration += lecture.duration;
+
+				courseSectionValueObject.lectures.push({
+					description: lecture.description,
+					duration: lecture.duration,
+					id: lecture._id.toString(),
+					link: lecture.link,
+					order: lecture.order,
+					status: lecture.status,
+					subtitles: [],
+					thumbnail: lecture.thumbnail,
+					title: lecture.title
+				});
+			});
+
+			totalDuration += lectureDuration;
+			totalLecturesCount += section.lectures.length;
+
+			courseSectionValueObject.lecturesCount =
+				section.lectures.length;
+			courseSectionValueObject.lecturesDuration = lectureDuration;
+			courseSectionValueObject.order = section.order;
+			courseSectionValueObject.title = section.title;
+
+			courseEntity.addSection(courseSectionValueObject);
+		});
+
+		course.subtitles.forEach(subtitle => {
+			courseEntity.addSubtitle(subtitle.subtitle);
+		});
+
+		courseEntity.category = course.category;
+		courseEntity.description = course.description;
+		courseEntity.id = course._id.toString();
+		courseEntity.image = course.image;
+		courseEntity.lastUpdatedOn = course.lastModifiedDate;
+
+		courseEntity.setPrice(course.currency, course.price);
+
+		courseEntity.status = course.status;
+		courseEntity.title = course.title;
+		courseEntity.totalDuration = totalDuration;
+		courseEntity.totalLecturesCount = totalLecturesCount;
+		courseEntity.totalSectionsCount = course.sections.length;
+		courseEntity.totalStudents = course.totalStudents;
+
+		return courseEntity;
+	}
+
+	async getCourseByInstructor(
+		courseId: string,
+		instructorId: string
+	): Promise<CourseEntity> {
+		if (!this._mongodbRepository)
+			throw new GenericError({
+				code: ErrorCodes.mongoDBRepositoryDoesNotExist,
+				error: new Error("MongoDB repository does not exist"),
+				errorCode: 500
+			});
+
+		const courseCreatorRepository = new CourseCreatorRepositoryImpl(
+			this._mongodbRepository
+		);
+
+		if(!await courseCreatorRepository
+			.isCourseCreatedByInstructor(
+				new ObjectId(courseId),
+				instructorId
+			)
+		) throw new GenericError({
+			code: ErrorCodes.courseNotCreatedByInstructor,
+			error: new Error("Course is not created by instructor"),
+			errorCode: 403
+		});
+
+		const course = await this._mongodbRepository
+			.findOne<ViewCourseORMEntity>(
+				this._viewCollectionName,
+				{
+					_id: new ObjectId(courseId)
+				}
+			);
+
+		if (!course)
 			throw new GenericError({
 				code: ErrorCodes.courseNotFound,
 				error: new Error("Course not found"),

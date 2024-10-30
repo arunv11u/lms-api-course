@@ -7,12 +7,12 @@
 	},
 	"servers": [
 		{
-			"url": "http://localhost:3000",
-			"description": "Local host server, exclusively for back-end developers."
-		},
-		{
 			"url": "https://smooth-raptor-explicitly.ngrok-free.app/api/main",
 			"description": "LMS API's related to courses"
+		},
+		{
+			"url": "http://localhost:3000",
+			"description": "Local host server, exclusively for back-end developers."
 		}
 	],
 	"paths": {
@@ -1731,6 +1731,51 @@
 		"/course/my-course": {
 			"get": {
 				"summary": "Get the enrolled course of a student",
+				"tags": [
+					"Course"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": [
+					{
+						"name": "courseId",
+						"in": "query",
+						"description": "Course id",
+						"required": true,
+						"schema": {
+							"type": "string",
+							"example": "667f14303cebd3afba47d623"
+						}
+					}
+				],
+				"requestBody": {},
+				"responses": {
+					"200": {
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"data": {
+											"$ref": "#/components/schemas/Course"
+										}
+									},
+									"required": [
+										"data"
+									]
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/course/by-instructor": {
+			"get": {
+				"summary": "Get the course by instructor",
 				"tags": [
 					"Course"
 				],
