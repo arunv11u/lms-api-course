@@ -14,6 +14,10 @@ export * from "./get-all-course-categories.use-case";
 
 export * from "./get-all-course-categories.use-case.type";
 
+export * from "./get-my-learnings.use-case";
+
+export * from "./get-my-learnings.use-case.type";
+
 export * from "./process-course-transcoding-completed-event.use-case";
 
 export * from "./process-course-transcoding-completed-event.use-case.type";

@@ -10,6 +10,10 @@ export * from "./explore-all-courses.request.dto";
 
 export * from "./explore-all-courses.request.dto.type";
 
+export * from "./get-my-learnings.request.dto";
+
+export * from "./get-my-learnings.request.dto.type";
+
 export * from "./process-course-transcoding-completed-event.request.dto";
 
 export * from "./process-course-transcoding-completed-event.request.dto.type";
