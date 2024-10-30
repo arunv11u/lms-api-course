@@ -54,4 +54,22 @@ export class CourseStudentRepositoryImpl {
 
 		return courseIds;
 	}
+
+	async isStudentEnrolledForCourse(
+		courseId: ObjectId,
+		studentId: string
+	): Promise<boolean> {
+		const courseStudentORMEntity = await this._mongodbRepository
+			.findOne<CourseStudentORMEntity>(
+				this._collectionName,
+				{
+					course: courseId,
+					student: studentId
+				}
+			);
+
+		if (!courseStudentORMEntity) return false;
+
+		return true;
+	}
 }

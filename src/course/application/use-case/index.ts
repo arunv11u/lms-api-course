@@ -14,6 +14,10 @@ export * from "./get-all-course-categories.use-case";
 
 export * from "./get-all-course-categories.use-case.type";
 
+export * from "./get-my-course.use-case";
+
+export * from "./get-my-course.use-case.type";
+
 export * from "./get-my-learnings.use-case";
 
 export * from "./get-my-learnings.use-case.type";

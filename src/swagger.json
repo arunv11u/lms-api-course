@@ -1693,7 +1693,7 @@
 		},
 		"/course/my-learnings": {
 			"get": {
-				"summary": "Get the list of courses",
+				"summary": "Get the list of enrolled courses of a student",
 				"tags": [
 					"Course"
 				],
@@ -1716,6 +1716,51 @@
 											"items": {
 												"$ref": "#/components/schemas/Course"
 											}
+										}
+									},
+									"required": [
+										"data"
+									]
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/course/my-course": {
+			"get": {
+				"summary": "Get the enrolled course of a student",
+				"tags": [
+					"Course"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": [
+					{
+						"name": "courseId",
+						"in": "query",
+						"description": "Course id",
+						"required": true,
+						"schema": {
+							"type": "string",
+							"example": "667f14303cebd3afba47d623"
+						}
+					}
+				],
+				"requestBody": {},
+				"responses": {
+					"200": {
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"data": {
+											"$ref": "#/components/schemas/Course"
 										}
 									},
 									"required": [
