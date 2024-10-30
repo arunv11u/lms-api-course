@@ -11,6 +11,9 @@ import {
 	ExploreAllCoursesRequestDTOImpl,
 	ExploreAllCoursesUseCase,
 	GetAllCourseCategoriesUseCase,
+	GetCourseByInstructorRequestDTOImpl,
+	GetCourseByInstructorResponseDTO,
+	GetCourseByInstructorUseCase,
 	GetMyCourseRequestDTOImpl,
 	GetMyCourseResponseDTO,
 	GetMyCourseUseCase,
@@ -550,6 +553,65 @@ export class CourseController {
 		} catch (error) {
 			winston.error(
 				"Error in retrieving my course of a student:",
+				error
+			);
+
+			next(error);
+		}
+	}
+
+	@Get("/by-instructor")
+	async getCourseByInstructor(
+		request: Request,
+		response: Response,
+		next: NextFunction
+	): Promise<void> {
+		const winston = winstonLogger.winston;
+		try {
+			winston.info("Retrieving a course by instructor");
+
+			const courseFactory = getCourseFactory();
+			const responseHandler = getResponseHandler();
+
+			const authorizationToken = request.header(authorizationTokenName);
+			if (!authorizationToken)
+				throw new GenericError({
+					code: ErrorCodes.invalidAuthorizationToken,
+					error: new Error("Invalid authorization token"),
+					errorCode: 400
+				});
+
+			if (!request.query.courseId)
+				throw new GenericError({
+					code: ErrorCodes.courseIdRequired,
+					error: new Error("Course id is required"),
+					errorCode: 400
+				});
+
+			const getCourseByInstructorRequestDTO =
+				new GetCourseByInstructorRequestDTOImpl();
+
+			getCourseByInstructorRequestDTO.authorizationToken = 
+				authorizationToken;
+			getCourseByInstructorRequestDTO.courseId = 
+				request.query.courseId as string;
+
+			const getCourseByInstructorUseCase = courseFactory.make("GetCourseByInstructorUseCase") as GetCourseByInstructorUseCase;
+			getCourseByInstructorUseCase
+				.getCourseByInstructorRequestDTO = 
+					getCourseByInstructorRequestDTO;
+
+			const getCourseByInstructorResponseDTO =
+				await getCourseByInstructorUseCase
+					.execute();
+
+			responseHandler.ok<GetCourseByInstructorResponseDTO>(
+				response,
+				getCourseByInstructorResponseDTO
+			);
+		} catch (error) {
+			winston.error(
+				"Error in retrieving a course by instructor:",
 				error
 			);
 

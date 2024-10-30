@@ -36,4 +36,22 @@ export class CourseCreatorRepositoryImpl {
 			creatorsORMEntity
 		);
 	}
+
+	async isCourseCreatedByInstructor(
+		courseId: ObjectId,
+		instructorId: string
+	): Promise<boolean> {
+		const creator = await this._mongodbRepository
+			.findOne<CourseCreatorORMEntity>(
+				this._collectionName,
+				{
+					course: courseId,
+					creator: instructorId
+				}
+			);
+
+		if (!creator) return false;
+
+		return true;
+	}
 }

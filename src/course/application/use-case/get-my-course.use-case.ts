@@ -58,10 +58,7 @@ export class GetMyCourseUseCaseImpl implements
 			studentId
 		);
 
-		const getMyCourseResponseDTO =
-			new GetMyCourseResponseDTOImpl();
-
-		getMyCourseResponseDTO.category = course.category;
+		this._getMyCourseResponseDTO.category = course.category;
 
 		course.creators.forEach(creator => {
 			const creatorResponseDTO =
@@ -71,21 +68,21 @@ export class GetMyCourseUseCaseImpl implements
 			creatorResponseDTO.lastName = creator.lastName;
 			creatorResponseDTO.profilePicture = creator.profilePicture;
 
-			getMyCourseResponseDTO.creators.push(creatorResponseDTO);
+			this._getMyCourseResponseDTO.creators.push(creatorResponseDTO);
 		});
 
-		getMyCourseResponseDTO.description = course.description;
-		getMyCourseResponseDTO.id = course.id;
-		getMyCourseResponseDTO.image = course.image;
-		getMyCourseResponseDTO.languages = course.languages;
-		getMyCourseResponseDTO.lastUpdatedOn = course.lastUpdatedOn;
-		getMyCourseResponseDTO.materialsAndOffers =
+		this._getMyCourseResponseDTO.description = course.description;
+		this._getMyCourseResponseDTO.id = course.id;
+		this._getMyCourseResponseDTO.image = course.image;
+		this._getMyCourseResponseDTO.languages = course.languages;
+		this._getMyCourseResponseDTO.lastUpdatedOn = course.lastUpdatedOn;
+		this._getMyCourseResponseDTO.materialsAndOffers =
 			course.materialsAndOffers;
 
-		getMyCourseResponseDTO.price.currency = course.price.currency;
-		getMyCourseResponseDTO.price.value = course.price.value;
+		this._getMyCourseResponseDTO.price.currency = course.price.currency;
+		this._getMyCourseResponseDTO.price.value = course.price.value;
 
-		getMyCourseResponseDTO.rating = null;
+		this._getMyCourseResponseDTO.rating = null;
 
 		course.sections.forEach(section => {
 			const sectionResponseDTO =
@@ -111,17 +108,17 @@ export class GetMyCourseUseCaseImpl implements
 			sectionResponseDTO.order = section.order;
 			sectionResponseDTO.title = section.title;
 
-			getMyCourseResponseDTO.sections
+			this._getMyCourseResponseDTO.sections
 				.push(sectionResponseDTO);
 		});
 
-		getMyCourseResponseDTO.status = course.status;
-		getMyCourseResponseDTO.subtitles = course.subtitles;
-		getMyCourseResponseDTO.title = course.title;
-		getMyCourseResponseDTO.totalDuration = course.totalDuration;
-		getMyCourseResponseDTO.totalLecturesCount =
+		this._getMyCourseResponseDTO.status = course.status;
+		this._getMyCourseResponseDTO.subtitles = course.subtitles;
+		this._getMyCourseResponseDTO.title = course.title;
+		this._getMyCourseResponseDTO.totalDuration = course.totalDuration;
+		this._getMyCourseResponseDTO.totalLecturesCount =
 			course.totalLecturesCount;
-		getMyCourseResponseDTO.totalStudents = course.totalStudents;
+		this._getMyCourseResponseDTO.totalStudents = course.totalStudents;
 
 		return this._getMyCourseResponseDTO;
 	}
