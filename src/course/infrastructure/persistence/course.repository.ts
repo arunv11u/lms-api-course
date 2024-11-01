@@ -35,6 +35,7 @@ import { CourseSubtitleRepositoryImpl } from "./course-subtitle.repository";
 import { CourseTranscodingCompletedRegistryRepositoryImpl } from "./course-transcoding-completed-registry.repository";
 import { CourseCategoryRepositoryImpl } from "./course-category.repository";
 import { CourseStudentRepositoryImpl } from "./course-student.repository";
+import { CourseLectureWatchDurationRepositoryImpl } from "./course-lecture-watch-duration.repository";
 
 
 
@@ -1073,6 +1074,34 @@ export class CourseRepositoryImpl implements CourseRepository, CourseObject {
 		courseEntity.totalStudents = course.totalStudents;
 
 		return courseEntity;
+	}
+
+	// eslint-disable-next-line max-params
+	async updateLectureWatchDuration(
+		studentId: string,
+		courseId: string,
+		lectureId: string, 
+		duration: number
+	): Promise<void> {
+		if (!this._mongodbRepository)
+			throw new GenericError({
+				code: ErrorCodes.mongoDBRepositoryDoesNotExist,
+				error: new Error("MongoDB repository does not exist"),
+				errorCode: 500
+			});
+
+		const courseLectureWatchDurationRepository = 
+			new CourseLectureWatchDurationRepositoryImpl(
+				this._mongodbRepository
+			);
+
+		await courseLectureWatchDurationRepository
+			.updateCourseLectureWatchDuration(
+				studentId,
+				courseId,
+				lectureId,
+				duration
+			);
 	}
 
 	private async _getCourseWithId(courseId: string): Promise<CourseEntity> {

@@ -14,6 +14,7 @@ import {
 	SocketConnect,
 	Winston
 } from "../types";
+import { CourseSocket } from "../../course/interfaces";
 
 
 class SocketConnectImpl implements SocketConnect {
@@ -45,12 +46,19 @@ class SocketConnectImpl implements SocketConnect {
 	}
 
 	connect(): void {
-		if (!this._io)
-			throw new SocketConnectionError("Socket connect must be initialized before connect. To initialize, call init method, first.");
+		try {
+			if (!this._io)
+				throw new SocketConnectionError("Socket connect must be initialized before connect. To initialize, call init method, first.");
 
-		this._io.on("connection", (socket) => {
-			this._winston.info(`${socket.id}, Socket connected.`);
-		});
+			this._io.on("connection", (socket) => {
+				this._winston.info(`${socket.id}, Socket connected.`);
+			});
+
+			const courseSocket = new CourseSocket(this._io as Server);
+			courseSocket.connect();
+		} catch (error) {
+			this._winston.error("Error in connecting to the socket");
+		}
 	}
 }
 
