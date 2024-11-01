@@ -30,6 +30,10 @@ export * from "./update-course-by-instructor.request.dto";
 
 export * from "./update-course-by-instructor.request.dto.type";
 
+export * from "./update-lecture-watch-duration.request.dto";
+
+export * from "./update-lecture-watch-duration.request.dto.type";
+
 export * from "./upload-course-image.request.dto";
 
 export * from "./upload-course-image.request.dto.type";

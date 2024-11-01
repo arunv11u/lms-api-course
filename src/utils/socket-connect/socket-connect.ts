@@ -1,8 +1,10 @@
 import { Server } from "socket.io";
+import { createClient } from "redis";
 import {
 	Server as HttpServer
 } from "http";
 import { CorsOptionsDelegate } from "cors";
+import { createAdapter } from "@socket.io/redis-adapter";
 import { SocketConnectionError } from "@arunvaradharajalu/common.errors";
 import {
 	winstonLogger,
@@ -37,20 +39,33 @@ class SocketConnectImpl implements SocketConnect {
 		this._path = path;
 	}
 
-	init(httpServer: HttpServer): void {
+	async init(httpServer: HttpServer): Promise<void> {
+		const pubClient = createClient({ url: "redis://redis:6379" });
+		const subClient = pubClient.duplicate();
+
+		await Promise.all([
+			pubClient.connect(),
+			subClient.connect()
+		]);
+
 		this._io = new Server(httpServer, {
 			cors: corsOptions as CorsOptionsDelegate,
-			path: this._path
+			path: this._path,
+			adapter: createAdapter(pubClient, subClient)
 		});
 	}
 
 	connect(): void {
-		if (!this._io)
-			throw new SocketConnectionError("Socket connect must be initialized before connect. To initialize, call init method, first.");
+		try {
+			if (!this._io)
+				throw new SocketConnectionError("Socket connect must be initialized before connect. To initialize, call init method, first.");
 
-		this._io.on("connection", (socket) => {
-			this._winston.info(`${socket.id}, Socket connected.`);
-		});
+			this._io.on("connection", (socket) => {
+				this._winston.info(`${socket.id}, Socket connected.`);
+			});
+		} catch (error) {
+			this._winston.error("Error in connecting to the socket");
+		}
 	}
 }
 

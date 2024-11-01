@@ -1,11 +1,11 @@
 import "@arunvaradharajalu/common.decorators";
-import { 
+import {
+	devConfig, 
 	Environment, 
 	Loader, 
-	Winston, 
-	devConfig, 
 	prodConfig, 
 	stagingConfig, 
+	Winston, 
 	winstonLogger
 } from "./utils";
 import { app, server } from "./server";

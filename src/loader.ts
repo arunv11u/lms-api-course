@@ -61,9 +61,9 @@ export class LoaderImpl implements Loader {
 		mongoDBConnect.init();
 		await mongoDBConnect.connect();
 
-		socketConnect.init(server);
+		await socketConnect.init(server);
 		socketConnect.connect();
-		sockets.listen();
+		sockets.listen(socketConnect.io);
 
 
 		const messagingLoader = new MessagingLoaderImpl();

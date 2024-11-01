@@ -1,6 +1,7 @@
+import { Server } from "socket.io";
 
 interface Socket {
-	listen(): boolean;
+	listen(io: Server): boolean;
 }
 
 export {

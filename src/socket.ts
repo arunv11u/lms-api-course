@@ -1,3 +1,5 @@
+import { Server } from "socket.io";
+import { CourseSocket } from "./course/interfaces";
 import {
 	Socket
 } from "./utils";
@@ -5,8 +7,11 @@ import {
 class SocketImpl implements Socket {
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	listen(): boolean {
+	listen(io: Server): boolean {
 		
+		const courseSocket = new CourseSocket(io);
+		courseSocket.connect();
+
 		return true;
 	}
 }
