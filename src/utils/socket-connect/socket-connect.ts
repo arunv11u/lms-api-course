@@ -1,8 +1,10 @@
 import { Server } from "socket.io";
+import { createClient } from "redis";
 import {
 	Server as HttpServer
 } from "http";
 import { CorsOptionsDelegate } from "cors";
+import { createAdapter } from "@socket.io/redis-adapter";
 import { SocketConnectionError } from "@arunvaradharajalu/common.errors";
 import {
 	winstonLogger,
@@ -14,7 +16,6 @@ import {
 	SocketConnect,
 	Winston
 } from "../types";
-import { CourseSocket } from "../../course/interfaces";
 
 
 class SocketConnectImpl implements SocketConnect {
@@ -38,10 +39,19 @@ class SocketConnectImpl implements SocketConnect {
 		this._path = path;
 	}
 
-	init(httpServer: HttpServer): void {
+	async init(httpServer: HttpServer): Promise<void> {
+		const pubClient = createClient({ url: "redis://redis:6379" });
+		const subClient = pubClient.duplicate();
+
+		await Promise.all([
+			pubClient.connect(),
+			subClient.connect()
+		]);
+
 		this._io = new Server(httpServer, {
 			cors: corsOptions as CorsOptionsDelegate,
-			path: this._path
+			path: this._path,
+			adapter: createAdapter(pubClient, subClient)
 		});
 	}
 
@@ -53,9 +63,6 @@ class SocketConnectImpl implements SocketConnect {
 			this._io.on("connection", (socket) => {
 				this._winston.info(`${socket.id}, Socket connected.`);
 			});
-
-			const courseSocket = new CourseSocket(this._io as Server);
-			courseSocket.connect();
 		} catch (error) {
 			this._winston.error("Error in connecting to the socket");
 		}

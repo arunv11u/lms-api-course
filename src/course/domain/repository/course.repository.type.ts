@@ -90,4 +90,11 @@ export abstract class CourseRepository extends Repository {
 		courseId: string,
 		instructorId: string
 	): Promise<CourseEntity>;
+
+	abstract updateLectureWatchDuration(
+		studentId: string,
+		courseId: string,
+		lectureId: string,
+		duration: number
+	): Promise<void>;
 }

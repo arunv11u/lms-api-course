@@ -9,6 +9,6 @@ export abstract class SocketConnect {
 	abstract get io(): Server;
 	abstract set path(path: string);
 
-	abstract init(httpServer: HttpServer): void;
+	abstract init(httpServer: HttpServer): Promise<void>;
 	abstract connect(): void;
 }

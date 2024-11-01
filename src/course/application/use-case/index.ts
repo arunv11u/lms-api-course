@@ -34,6 +34,10 @@ export * from "./update-course-by-instructor.use-case";
 
 export * from "./update-course-by-instructor.use-case.type";
 
+export * from "./update-lecture-watch-duration.use-case";
+
+export * from "./update-lecture-watch-duration.use-case.type";
+
 export * from "./upload-course-image.use-case";
 
 export * from "./upload-course-image.use-case.type";

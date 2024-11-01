@@ -55,7 +55,7 @@ export class GetMyCourseUseCaseImpl implements
 		});
 
 		const course = await courseRepository.getMyCourse(
-			studentId
+			this._getMyCourseRequestDTO.courseId
 		);
 
 		this._getMyCourseResponseDTO.category = course.category;

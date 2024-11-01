@@ -63,7 +63,9 @@ export enum ErrorCodes {
 	courseTranscodingInprogress = "COURSE_TRANSCODING_INPROGRESS",
 	orderNotFound = "ORDER_NOT_FOUND",
 	studentNotEnrolledForCourse = "STUDENT_NOT_ENROLLED_FOR_COURSE",
-	courseNotCreatedByInstructor = "COURSE_NOT_CREATED_BY_INSTRUCTOR"
+	courseNotCreatedByInstructor = "COURSE_NOT_CREATED_BY_INSTRUCTOR",
+	courseLectureIdRequired = "COURSE_LECTURE_ID_REQUIRED",
+	courseLectureWatchDurationRequired = "COURSE_LECTURE_WATCH_DURATION_REQUIRED"
 }
 
 export interface FormattedError {
