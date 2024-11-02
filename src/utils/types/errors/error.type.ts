@@ -65,7 +65,8 @@ export enum ErrorCodes {
 	studentNotEnrolledForCourse = "STUDENT_NOT_ENROLLED_FOR_COURSE",
 	courseNotCreatedByInstructor = "COURSE_NOT_CREATED_BY_INSTRUCTOR",
 	courseLectureIdRequired = "COURSE_LECTURE_ID_REQUIRED",
-	courseLectureWatchDurationRequired = "COURSE_LECTURE_WATCH_DURATION_REQUIRED"
+	courseLectureWatchDurationRequired = "COURSE_LECTURE_WATCH_DURATION_REQUIRED",
+	courseLectureNotFound = "COURSE_LECTURE_NOT_FOUND"
 }
 
 export interface FormattedError {

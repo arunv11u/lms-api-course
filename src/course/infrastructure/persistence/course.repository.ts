@@ -389,7 +389,8 @@ export class CourseRepositoryImpl implements CourseRepository, CourseObject {
 						status: lecture.status,
 						subtitles: [],
 						thumbnail: lecture.thumbnail,
-						title: lecture.title
+						title: lecture.title,
+						watchDuration: 0
 					});
 				});
 
@@ -523,7 +524,8 @@ export class CourseRepositoryImpl implements CourseRepository, CourseObject {
 					status: lecture.status,
 					subtitles: [],
 					thumbnail: lecture.thumbnail,
-					title: lecture.title
+					title: lecture.title,
+					watchDuration: 0
 				});
 			});
 
@@ -729,7 +731,8 @@ export class CourseRepositoryImpl implements CourseRepository, CourseObject {
 				}
 			);
 
-		const coursesEntity = coursesORMEntity.map<CourseEntity>(course => {
+		// eslint-disable-next-line max-len
+		const coursesEntityPromises = coursesORMEntity.map<Promise<CourseEntity>>(async (course) => {
 			const courseEntity = this._courseFactory.make("CourseEntity") as CourseEntity;
 
 			course.creators.forEach(creator => {
@@ -760,13 +763,27 @@ export class CourseRepositoryImpl implements CourseRepository, CourseObject {
 
 			let totalDuration = 0;
 			let totalLecturesCount = 0;
-			course.sections.forEach(section => {
+			const sectionPromises = course.sections.map(async (section) => {
 				const courseSectionValueObject = new CourseSectionValueObject();
 				courseSectionValueObject.id = section._id.toString();
 
 				let lectureDuration = 0;
-				section.lectures.forEach(lecture => {
+				// eslint-disable-next-line max-len
+				const lecturePromises = section.lectures.map(async (lecture) => {
 					lectureDuration += lecture.duration;
+
+					const courseLectureWatchDurationRepository = 
+						new CourseLectureWatchDurationRepositoryImpl(
+							this._mongodbRepository!
+						);
+
+					// eslint-disable-next-line max-len
+					const watchDuration = await courseLectureWatchDurationRepository
+						.getCourseLectureWatchDuration(
+							studentId,
+							course._id.toString(),
+							lecture._id.toString()
+						);
 
 					courseSectionValueObject.lectures.push({
 						description: lecture.description,
@@ -777,9 +794,12 @@ export class CourseRepositoryImpl implements CourseRepository, CourseObject {
 						status: lecture.status,
 						subtitles: [],
 						thumbnail: lecture.thumbnail,
-						title: lecture.title
+						title: lecture.title,
+						watchDuration: watchDuration
 					});
 				});
+
+				await Promise.all(lecturePromises);
 
 				totalDuration += lectureDuration;
 				totalLecturesCount += section.lectures.length;
@@ -792,6 +812,8 @@ export class CourseRepositoryImpl implements CourseRepository, CourseObject {
 
 				courseEntity.addSection(courseSectionValueObject);
 			});
+
+			await Promise.all(sectionPromises);
 
 			course.subtitles.forEach(subtitle => {
 				courseEntity.addSubtitle(subtitle.subtitle);
@@ -814,6 +836,8 @@ export class CourseRepositoryImpl implements CourseRepository, CourseObject {
 
 			return courseEntity;
 		});
+
+		const coursesEntity = await Promise.all(coursesEntityPromises);
 
 		return coursesEntity;
 	}
@@ -842,7 +866,10 @@ export class CourseRepositoryImpl implements CourseRepository, CourseObject {
 		return isStudentEnrolledForCourse;
 	}
 
-	async getMyCourse(courseId: string): Promise<CourseEntity> {
+	async getMyCourse(
+		courseId: string,
+		studentId: string
+	): Promise<CourseEntity> {
 		if (!this._mongodbRepository)
 			throw new GenericError({
 				code: ErrorCodes.mongoDBRepositoryDoesNotExist,
@@ -895,13 +922,26 @@ export class CourseRepositoryImpl implements CourseRepository, CourseObject {
 
 		let totalDuration = 0;
 		let totalLecturesCount = 0;
-		course.sections.forEach(section => {
+		const sectionPromises = course.sections.map(async (section) => {
 			const courseSectionValueObject = new CourseSectionValueObject();
 			courseSectionValueObject.id = section._id.toString();
 
 			let lectureDuration = 0;
-			section.lectures.forEach(lecture => {
+			const lecturePromises = section.lectures.map(async (lecture) => {
 				lectureDuration += lecture.duration;
+
+				const courseLectureWatchDurationRepository = 
+						new CourseLectureWatchDurationRepositoryImpl(
+							this._mongodbRepository!
+						);
+
+				// eslint-disable-next-line max-len
+				const watchDuration = await courseLectureWatchDurationRepository
+					.getCourseLectureWatchDuration(
+						studentId,
+						course._id.toString(),
+						lecture._id.toString()
+					);
 
 				courseSectionValueObject.lectures.push({
 					description: lecture.description,
@@ -912,9 +952,12 @@ export class CourseRepositoryImpl implements CourseRepository, CourseObject {
 					status: lecture.status,
 					subtitles: [],
 					thumbnail: lecture.thumbnail,
-					title: lecture.title
+					title: lecture.title,
+					watchDuration: watchDuration
 				});
 			});
+
+			await Promise.all(lecturePromises);
 
 			totalDuration += lectureDuration;
 			totalLecturesCount += section.lectures.length;
@@ -927,6 +970,8 @@ export class CourseRepositoryImpl implements CourseRepository, CourseObject {
 
 			courseEntity.addSection(courseSectionValueObject);
 		});
+
+		await Promise.all(sectionPromises);
 
 		course.subtitles.forEach(subtitle => {
 			courseEntity.addSubtitle(subtitle.subtitle);
@@ -1038,7 +1083,8 @@ export class CourseRepositoryImpl implements CourseRepository, CourseObject {
 					status: lecture.status,
 					subtitles: [],
 					thumbnail: lecture.thumbnail,
-					title: lecture.title
+					title: lecture.title,
+					watchDuration: 0
 				});
 			});
 
@@ -1175,7 +1221,8 @@ export class CourseRepositoryImpl implements CourseRepository, CourseObject {
 					status: lecture.status,
 					subtitles: [],
 					thumbnail: lecture.thumbnail,
-					title: lecture.title
+					title: lecture.title,
+					watchDuration: 0
 				});
 			});
 

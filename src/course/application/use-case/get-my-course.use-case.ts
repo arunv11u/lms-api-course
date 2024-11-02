@@ -55,7 +55,8 @@ export class GetMyCourseUseCaseImpl implements
 		});
 
 		const course = await courseRepository.getMyCourse(
-			this._getMyCourseRequestDTO.courseId
+			this._getMyCourseRequestDTO.courseId,
+			studentId
 		);
 
 		this._getMyCourseResponseDTO.category = course.category;
@@ -99,6 +100,7 @@ export class GetMyCourseUseCaseImpl implements
 				lectureResponseDTO.order = lecture.order;
 				lectureResponseDTO.thumbnail = lecture.thumbnail;
 				lectureResponseDTO.title = lecture.title;
+				lectureResponseDTO.watchDuration = lecture.watchDuration;
 
 				sectionResponseDTO.lectures.push(lectureResponseDTO);
 			});
