@@ -35,6 +35,7 @@ interface GetMyCourseSectionLectureResponseDTO {
 	duration: number;
 	thumbnail: string | null;
 	order: number;
+	watchDuration: number;
 }
 
 interface GetMyCourseSectionResponseDTO {

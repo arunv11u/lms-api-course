@@ -12,6 +12,7 @@ class CourseSectionLectureValueObject {
 	thumbnail: string | null = null;
 	subtitles: CourseSectionLectureSubtitleValueObject[] = [];
 	order: number;
+	watchDuration: number = 0;
 }
 
 export {

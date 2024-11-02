@@ -58,7 +58,8 @@ export class UpdateLectureWatchDurationUseCaseImpl implements
 			);
 
 		const course = await courseRepository.getMyCourse(
-			this._updateLectureWatchDurationRequestDTO.courseId
+			this._updateLectureWatchDurationRequestDTO.courseId,
+			this._updateLectureWatchDurationRequestDTO.studentId
 		);
 
 		this._updateLectureWatchDurationResponseDTO.category = course.category;

@@ -17,6 +17,7 @@ class CourseSectionLectureEntityImpl implements CourseSectionLectureEntity {
 	private _thumbnail: string | null = null;
 	private _subtitles: CourseSectionLectureSubtitleEntity[] = [];
 	private _order: number;
+	private _watchDuration: number = 0;
 
 	get id(): string {
 		return this._id;
@@ -84,6 +85,13 @@ class CourseSectionLectureEntityImpl implements CourseSectionLectureEntity {
 	}
 	set order(order: number) {
 		this._order = order;
+	}
+
+	get watchDuration(): number {
+		return this._watchDuration;
+	}
+	set watchDuration(watchDuration: number) {
+		this._watchDuration = watchDuration;
 	}
 }
 

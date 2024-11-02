@@ -91,6 +91,7 @@ export class GetMyLearningsUseCaseImpl implements
 					lectureResponseDTO.order = lecture.order;
 					lectureResponseDTO.thumbnail = lecture.thumbnail;
 					lectureResponseDTO.title = lecture.title;
+					lectureResponseDTO.watchDuration = lecture.watchDuration;
 
 					sectionResponseDTO.lectures.push(lectureResponseDTO);
 				});

@@ -32,6 +32,9 @@ abstract class CourseSectionLectureEntity {
 
 	abstract get order(): number;
 	abstract set order(order: number);
+
+	abstract get watchDuration(): number;
+	abstract set watchDuration(watchDuration: number);
 }
 
 export {

@@ -51,6 +51,7 @@ class GetMyLearningsSectionLectureResponseDTOImpl implements
 	link: string;
 	thumbnail: string | null = null;
 	order: number;
+	watchDuration: number;
 }
 
 class GetMyLearningsSectionResponseDTOImpl implements

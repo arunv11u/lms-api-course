@@ -2078,6 +2078,10 @@
 											"order": {
 												"type": "number",
 												"example": 1
+											},
+											"watchDuration": {
+												"type": "number",
+												"example": 20
 											}
 										},
 										"required": [
