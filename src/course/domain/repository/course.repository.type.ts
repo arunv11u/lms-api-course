@@ -98,4 +98,8 @@ export abstract class CourseRepository extends Repository {
 		lectureId: string,
 		duration: number
 	): Promise<void>;
+
+	abstract getAllCoursesByInstructor(
+		instructorId: string
+	): Promise<CourseEntity[]>;
 }
