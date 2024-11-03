@@ -11,6 +11,9 @@ import {
 	ExploreAllCoursesRequestDTOImpl,
 	ExploreAllCoursesUseCase,
 	GetAllCourseCategoriesUseCase,
+	GetAllCoursesByInstructorRequestDTOImpl,
+	GetAllCoursesByInstructorResponseDTO,
+	GetAllCoursesByInstructorUseCase,
 	GetCourseByInstructorRequestDTOImpl,
 	GetCourseByInstructorResponseDTO,
 	GetCourseByInstructorUseCase,
@@ -591,15 +594,15 @@ export class CourseController {
 			const getCourseByInstructorRequestDTO =
 				new GetCourseByInstructorRequestDTOImpl();
 
-			getCourseByInstructorRequestDTO.authorizationToken = 
+			getCourseByInstructorRequestDTO.authorizationToken =
 				authorizationToken;
-			getCourseByInstructorRequestDTO.courseId = 
+			getCourseByInstructorRequestDTO.courseId =
 				request.query.courseId as string;
 
 			const getCourseByInstructorUseCase = courseFactory.make("GetCourseByInstructorUseCase") as GetCourseByInstructorUseCase;
 			getCourseByInstructorUseCase
-				.getCourseByInstructorRequestDTO = 
-					getCourseByInstructorRequestDTO;
+				.getCourseByInstructorRequestDTO =
+				getCourseByInstructorRequestDTO;
 
 			const getCourseByInstructorResponseDTO =
 				await getCourseByInstructorUseCase
@@ -612,6 +615,57 @@ export class CourseController {
 		} catch (error) {
 			winston.error(
 				"Error in retrieving a course by instructor:",
+				error
+			);
+
+			next(error);
+		}
+	}
+
+	@Get("/all-by-instructor")
+	async getAllCoursesByInstructor(
+		request: Request,
+		response: Response,
+		next: NextFunction
+	): Promise<void> {
+		const winston = winstonLogger.winston;
+		try {
+			winston.info("Retrieving all courses by instructor");
+
+			const courseFactory = getCourseFactory();
+			const responseHandler = getResponseHandler();
+
+			const getAllCoursesByInstructorRequestDTO =
+				new GetAllCoursesByInstructorRequestDTOImpl();
+
+			const authorizationToken = request.header(authorizationTokenName);
+			if (!authorizationToken)
+				throw new GenericError({
+					code: ErrorCodes.invalidAuthorizationToken,
+					error: new Error("Invalid authorization token"),
+					errorCode: 400
+				});
+
+			getAllCoursesByInstructorRequestDTO.authorizationToken =
+				authorizationToken;
+
+			const getAllCoursesByInstructorUseCase = courseFactory
+				.make("GetAllCoursesByInstructorUseCase") as GetAllCoursesByInstructorUseCase;
+			getAllCoursesByInstructorUseCase
+				.getAllCoursesByInstructorRequestDTO =
+				getAllCoursesByInstructorRequestDTO;
+
+			const getAllCoursesByInstructorResponseDTO =
+				await getAllCoursesByInstructorUseCase
+					.execute();
+
+			responseHandler.ok<GetAllCoursesByInstructorResponseDTO[]>(
+				response,
+				getAllCoursesByInstructorResponseDTO
+			);
+		} catch (error) {
+			winston.error(
+				"Error in retrieving all courses by instructor:",
 				error
 			);
 

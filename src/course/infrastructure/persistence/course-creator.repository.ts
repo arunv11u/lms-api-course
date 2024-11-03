@@ -54,4 +54,21 @@ export class CourseCreatorRepositoryImpl {
 
 		return true;
 	}
+
+	async getAllCourseIdsCreatedByInstructor(
+		instructorId: string
+	): Promise<ObjectId[]> {
+		const courseCreatorsORMEntity = await this._mongodbRepository
+			.find<CourseCreatorORMEntity>(
+				this._collectionName,
+				{
+					creator: instructorId
+				}
+			);
+
+		const courseIds = courseCreatorsORMEntity
+			.map(courseCreator => courseCreator.course);
+
+		return courseIds;
+	}
 }
