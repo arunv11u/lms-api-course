@@ -103,6 +103,8 @@ export class ExploreAllCoursesUseCaseImpl implements
 			exploreAllCoursesResponseDTO.subtitles = course.subtitles;
 			exploreAllCoursesResponseDTO.title = course.title;
 			exploreAllCoursesResponseDTO.totalDuration = course.totalDuration;
+			exploreAllCoursesResponseDTO.totalSectionsCount = 
+			course.totalSectionsCount;
 			exploreAllCoursesResponseDTO.totalLecturesCount =
 				course.totalLecturesCount;
 			exploreAllCoursesResponseDTO.totalStudents = course.totalStudents;
