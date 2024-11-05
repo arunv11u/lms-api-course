@@ -26,7 +26,9 @@ export const corsOptions = function (req: Request, callback: any) {
 		});
 
 	const corsOptionsConfig: CorsOptions = {
-		methods: ["POST", "GET", "PATCH", "DELETE", "PUT", "OPTIONS"]
+		methods: ["POST", "GET", "PATCH", "DELETE", "PUT", "OPTIONS"],
+		allowedHeaders: ["Content-Type", "Authorization"],
+		credentials: true
 	};
 
 	if (isCorsOriginEnabled) {
