@@ -112,6 +112,8 @@ export class GetCourseByInstructorUseCaseImpl implements
 		this._getCourseByInstructorResponseDTO.title = course.title;
 		this._getCourseByInstructorResponseDTO.totalDuration =
 			course.totalDuration;
+		this._getCourseByInstructorResponseDTO.totalSectionsCount = 
+			course.totalSectionsCount;
 		this._getCourseByInstructorResponseDTO.totalLecturesCount =
 			course.totalLecturesCount;
 		this._getCourseByInstructorResponseDTO.totalStudents =

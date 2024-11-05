@@ -118,6 +118,8 @@ export class GetMyCourseUseCaseImpl implements
 		this._getMyCourseResponseDTO.subtitles = course.subtitles;
 		this._getMyCourseResponseDTO.title = course.title;
 		this._getMyCourseResponseDTO.totalDuration = course.totalDuration;
+		this._getMyCourseResponseDTO.totalSectionsCount = 
+			course.totalSectionsCount;
 		this._getMyCourseResponseDTO.totalLecturesCount =
 			course.totalLecturesCount;
 		this._getMyCourseResponseDTO.totalStudents = course.totalStudents;

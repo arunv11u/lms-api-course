@@ -95,6 +95,8 @@ export class ExploreACourseUseCaseImpl implements
 		this._exploreACourseResponseDTO.subtitles = course.subtitles;
 		this._exploreACourseResponseDTO.title = course.title;
 		this._exploreACourseResponseDTO.totalDuration = course.totalDuration;
+		this._exploreACourseResponseDTO.totalSectionsCount = 
+			course.totalSectionsCount;
 		this._exploreACourseResponseDTO.totalLecturesCount =
 			course.totalLecturesCount;
 		this._exploreACourseResponseDTO.totalStudents = course.totalStudents;

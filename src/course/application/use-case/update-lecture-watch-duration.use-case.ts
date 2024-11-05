@@ -129,6 +129,8 @@ export class UpdateLectureWatchDurationUseCaseImpl implements
 		this._updateLectureWatchDurationResponseDTO.title = course.title;
 		this._updateLectureWatchDurationResponseDTO
 			.totalDuration = course.totalDuration;
+		this._updateLectureWatchDurationResponseDTO.totalSectionsCount =
+			course.totalSectionsCount;
 		this._updateLectureWatchDurationResponseDTO.totalLecturesCount =
 			course.totalLecturesCount;
 		this._updateLectureWatchDurationResponseDTO

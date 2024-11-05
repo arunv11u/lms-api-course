@@ -109,6 +109,8 @@ export class GetMyLearningsUseCaseImpl implements
 			getMyLearningsResponseDTO.subtitles = course.subtitles;
 			getMyLearningsResponseDTO.title = course.title;
 			getMyLearningsResponseDTO.totalDuration = course.totalDuration;
+			getMyLearningsResponseDTO.totalSectionsCount =
+				course.totalSectionsCount;
 			getMyLearningsResponseDTO.totalLecturesCount =
 				course.totalLecturesCount;
 			getMyLearningsResponseDTO.totalStudents = course.totalStudents;
