@@ -239,7 +239,7 @@ class CartRepositoryImpl implements CartRepository {
 				{ $match: { $expr: { $eq: ["$_id", cartId] } } },
 				{
 					$lookup: {
-						from: "courses",
+						from: "view-courses",
 						let: { courseIds: cartCourseIds },
 						pipeline: [
 							{ $match: { $expr: { $in: ["$_id", "$$courseIds"] } } },
@@ -251,7 +251,10 @@ class CartRepositoryImpl implements CartRepository {
 									category: 1,
 									image: 1,
 									currency: 1,
-									price: 1
+									price: 1,
+									creators: 1,
+									sections: 1,
+									lectures: 1
 								}
 							}
 						],
@@ -273,6 +276,22 @@ class CartRepositoryImpl implements CartRepository {
 			addCourseToCartValueObject.image = course.image;
 			addCourseToCartValueObject.title = course.title;
 			addCourseToCartValueObject.value = course.price;
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			addCourseToCartValueObject.creators = course.creators.map((creator: any) => `${creator.firstName} ${creator.lastName}`);
+
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			course.sections.forEach((section: any) => {
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				section.lectures.forEach((lecture: any) => {
+					addCourseToCartValueObject.totalDuration += 
+						lecture.duration;
+
+					addCourseToCartValueObject.totalLecturesCount += 1;
+				});
+			});
+			
+			addCourseToCartValueObject.totalSectionsCount = 
+				course.sections.length;
 
 			cartEntity.addCourse(addCourseToCartValueObject);
 		});

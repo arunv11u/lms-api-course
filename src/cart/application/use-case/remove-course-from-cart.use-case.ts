@@ -78,6 +78,14 @@ export class RemoveCourseFromCartUseCaseImpl implements
 					removeCourseFromCartCourseResponseDTO.image = course.image;
 					removeCourseFromCartCourseResponseDTO.title = course.title;
 					removeCourseFromCartCourseResponseDTO.value = course.value;
+					removeCourseFromCartCourseResponseDTO.totalDuration =
+						course.totalDuration;
+					removeCourseFromCartCourseResponseDTO.totalLecturesCount =
+						course.totalLecturesCount;
+					removeCourseFromCartCourseResponseDTO.totalSectionsCount =
+						course.totalSectionsCount;
+					removeCourseFromCartCourseResponseDTO.creators =
+						course.creators;
 
 					this._removeCourseFromCartResponseDTO!.courses
 						.push(removeCourseFromCartCourseResponseDTO);
@@ -87,12 +95,12 @@ export class RemoveCourseFromCartUseCaseImpl implements
 					.currency = cartEntity.currency;
 				this._removeCourseFromCartResponseDTO.id = cartEntity.id;
 				this._removeCourseFromCartResponseDTO.tax = cartEntity.tax;
-				this._removeCourseFromCartResponseDTO.totalvalue =
+				this._removeCourseFromCartResponseDTO.totalValue =
 					cartEntity.totalvalue;
 			}
 
 			await this._unitOfWork.complete();
-			
+
 			return this._removeCourseFromCartResponseDTO;
 		} catch (error) {
 			await this._unitOfWork.dispose();

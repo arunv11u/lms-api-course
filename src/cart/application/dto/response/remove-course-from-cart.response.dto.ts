@@ -13,6 +13,10 @@ class RemoveCourseFromCartCourseResponseDTOImpl implements
 	image: string;
 	currency: CoursePriceCurrencies;
 	value: number;
+	creators: string[] = [];
+	totalDuration: number;
+	totalLecturesCount: number;
+	totalSectionsCount: number;
 }
 
 class RemoveCourseFromCartResponseDTOImpl implements
@@ -20,7 +24,7 @@ class RemoveCourseFromCartResponseDTOImpl implements
 	id: string;
 	courses: RemoveCourseFromCartCourseResponseDTO[] = [];
 	currency: CoursePriceCurrencies;
-	totalvalue: number;
+	totalValue: number;
 	tax: number;
 }
 

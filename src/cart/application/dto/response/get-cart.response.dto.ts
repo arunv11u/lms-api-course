@@ -13,6 +13,10 @@ class GetCartCourseResponseDTOImpl implements
 	image: string;
 	currency: CoursePriceCurrencies;
 	value: number;
+	creators: string[] = [];
+	totalDuration: number;
+	totalLecturesCount: number;
+	totalSectionsCount: number;
 }
 
 class GetCartResponseDTOImpl implements
@@ -20,7 +24,7 @@ class GetCartResponseDTOImpl implements
 	id: string;
 	courses: GetCartCourseResponseDTO[] = [];
 	currency: CoursePriceCurrencies;
-	totalvalue: number;
+	totalValue: number;
 	tax: number;
 }
 

@@ -10,6 +10,10 @@ class CartCourseEntityImpl implements CartCourseEntity {
 	private _image: string;
 	private _currency: CoursePriceCurrencies;
 	private _value: number;
+	private _creators: string[] = [];
+	private _totalDuration: number;
+	private _totalLecturesCount: number;
+	private _totalSectionsCount: number;
 
 	get id(): string {
 		return this._id;
@@ -58,6 +62,34 @@ class CartCourseEntityImpl implements CartCourseEntity {
 	}
 	set value(value: number) {
 		this._value = value;
+	}
+
+	get creators(): string[] {
+		return this._creators;
+	}
+	set creators(creators: string[]) {
+		this._creators = creators;
+	}
+
+	get totalDuration(): number {
+		return this._totalDuration;
+	}
+	set totalDuration(totalDuration: number) {
+		this._totalDuration = totalDuration;
+	}
+
+	get totalLecturesCount(): number {
+		return this._totalLecturesCount;
+	}
+	set totalLecturesCount(totalLecturesCount: number) {
+		this._totalLecturesCount = totalLecturesCount;
+	}
+
+	get totalSectionsCount(): number {
+		return this._totalSectionsCount;
+	}
+	set totalSectionsCount(totalSectionsCount: number) {
+		this._totalSectionsCount = totalSectionsCount;
 	}
 }
 

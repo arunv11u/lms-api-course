@@ -9,13 +9,17 @@ interface GetCartCourseResponseDTO {
 	image: string;
 	currency: CoursePriceCurrencies;
 	value: number;
+	creators: string[];
+	totalDuration: number;
+	totalSectionsCount: number;
+	totalLecturesCount: number;
 }
 
 interface GetCartResponseDTO {
 	id: string;
 	courses: GetCartCourseResponseDTO[];
 	currency: CoursePriceCurrencies;
-	totalvalue: number;
+	totalValue: number;
 	tax: number;
 }
 

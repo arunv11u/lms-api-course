@@ -8,7 +8,11 @@ class AddCourseToCartValueObject {
 	category: string;
 	image: string;
 	currency: CoursePriceCurrencies;
-	value: number;
+	value: number = 0;
+	creators: string[];
+	totalDuration: number = 0;
+	totalSectionsCount: number = 0;
+	totalLecturesCount: number = 0;
 }
 
 export {

@@ -9,13 +9,17 @@ interface RemoveCourseFromCartCourseResponseDTO {
 	image: string;
 	currency: CoursePriceCurrencies;
 	value: number;
+	creators: string[];
+	totalDuration: number;
+	totalSectionsCount: number;
+	totalLecturesCount: number;
 }
 
 interface RemoveCourseFromCartResponseDTO {
 	id: string;
 	courses: RemoveCourseFromCartCourseResponseDTO[];
 	currency: CoursePriceCurrencies;
-	totalvalue: number;
+	totalValue: number;
 	tax: number;
 }
 
