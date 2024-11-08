@@ -268,6 +268,7 @@ class CartRepositoryImpl implements CartRepository {
 		const cartEntity = getCartFactory().make("CartEntity") as CartEntity;
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		cart.courses.forEach((course: any) => {
+
 			const addCourseToCartValueObject = new AddCourseToCartValueObject();
 			addCourseToCartValueObject.category = course.category;
 			addCourseToCartValueObject.currency = course.currency;
@@ -289,7 +290,7 @@ class CartRepositoryImpl implements CartRepository {
 					addCourseToCartValueObject.totalLecturesCount += 1;
 				});
 			});
-			
+
 			addCourseToCartValueObject.totalSectionsCount = 
 				course.sections.length;
 

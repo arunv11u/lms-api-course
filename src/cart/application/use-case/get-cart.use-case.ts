@@ -67,13 +67,6 @@ export class GetCartUseCaseImpl implements
 					course.totalLecturesCount;
 				getCartCourseResponseDTO.totalSectionsCount =
 					course.totalSectionsCount;
-				getCartCourseResponseDTO.totalDuration =
-					course.totalDuration;
-				getCartCourseResponseDTO.totalLecturesCount =
-					course.totalLecturesCount;
-				getCartCourseResponseDTO.totalSectionsCount =
-					course.totalSectionsCount;
-				getCartCourseResponseDTO.creators = course.creators;
 
 				this._getCartResponseDTO!.courses
 					.push(getCartCourseResponseDTO);
