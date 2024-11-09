@@ -23,6 +23,18 @@ abstract class CartCourseEntity {
 
 	abstract get value(): number;
 	abstract set value(value: number);
+
+	abstract get creators(): string[];
+	abstract set creators(creators: string[]);
+
+	abstract get totalDuration(): number;
+	abstract set totalDuration(totalDuration: number);
+
+	abstract get totalSectionsCount(): number;
+	abstract set totalSectionsCount(totalSectionsCount: number);
+
+	abstract get totalLecturesCount(): number;
+	abstract set totalLecturesCount(totalLecturesCount: number);
 }
 
 export {

@@ -1,11 +1,11 @@
 import { TokenRepository } from "../../../token";
 import { UnitOfWork, UnitOfWorkImpl } from "../../../utils";
 import { CartObject, CartRepository } from "../../domain";
-import { 
-	GetCartCourseResponseDTOImpl, 
-	GetCartRequestDTO, 
-	GetCartResponseDTO, 
-	GetCartResponseDTOImpl 
+import {
+	GetCartCourseResponseDTOImpl,
+	GetCartRequestDTO,
+	GetCartResponseDTO,
+	GetCartResponseDTOImpl
 } from "../dto";
 import { GetCartUseCase } from "./get-cart.use-case.type";
 
@@ -61,6 +61,12 @@ export class GetCartUseCaseImpl implements
 				getCartCourseResponseDTO.image = course.image;
 				getCartCourseResponseDTO.title = course.title;
 				getCartCourseResponseDTO.value = course.value;
+				getCartCourseResponseDTO.creators = course.creators;
+				getCartCourseResponseDTO.totalDuration = course.totalDuration;
+				getCartCourseResponseDTO.totalLecturesCount =
+					course.totalLecturesCount;
+				getCartCourseResponseDTO.totalSectionsCount =
+					course.totalSectionsCount;
 
 				this._getCartResponseDTO!.courses
 					.push(getCartCourseResponseDTO);
@@ -70,7 +76,7 @@ export class GetCartUseCaseImpl implements
 				.currency = cartEntity.currency;
 			this._getCartResponseDTO.id = cartEntity.id;
 			this._getCartResponseDTO.tax = cartEntity.tax;
-			this._getCartResponseDTO.totalvalue =
+			this._getCartResponseDTO.totalValue =
 				cartEntity.totalvalue;
 		}
 

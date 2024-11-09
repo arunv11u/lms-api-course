@@ -4,8 +4,9 @@ import { OrderEntity, OrderRepository } from "../../../order";
 import { ErrorCodes, GenericError, Repository } from "../../../utils";
 import { PaymentRepository } from "../../domain";
 import { StripeCheckoutCompletedRegistryRepositoryImpl } from "./stripe-checkout-completed-registry.repository";
-import { getCourseFactory, getOrderFactory } from "../../../global-config";
+import { getCartFactory, getCourseFactory, getOrderFactory } from "../../../global-config";
 import { CourseRepository } from "../../../course";
+import { CartRepository } from "../../../cart";
 
 
 class PaymentRepositoryImpl implements PaymentRepository, Repository {
@@ -47,9 +48,13 @@ class PaymentRepositoryImpl implements PaymentRepository, Repository {
 			mode: "payment",
 			success_url: successUrl,
 			cancel_url: cancelUrl,
+			automatic_tax: {
+				enabled: true
+			},
 			metadata: {
 				orderId: orderEntity.id
-			}
+			},
+			
 		});
 
 		return { sessionId: session.id };
@@ -73,9 +78,14 @@ class PaymentRepositoryImpl implements PaymentRepository, Repository {
 		const courseRepository = getCourseFactory().make("CourseRepository") as CourseRepository;
 		courseRepository.mongoDBRepository = this._mongodbRepository;
 
+		const cartRepository = getCartFactory().make("CartRepository") as CartRepository;
+		cartRepository.mongoDBRepository = this._mongodbRepository;
+
 		await orderRepository.markOrderStatusAsCompletedWithId(orderId);
 
 		const orderEntity = await orderRepository.getOrder(orderId);
+
+		await cartRepository.clearAllCoursesFromCart(orderEntity.student.id);
 
 		const orderCourseIds = orderEntity.courses.map(course => course.id);
 		await courseRepository.enrollStudentForCourses(

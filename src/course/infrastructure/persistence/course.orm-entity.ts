@@ -134,6 +134,9 @@ interface ViewCourseORMEntity {
 	subtitles: ViewCourseSubtitleORMEntity[];
 	creators: ViewCourseCreatorORMEntity[];
 	totalStudents: number;
+	totalDuration: number;
+	totalSectionsCount: number;
+	totalLecturesCount: number;
 	creationDate: Date;
 	lastModifiedDate: Date;
 	createdBy: string;

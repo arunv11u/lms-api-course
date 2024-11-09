@@ -32,6 +32,13 @@ class CartEntityImpl implements CartEntity {
 		cartCourseEntity.image = addCourseToCartValueObject.image;
 		cartCourseEntity.title = addCourseToCartValueObject.title;
 		cartCourseEntity.value = addCourseToCartValueObject.value;
+		cartCourseEntity.creators = addCourseToCartValueObject.creators;
+		cartCourseEntity.totalDuration = 
+			addCourseToCartValueObject.totalDuration;
+		cartCourseEntity.totalLecturesCount = 
+			addCourseToCartValueObject.totalLecturesCount;
+		cartCourseEntity.totalSectionsCount = 
+			addCourseToCartValueObject.totalSectionsCount;
 
 		this._courses.push(cartCourseEntity);
 	}

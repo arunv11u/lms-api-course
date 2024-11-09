@@ -74,7 +74,9 @@ class OrderRepositoryImpl implements OrderRepository {
 				_id: new ObjectId(orderId)
 			},
 			{
-				status: OrderStatuses.completed
+				$set: {
+					status: OrderStatuses.completed
+				}
 			}
 		);
 	}

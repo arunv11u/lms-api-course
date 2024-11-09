@@ -75,6 +75,13 @@ export class AddCourseToCartUseCaseImpl implements
 				addCourseToCartCourseResponseDTO.image = course.image;
 				addCourseToCartCourseResponseDTO.title = course.title;
 				addCourseToCartCourseResponseDTO.value = course.value;
+				addCourseToCartCourseResponseDTO.totalDuration =
+					course.totalDuration;
+				addCourseToCartCourseResponseDTO.totalLecturesCount =
+					course.totalLecturesCount;
+				addCourseToCartCourseResponseDTO.totalSectionsCount =
+					course.totalSectionsCount;
+				addCourseToCartCourseResponseDTO.creators = course.creators;
 
 				this._addCourseToCartResponseDTO.courses
 					.push(addCourseToCartCourseResponseDTO);
@@ -83,7 +90,7 @@ export class AddCourseToCartUseCaseImpl implements
 			this._addCourseToCartResponseDTO.currency = cartEntity.currency;
 			this._addCourseToCartResponseDTO.id = cartEntity.id;
 			this._addCourseToCartResponseDTO.tax = cartEntity.tax;
-			this._addCourseToCartResponseDTO.totalvalue = cartEntity.totalvalue;
+			this._addCourseToCartResponseDTO.totalValue = cartEntity.totalvalue;
 
 			await this._unitOfWork.complete();
 
