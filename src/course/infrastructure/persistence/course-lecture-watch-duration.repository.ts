@@ -1,7 +1,6 @@
 import { ObjectId } from "mongodb";
 import { MongoDBRepository } from "@arunvaradharajalu/common.mongodb-api";
 import { CourseLectureWatchDurationORMEntity } from "./course-lecture-watch-duration.orm-entity";
-import { ErrorCodes, GenericError } from "../../../utils";
 
 
 
@@ -65,11 +64,7 @@ export class CourseLectureWatchDurationRepositoryImpl {
 				);
 
 		if (!courseLectureWatchDurationORMEntity)
-			throw new GenericError({
-				code: ErrorCodes.courseLectureNotFound,
-				error: new Error("Course, lecture not found"),
-				errorCode: 404
-			});
+			return 0;
 
 		return courseLectureWatchDurationORMEntity.duration;
 	}
