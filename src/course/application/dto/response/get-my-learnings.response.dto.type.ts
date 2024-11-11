@@ -47,6 +47,16 @@ interface GetMyLearningsSectionResponseDTO {
 	order: number;
 }
 
+interface GetMyLearningsLastViewedLectureResponseDTO {
+	id: string;
+	title: string;
+	description: string;
+	duration: number;
+	thumbnail: string | null;
+	order: number;
+	watchDuration: number;
+}
+
 interface GetMyLearningsResponseDTO {
 	id: string;
 	status: CourseStatuses;
@@ -66,6 +76,7 @@ interface GetMyLearningsResponseDTO {
 	totalSectionsCount: number;
 	totalLecturesCount: number;
 	totalDuration: number;
+	lastViewedLecture: GetMyLearningsLastViewedLectureResponseDTO | null;
 }
 
 
@@ -76,5 +87,6 @@ export {
 	GetMyLearningsSectionLectureSubtitleResponseDTO,
 	GetMyLearningsSectionLectureResponseDTO,
 	GetMyLearningsSectionResponseDTO,
+	GetMyLearningsLastViewedLectureResponseDTO,
 	GetMyLearningsResponseDTO
 };

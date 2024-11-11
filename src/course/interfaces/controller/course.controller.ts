@@ -17,6 +17,9 @@ import {
 	GetCourseByInstructorRequestDTOImpl,
 	GetCourseByInstructorResponseDTO,
 	GetCourseByInstructorUseCase,
+	GetLastViewedCourseRequestDTOImpl,
+	GetLastViewedCourseResponseDTO,
+	GetLastViewedCourseUseCase,
 	GetMyCourseRequestDTOImpl,
 	GetMyCourseResponseDTO,
 	GetMyCourseUseCase,
@@ -666,6 +669,55 @@ export class CourseController {
 		} catch (error) {
 			winston.error(
 				"Error in retrieving all courses by instructor:",
+				error
+			);
+
+			next(error);
+		}
+	}
+
+	@Get("/last-viewed-course")
+	async getLastViewedCourse(
+		request: Request,
+		response: Response,
+		next: NextFunction
+	): Promise<void> {
+		const winston = winstonLogger.winston;
+		try {
+			winston.info("Retrieving last viewed course of a student");
+
+			const courseFactory = getCourseFactory();
+			const responseHandler = getResponseHandler();
+
+			const authorizationToken = request.header(authorizationTokenName);
+			if (!authorizationToken)
+				throw new GenericError({
+					code: ErrorCodes.invalidAuthorizationToken,
+					error: new Error("Invalid authorization token"),
+					errorCode: 400
+				});
+
+			const getLastViewedCourseRequestDTO =
+				new GetLastViewedCourseRequestDTOImpl();
+
+			getLastViewedCourseRequestDTO.authorizationToken = 
+				authorizationToken;
+
+			const getLastViewedCourseUseCase = courseFactory.make("GetLastViewedCourseUseCase") as GetLastViewedCourseUseCase;
+			getLastViewedCourseUseCase
+				.getLastViewedCourseRequestDTO = getLastViewedCourseRequestDTO;
+
+			const getLastViewedCourseResponseDTO =
+				await getLastViewedCourseUseCase
+					.execute();
+
+			responseHandler.ok<GetLastViewedCourseResponseDTO | null>(
+				response,
+				getLastViewedCourseResponseDTO
+			);
+		} catch (error) {
+			winston.error(
+				"Error in retrieving last viewed course of a student:",
 				error
 			);
 

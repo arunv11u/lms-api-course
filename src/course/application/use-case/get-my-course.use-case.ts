@@ -3,6 +3,7 @@ import { ErrorCodes, GenericError, UnitOfWork, UnitOfWorkImpl } from "../../../u
 import { CourseObject, CourseRepository } from "../../domain";
 import {
 	GetMyCourseCreatorResponseDTOImpl,
+	GetMyCourseLastViewedLectureResponseDTOImpl,
 	GetMyCourseRequestDTO,
 	GetMyCourseResponseDTO,
 	GetMyCourseResponseDTOImpl,
@@ -123,6 +124,27 @@ export class GetMyCourseUseCaseImpl implements
 		this._getMyCourseResponseDTO.totalLecturesCount =
 			course.totalLecturesCount;
 		this._getMyCourseResponseDTO.totalStudents = course.totalStudents;
+
+		if(course.lastViewedLecture) {
+			const lastViewedLectureResponseDTO = 
+				new GetMyCourseLastViewedLectureResponseDTOImpl();
+
+			lastViewedLectureResponseDTO.description = 
+				course.lastViewedLecture.description;
+			lastViewedLectureResponseDTO.duration = 
+				course.lastViewedLecture.duration;
+			lastViewedLectureResponseDTO.id = course.lastViewedLecture.id;
+			lastViewedLectureResponseDTO.link = course.lastViewedLecture.link;
+			lastViewedLectureResponseDTO.order = course.lastViewedLecture.order;
+			lastViewedLectureResponseDTO.thumbnail = 
+				course.lastViewedLecture.thumbnail;
+			lastViewedLectureResponseDTO.title = course.lastViewedLecture.title;
+			lastViewedLectureResponseDTO.watchDuration = 
+				course.lastViewedLecture.watchDuration;
+
+			this._getMyCourseResponseDTO
+				.lastViewedLecture = lastViewedLectureResponseDTO;
+		}
 
 		return this._getMyCourseResponseDTO;
 	}

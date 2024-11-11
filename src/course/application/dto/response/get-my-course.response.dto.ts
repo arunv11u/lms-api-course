@@ -5,9 +5,10 @@ import {
 	CourseStatuses,
 	CourseSubtitles
 } from "../../../domain";
-import { 
+import {
 	GetMyCourseCreatorResponseDTO,
-	GetMyCoursePriceResponseDTO, 
+	GetMyCourseLastViewedLectureResponseDTO,
+	GetMyCoursePriceResponseDTO,
 	GetMyCourseRatingResponseDTO,
 	GetMyCourseResponseDTO,
 	GetMyCourseSectionLectureResponseDTO,
@@ -64,6 +65,18 @@ class GetMyCourseSectionResponseDTOImpl implements
 	order: number;
 }
 
+class GetMyCourseLastViewedLectureResponseDTOImpl implements
+	GetMyCourseLastViewedLectureResponseDTO {
+	id: string;
+	title: string;
+	description: string;
+	duration: number;
+	link: string;
+	thumbnail: string | null = null;
+	order: number;
+	watchDuration: number;
+}
+
 class GetMyCourseResponseDTOImpl implements
 	GetMyCourseResponseDTO {
 	id: string;
@@ -84,6 +97,7 @@ class GetMyCourseResponseDTOImpl implements
 	totalSectionsCount: number;
 	totalLecturesCount: number;
 	totalDuration: number;
+	lastViewedLecture: GetMyCourseLastViewedLectureResponseDTO | null = null;
 }
 
 
@@ -94,5 +108,6 @@ export {
 	GetMyCourseSectionLectureSubtitleResponseDTOImpl,
 	GetMyCourseSectionLectureResponseDTOImpl,
 	GetMyCourseSectionResponseDTOImpl,
+	GetMyCourseLastViewedLectureResponseDTOImpl,
 	GetMyCourseResponseDTOImpl
 };

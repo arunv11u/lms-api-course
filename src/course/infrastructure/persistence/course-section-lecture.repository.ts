@@ -1,7 +1,9 @@
 import { AnyBulkWriteOperation, ObjectId } from "mongodb";
 import { MongoDBRepository } from "@arunvaradharajalu/common.mongodb-api";
-import { CourseEntity, CourseSectionLectureStatuses } from "../../domain";
+import { CourseEntity, CourseSectionLectureStatuses, CourseSectionLectureValueObject } from "../../domain";
 import { CourseSectionLectureORMEntity } from "./course-section-lecture.orm-entity";
+import { ErrorCodes, GenericError } from "../../../utils";
+import { CourseLectureWatchDurationRepositoryImpl } from "./course-lecture-watch-duration.repository";
 
 
 
@@ -173,10 +175,10 @@ export class CourseSectionLectureRepositoryImpl {
 						const oldCourseLectureLink = oldCourseLectureIdsMap
 							.get(lecture.id);
 						if (oldCourseLectureLink !== lecture.link)
-							lectureORMEntity.status = 
+							lectureORMEntity.status =
 								// eslint-disable-next-line max-len
 								CourseSectionLectureStatuses.transcodingInProgress;
-						else lectureORMEntity.status = 
+						else lectureORMEntity.status =
 							CourseSectionLectureStatuses.transcodingCompleted;
 
 						lectureORMEntity.title = lecture.title;
@@ -197,21 +199,78 @@ export class CourseSectionLectureRepositoryImpl {
 			}
 		});
 
-		if(lecturesToBeDeleted.length)
+		if (lecturesToBeDeleted.length)
 			await this._deleteLectures(lecturesToBeDeleted);
 
-		if(newLectures.length)
+		if (newLectures.length)
 			await this._addLectures(
 				new ObjectId(course.id),
 				newLectures,
 				instructorId
 			);
 
-		if(operations.length)
+		if (operations.length)
 			await this._mongodbRepository.bulkWrite(
 				this._collectionName,
 				operations
 			);
+	}
+
+	async getLectureByStudent(
+		lectureId: string,
+		studentId: string
+	): Promise<CourseSectionLectureValueObject> {
+		const courseSectionLectureORMEntity =
+			await this._mongodbRepository
+				.findOne<CourseSectionLectureORMEntity>(
+					this._collectionName,
+					{
+						_id: new ObjectId(lectureId)
+					}
+				);
+
+		if (!courseSectionLectureORMEntity)
+			throw new GenericError({
+				code: ErrorCodes.courseLectureNotFound,
+				error: new Error("Course, lecture not found"),
+				errorCode: 404
+			});
+
+		const courseSectionLectureValueObject =
+			new CourseSectionLectureValueObject();
+		courseSectionLectureValueObject.description =
+			courseSectionLectureORMEntity.description;
+		courseSectionLectureValueObject.duration = 
+			courseSectionLectureORMEntity.duration;
+		courseSectionLectureValueObject.id = 
+			courseSectionLectureORMEntity._id.toString();
+		courseSectionLectureValueObject.link = 
+			courseSectionLectureORMEntity.link;
+		courseSectionLectureValueObject.order = 
+			courseSectionLectureORMEntity.order;
+		courseSectionLectureValueObject.status = 
+			courseSectionLectureORMEntity.status;
+		courseSectionLectureValueObject.subtitles = [];
+		courseSectionLectureValueObject.thumbnail = 
+			courseSectionLectureORMEntity.thumbnail;
+		courseSectionLectureValueObject.title = 
+			courseSectionLectureORMEntity.title;
+
+		const courseLectureWatchDurationRepository =
+			new CourseLectureWatchDurationRepositoryImpl(
+				this._mongodbRepository!
+			);
+
+		const watchDuration = await courseLectureWatchDurationRepository
+			.getCourseLectureWatchDuration(
+				studentId,
+				courseSectionLectureORMEntity.course.toString(),
+				courseSectionLectureORMEntity._id.toString()
+			);
+
+		courseSectionLectureValueObject.watchDuration = watchDuration;
+
+		return courseSectionLectureValueObject;
 	}
 
 	private async _deleteLectures(

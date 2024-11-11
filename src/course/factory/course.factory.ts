@@ -6,6 +6,7 @@ import {
 	GetAllCourseCategoriesUseCaseImpl,
 	GetAllCoursesByInstructorUseCaseImpl,
 	GetCourseByInstructorUseCaseImpl,
+	GetLastViewedCourseUseCaseImpl,
 	GetMyCourseUseCaseImpl,
 	GetMyLearningsUseCaseImpl,
 	ProcessCourseTranscodingCompletedEventUseCaseImpl,
@@ -40,7 +41,8 @@ class CourseFactory implements Factory {
 		"GetMyCourseUseCase",
 		"GetCourseByInstructorUseCase",
 		"UpdateLectureWatchDurationUseCase",
-		"GetAllCoursesByInstructorUseCase"
+		"GetAllCoursesByInstructorUseCase",
+		"GetLastViewedCourseUseCase"
 	];
 
 	make(objectName: string): CourseObject {
@@ -92,6 +94,9 @@ class CourseFactory implements Factory {
 
 		if (objectName === "GetAllCoursesByInstructorUseCase")
 			return new GetAllCoursesByInstructorUseCaseImpl();
+
+		if (objectName === "GetLastViewedCourseUseCase")
+			return new GetLastViewedCourseUseCaseImpl();
 
 		throw new GenericError({
 			code: ErrorCodes.invalidFactoryObject,
