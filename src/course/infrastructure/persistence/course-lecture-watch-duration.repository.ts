@@ -69,6 +69,48 @@ export class CourseLectureWatchDurationRepositoryImpl {
 		return courseLectureWatchDurationORMEntity.duration;
 	}
 
+	async getLastViewedCourseIdByStudent(
+		studentId: string
+	): Promise<string | null> {
+		const courseLectureWatchDurationORMEntity =
+			await this._mongodbRepository
+				.findOne<CourseLectureWatchDurationORMEntity>(
+					this._collectionName,
+					{
+						studentId: studentId
+					},
+					{
+						sort: { lastModifiedDate: -1 }
+					}
+				);
+
+		if(!courseLectureWatchDurationORMEntity) return null;
+
+		return courseLectureWatchDurationORMEntity.courseId.toString();
+	}
+
+	async getLastViewedLectureIdForCourseByStudent(
+		courseId: string,
+		studentId: string
+	): Promise<string | null> {
+		const courseLectureWatchDurationORMEntity =
+			await this._mongodbRepository
+				.findOne<CourseLectureWatchDurationORMEntity>(
+					this._collectionName,
+					{
+						studentId: studentId,
+						courseId: new Date(courseId)
+					},
+					{
+						sort: { lastModifiedDate: -1 }
+					}
+				);
+
+		if(!courseLectureWatchDurationORMEntity) return null;
+
+		return courseLectureWatchDurationORMEntity.courseId.toString();
+	}
+
 	private async _isCourseLectureWatchDurationExists(
 		studentId: string,
 		courseId: string,

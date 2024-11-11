@@ -1,7 +1,8 @@
-import { CourseCreatorValueObject, CourseSectionValueObject } from "../value-objects";
+import { CourseCreatorValueObject, CourseSectionLectureValueObject, CourseSectionValueObject } from "../value-objects";
 import { CourseCreatorEntity } from "./course-creator.entity.type";
 import { CoursePriceEntity } from "./course-price.entity.type";
 import { CourseRatingEntity } from "./course-rating.entity.type";
+import { CourseSectionLectureEntity } from "./course-section-lecture.entity.type";
 import { CourseSectionEntity } from "./course-section.entity.type";
 
 enum CourseLanguages {
@@ -86,6 +87,11 @@ abstract class CourseEntity {
 
 	abstract get totalDuration(): number;
 	abstract set totalDuration(totalDuration: number);
+
+	abstract get lastViewedLecture(): CourseSectionLectureEntity | null;
+	abstract setLastViewedLecture(
+		lecture: CourseSectionLectureValueObject
+	): void;
 }
 
 export {

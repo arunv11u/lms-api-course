@@ -1,10 +1,12 @@
-import { CourseCreatorValueObject, CourseSectionValueObject } from "../value-objects";
+import { CourseCreatorValueObject, CourseSectionLectureValueObject, CourseSectionValueObject } from "../value-objects";
 import { CourseCreatorEntityImpl } from "./course-creator.entity";
 import { CourseCreatorEntity } from "./course-creator.entity.type";
 import { CoursePriceEntityImpl } from "./course-price.entity";
 import { CoursePriceCurrencies, CoursePriceEntity } from "./course-price.entity.type";
 import { CourseRatingEntityImpl } from "./course-rating.entity";
 import { CourseRatingEntity } from "./course-rating.entity.type";
+import { CourseSectionLectureEntityImpl } from "./course-section-lecture.entity";
+import { CourseSectionLectureEntity } from "./course-section-lecture.entity.type";
 import { CourseSectionEntityImpl } from "./course-section.entity";
 import { CourseSectionEntity } from "./course-section.entity.type";
 import {
@@ -37,6 +39,7 @@ class CourseEntityImpl implements CourseEntity {
 	private _totalSectionsCount: number;
 	private _totalLecturesCount: number;
 	private _totalDuration: number;
+	private _lastViewedLecture: CourseSectionLectureEntity | null = null;
 
 	get id(): string {
 		return this._id;
@@ -163,7 +166,7 @@ class CourseEntityImpl implements CourseEntity {
 	}
 	addSection(section: CourseSectionValueObject): void {
 		const courseSectionEntity = new CourseSectionEntityImpl();
-		
+
 		section.lectures.forEach(lecture => {
 			courseSectionEntity.addLecture(lecture);
 		});
@@ -196,6 +199,30 @@ class CourseEntityImpl implements CourseEntity {
 	}
 	set totalDuration(totalDuration: number) {
 		this._totalDuration = totalDuration;
+	}
+
+	get lastViewedLecture(): CourseSectionLectureEntity | null {
+		return this._lastViewedLecture;
+	}
+	setLastViewedLecture(
+		lecture: CourseSectionLectureValueObject
+	): void {
+		const courseSectionLectureEntity = new CourseSectionLectureEntityImpl();
+
+		courseSectionLectureEntity.description = lecture.description;
+		courseSectionLectureEntity.duration = lecture.duration;
+		courseSectionLectureEntity.id = lecture.id;
+		courseSectionLectureEntity.link = lecture.link;
+		courseSectionLectureEntity.order = lecture.order;
+
+		lecture.subtitles.forEach(subtitle => {
+			courseSectionLectureEntity.addSubtitle(subtitle);
+		});
+
+		courseSectionLectureEntity.thumbnail = lecture.thumbnail;
+		courseSectionLectureEntity.title = lecture.title;
+
+		this._lastViewedLecture = courseSectionLectureEntity;
 	}
 }
 

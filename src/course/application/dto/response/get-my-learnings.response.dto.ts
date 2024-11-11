@@ -7,6 +7,7 @@ import {
 } from "../../../domain";
 import {
 	GetMyLearningsCreatorResponseDTO,
+	GetMyLearningsLastViewedLectureResponseDTO,
 	GetMyLearningsPriceResponseDTO,
 	GetMyLearningsRatingResponseDTO,
 	GetMyLearningsResponseDTO,
@@ -64,6 +65,18 @@ class GetMyLearningsSectionResponseDTOImpl implements
 	order: number;
 }
 
+class GetMyLearningsLastViewedLectureResponseDTOImpl implements
+	GetMyLearningsLastViewedLectureResponseDTO {
+	id: string;
+	title: string;
+	description: string;
+	duration: number;
+	link: string;
+	thumbnail: string | null = null;
+	order: number;
+	watchDuration: number;
+}
+
 class GetMyLearningsResponseDTOImpl implements
 	GetMyLearningsResponseDTO {
 	id: string;
@@ -84,6 +97,7 @@ class GetMyLearningsResponseDTOImpl implements
 	totalSectionsCount: number;
 	totalLecturesCount: number;
 	totalDuration: number;
+	lastViewedLecture: GetMyLearningsLastViewedLectureResponseDTO | null = null;
 }
 
 
@@ -94,5 +108,6 @@ export {
 	GetMyLearningsSectionLectureSubtitleResponseDTOImpl,
 	GetMyLearningsSectionLectureResponseDTOImpl,
 	GetMyLearningsSectionResponseDTOImpl,
+	GetMyLearningsLastViewedLectureResponseDTOImpl,
 	GetMyLearningsResponseDTOImpl
 };

@@ -834,6 +834,39 @@ export class CourseRepositoryImpl implements CourseRepository, CourseObject {
 			courseEntity.totalSectionsCount = course.sections.length;
 			courseEntity.totalStudents = course.totalStudents;
 
+			if (!this._mongodbRepository)
+				throw new GenericError({
+					code: ErrorCodes.mongoDBRepositoryDoesNotExist,
+					error: new Error("MongoDB repository does not exist"),
+					errorCode: 500
+				});
+
+			const courseLectureWatchDurationRepository =
+			new CourseLectureWatchDurationRepositoryImpl(
+				this._mongodbRepository
+			);
+			
+			// eslint-disable-next-line max-len
+			const lastViewedLectureId = await courseLectureWatchDurationRepository
+				.getLastViewedLectureIdForCourseByStudent(
+					course._id.toString(),
+					studentId
+				);
+
+			if(lastViewedLectureId) {
+				const courseSectionLectureRepository = 
+					// eslint-disable-next-line max-len
+					new CourseSectionLectureRepositoryImpl(this._mongodbRepository);
+
+				const lecture = await courseSectionLectureRepository
+					.getLectureByStudent(
+						lastViewedLectureId,
+						studentId
+					);
+
+				courseEntity.setLastViewedLecture(lecture);
+			}
+
 			return courseEntity;
 		});
 
@@ -991,6 +1024,30 @@ export class CourseRepositoryImpl implements CourseRepository, CourseObject {
 		courseEntity.totalLecturesCount = totalLecturesCount;
 		courseEntity.totalSectionsCount = course.sections.length;
 		courseEntity.totalStudents = course.totalStudents;
+
+		const courseLectureWatchDurationRepository =
+			new CourseLectureWatchDurationRepositoryImpl(
+				this._mongodbRepository
+			);
+
+		const lastViewedLectureId = await courseLectureWatchDurationRepository
+			.getLastViewedLectureIdForCourseByStudent(
+				course._id.toString(),
+				studentId
+			);
+
+		if(lastViewedLectureId) {
+			const courseSectionLectureRepository = 
+				new CourseSectionLectureRepositoryImpl(this._mongodbRepository);
+
+			const lecture = await courseSectionLectureRepository
+				.getLectureByStudent(
+					lastViewedLectureId,
+					studentId
+				);
+
+			courseEntity.setLastViewedLecture(lecture);
+		}
 
 		return courseEntity;
 	}
@@ -1264,6 +1321,163 @@ export class CourseRepositoryImpl implements CourseRepository, CourseObject {
 		});
 
 		return coursesEntity;
+	}
+
+	async getLastViewedCourseByStudent(
+		studentId: string
+	): Promise<CourseEntity | null> {
+		if (!this._mongodbRepository)
+			throw new GenericError({
+				code: ErrorCodes.mongoDBRepositoryDoesNotExist,
+				error: new Error("MongoDB repository does not exist"),
+				errorCode: 500
+			});
+
+		const courseLectureWatchDurationRepository =
+			new CourseLectureWatchDurationRepositoryImpl(
+				this._mongodbRepository
+			);
+
+		const lastViewedCourseId = await courseLectureWatchDurationRepository
+			.getLastViewedCourseIdByStudent(studentId);
+
+		if (!lastViewedCourseId) return null;
+
+		const course = await this._mongodbRepository
+			.findOne<ViewCourseORMEntity>(
+				this._viewCollectionName,
+				{
+					_id: new ObjectId(lastViewedCourseId)
+				}
+			);
+
+		if (!course)
+			throw new GenericError({
+				code: ErrorCodes.courseNotFound,
+				error: new Error("Last viewed course not found"),
+				errorCode: 404
+			});
+
+		const courseEntity = this._courseFactory.make("CourseEntity") as CourseEntity;
+
+		course.creators.forEach(creator => {
+			const courseCreatorValueObject = new CourseCreatorValueObject();
+			courseCreatorValueObject.designation = creator.designation;
+			courseCreatorValueObject.firstName = creator.firstName;
+			courseCreatorValueObject.id = creator._id;
+			courseCreatorValueObject.lastName = creator.lastName;
+			courseCreatorValueObject.profilePicture =
+				creator.profilePicture;
+
+			courseEntity.addCreator(courseCreatorValueObject);
+		});
+
+		course.languages.forEach(language => {
+			courseEntity.addLanguage(language.language);
+		});
+
+		course.learnings.forEach(learning => {
+			courseEntity.addLearning(learning.learning);
+		});
+
+		course.materialsAndOffers.forEach(materialAndOffer => {
+			courseEntity.addMaterialAndOffer(
+				materialAndOffer.materialAndOffer
+			);
+		});
+
+		let totalDuration = 0;
+		let totalLecturesCount = 0;
+		const sectionPromises = course.sections.map(async (section) => {
+			const courseSectionValueObject = new CourseSectionValueObject();
+			courseSectionValueObject.id = section._id.toString();
+
+			let lectureDuration = 0;
+			const lecturePromises = section.lectures.map(async (lecture) => {
+				lectureDuration += lecture.duration;
+
+				const courseLectureWatchDurationRepository =
+					new CourseLectureWatchDurationRepositoryImpl(
+						this._mongodbRepository!
+					);
+
+				// eslint-disable-next-line max-len
+				const watchDuration = await courseLectureWatchDurationRepository
+					.getCourseLectureWatchDuration(
+						studentId,
+						course._id.toString(),
+						lecture._id.toString()
+					);
+
+				courseSectionValueObject.lectures.push({
+					description: lecture.description,
+					duration: lecture.duration,
+					id: lecture._id.toString(),
+					link: lecture.link,
+					order: lecture.order,
+					status: lecture.status,
+					subtitles: [],
+					thumbnail: lecture.thumbnail,
+					title: lecture.title,
+					watchDuration: watchDuration
+				});
+			});
+
+			await Promise.all(lecturePromises);
+
+			totalDuration += lectureDuration;
+			totalLecturesCount += section.lectures.length;
+
+			courseSectionValueObject.lecturesCount =
+				section.lectures.length;
+			courseSectionValueObject.lecturesDuration = lectureDuration;
+			courseSectionValueObject.order = section.order;
+			courseSectionValueObject.title = section.title;
+
+			courseEntity.addSection(courseSectionValueObject);
+		});
+
+		await Promise.all(sectionPromises);
+
+		course.subtitles.forEach(subtitle => {
+			courseEntity.addSubtitle(subtitle.subtitle);
+		});
+
+		courseEntity.category = course.category;
+		courseEntity.description = course.description;
+		courseEntity.id = course._id.toString();
+		courseEntity.image = course.image;
+		courseEntity.lastUpdatedOn = course.lastModifiedDate;
+
+		courseEntity.setPrice(course.currency, course.price);
+
+		courseEntity.status = course.status;
+		courseEntity.title = course.title;
+		courseEntity.totalDuration = totalDuration;
+		courseEntity.totalLecturesCount = totalLecturesCount;
+		courseEntity.totalSectionsCount = course.sections.length;
+		courseEntity.totalStudents = course.totalStudents;
+
+		const lastViewedLectureId = await courseLectureWatchDurationRepository
+			.getLastViewedLectureIdForCourseByStudent(
+				course._id.toString(),
+				studentId
+			);
+
+		if(lastViewedLectureId) {
+			const courseSectionLectureRepository = 
+				new CourseSectionLectureRepositoryImpl(this._mongodbRepository);
+
+			const lecture = await courseSectionLectureRepository
+				.getLectureByStudent(
+					lastViewedLectureId,
+					studentId
+				);
+
+			courseEntity.setLastViewedLecture(lecture);
+		}
+
+		return courseEntity;
 	}
 
 	private async _getCourseWithId(courseId: string): Promise<CourseEntity> {

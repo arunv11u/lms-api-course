@@ -3,6 +3,7 @@ import { UnitOfWork, UnitOfWorkImpl } from "../../../utils";
 import { CourseObject, CourseRepository } from "../../domain";
 import {
 	GetMyLearningsCreatorResponseDTOImpl,
+	GetMyLearningsLastViewedLectureResponseDTOImpl,
 	GetMyLearningsRequestDTO,
 	GetMyLearningsResponseDTO,
 	GetMyLearningsResponseDTOImpl,
@@ -114,6 +115,30 @@ export class GetMyLearningsUseCaseImpl implements
 			getMyLearningsResponseDTO.totalLecturesCount =
 				course.totalLecturesCount;
 			getMyLearningsResponseDTO.totalStudents = course.totalStudents;
+
+			if (course.lastViewedLecture) {
+				const lastViewedLectureResponseDTO =
+					new GetMyLearningsLastViewedLectureResponseDTOImpl();
+
+				lastViewedLectureResponseDTO.description =
+					course.lastViewedLecture.description;
+				lastViewedLectureResponseDTO.duration =
+					course.lastViewedLecture.duration;
+				lastViewedLectureResponseDTO.id = course.lastViewedLecture.id;
+				lastViewedLectureResponseDTO.link = 
+					course.lastViewedLecture.link;
+				lastViewedLectureResponseDTO.order = 
+					course.lastViewedLecture.order;
+				lastViewedLectureResponseDTO.thumbnail =
+					course.lastViewedLecture.thumbnail;
+				lastViewedLectureResponseDTO.title = 
+					course.lastViewedLecture.title;
+				lastViewedLectureResponseDTO.watchDuration =
+					course.lastViewedLecture.watchDuration;
+
+				getMyLearningsResponseDTO
+					.lastViewedLecture = lastViewedLectureResponseDTO;
+			}
 
 			this._getMyLearningsResponseDTO
 				.push(getMyLearningsResponseDTO);

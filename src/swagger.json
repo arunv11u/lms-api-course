@@ -1854,6 +1854,40 @@
 					}
 				}
 			}
+		},
+		"/course/last-viewed-course": {
+			"get": {
+				"summary": "Get the last viewed course of a student",
+				"tags": [
+					"Course"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {},
+				"responses": {
+					"200": {
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"data": {
+											"$ref": "#/components/schemas/Course"
+										}
+									},
+									"required": [
+										"data"
+									]
+								}
+							}
+						}
+					}
+				}
+			}
 		}
 	},
 	"components": {
@@ -2166,6 +2200,65 @@
 					"totalDuration": {
 						"type": "number",
 						"example": "79980000 (in milliseconds)"
+					},
+					"lastViewedLecture": {
+						"id": {
+							"type": "string",
+							"example": "667f14303cebd3afba47d625"
+						},
+						"title": {
+							"type": "string",
+							"example": "Auto-Welcome Message"
+						},
+						"description": {
+							"type": "string",
+							"example": "Welcome to the Complete Python Bootcamp"
+						},
+						"duration": {
+							"type": "number",
+							"example": 399000
+						},
+						"link": {
+							"type": "string",
+							"example": "https://learning-management-system-project.s3.amazonaws.com/withmonday.m3u8"
+						},
+						"thumbnail": {
+							"type": "string",
+							"example": "https://s3.us-east-1.amazonaws.com/learning-management-system-project/public/courses/images/37f3aa96-7968-428f-9203-67a0a4c9d7e0.jpg"
+						},
+						"subtitles": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"language": {
+										"type": "language",
+										"enum": [
+											"English",
+											"French",
+											"Germany"
+										],
+										"example": "English"
+									},
+									"url": {
+										"type": "string",
+										"example": "https://s3.us-east-1.amazonaws.com/learning-management-system-project/public/courses/raw-lectures/a4f8287d-2fa5-44c9-9223-4a2b292b98ad.srt"
+									}
+								},
+								"required": [
+									"language",
+									"url"
+								]
+							}
+						},
+						"order": {
+							"type": "number",
+							"example": 1
+						},
+						"watchDuration": {
+							"type": "number",
+							"example": 20
+						}
 					}
 				},
 				"required": [

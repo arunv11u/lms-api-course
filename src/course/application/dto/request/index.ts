@@ -18,6 +18,10 @@ export * from "./get-course-by-instructor.request.dto";
 
 export * from "./get-course-by-instructor.request.dto.type";
 
+export * from "./get-last-viewed-course.request.dto";
+
+export * from "./get-last-viewed-course.request.dto.type";
+
 export * from "./get-my-course.request.dto";
 
 export * from "./get-my-course.request.dto.type";
