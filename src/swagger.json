@@ -11,7 +11,7 @@
 			"description": "LMS API's related to courses"
 		},
 		{
-			"url": "http://localhost",
+			"url": "http://localhost/api/main",
 			"description": "Local host server, exclusively for back-end developers."
 		}
 	],
@@ -533,6 +533,11 @@
 				"summary": "Get the list of courses",
 				"tags": [
 					"Course"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
 				],
 				"parameters": [
 					{

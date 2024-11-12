@@ -258,10 +258,12 @@ export class CourseRepositoryImpl implements CourseRepository, CourseObject {
 			.create(id, courseId, lectureIds);
 	}
 
+	// eslint-disable-next-line max-params
 	async exploreAllCourses(
 		searchString: string | null,
 		categories: string[],
-		pagination: CoursePaginationValueObject
+		pagination: CoursePaginationValueObject,
+		studentId: string | null
 	): Promise<DocsCountList<CourseEntity>> {
 		if (!this._mongodbRepository)
 			throw new GenericError({
@@ -341,7 +343,7 @@ export class CourseRepositoryImpl implements CourseRepository, CourseObject {
 				}
 			);
 
-		courses.docs.forEach(course => {
+		const coursePromises = courses.docs.map(async (course, courseIndex) => {
 			const courseEntity = this._courseFactory.make("CourseEntity") as CourseEntity;
 
 			course.creators.forEach(creator => {
@@ -425,8 +427,29 @@ export class CourseRepositoryImpl implements CourseRepository, CourseObject {
 			courseEntity.totalSectionsCount = course.sections.length;
 			courseEntity.totalStudents = course.totalStudents;
 
-			courseDocsCountList.docs.push(courseEntity);
+			if (!this._mongodbRepository)
+				throw new GenericError({
+					code: ErrorCodes.mongoDBRepositoryDoesNotExist,
+					error: new Error("MongoDB repository does not exist"),
+					errorCode: 500
+				});
+
+			if(studentId) {
+				const courseStudentRepository = 
+					new CourseStudentRepositoryImpl(this._mongodbRepository);
+				
+				const isStudentEnrolledForCourse = await courseStudentRepository
+					.isStudentEnrolledForCourse(course._id, studentId);
+
+				courseEntity.isStudentEnrolledForCourse = 
+					isStudentEnrolledForCourse;
+			}
+
+			courseDocsCountList.docs[courseIndex] = courseEntity;
 		});
+
+		await Promise.all(coursePromises);
+
 		courseDocsCountList.count = courses.count;
 
 		return courseDocsCountList;

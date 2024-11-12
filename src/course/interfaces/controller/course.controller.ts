@@ -339,6 +339,11 @@ export class CourseController {
 			const exploreAllCoursesRequestDTO =
 				new ExploreAllCoursesRequestDTOImpl();
 
+			if(request.header(authorizationTokenName)) {
+				exploreAllCoursesRequestDTO.authorizationToken =
+					request.header(authorizationTokenName) as string;
+			}
+
 			let categories = request.query.categories;
 
 			if (categories && !Array.isArray(categories))

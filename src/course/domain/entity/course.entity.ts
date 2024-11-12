@@ -40,6 +40,7 @@ class CourseEntityImpl implements CourseEntity {
 	private _totalLecturesCount: number;
 	private _totalDuration: number;
 	private _lastViewedLecture: CourseSectionLectureEntity | null = null;
+	private _isStudentEnrolledForCourse: boolean = false;
 
 	get id(): string {
 		return this._id;
@@ -223,6 +224,13 @@ class CourseEntityImpl implements CourseEntity {
 		courseSectionLectureEntity.title = lecture.title;
 
 		this._lastViewedLecture = courseSectionLectureEntity;
+	}
+
+	get isStudentEnrolledForCourse(): boolean {
+		return this._isStudentEnrolledForCourse;
+	}
+	set isStudentEnrolledForCourse(isStudentEnrolledForCourse: boolean) {
+		this._isStudentEnrolledForCourse = isStudentEnrolledForCourse;
 	}
 }
 
