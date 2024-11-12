@@ -92,6 +92,11 @@ abstract class CourseEntity {
 	abstract setLastViewedLecture(
 		lecture: CourseSectionLectureValueObject
 	): void;
+
+	abstract get isStudentEnrolledForCourse(): boolean;
+	abstract set isStudentEnrolledForCourse(
+		isStudentEnrolledForCourse: boolean
+	);
 }
 
 export {

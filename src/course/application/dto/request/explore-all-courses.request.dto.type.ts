@@ -8,6 +8,7 @@ interface ExploreAllCoursesRequestDTO {
 	pageSize: number;
 	sortType: SortTypes;
 	sortField: string;
+	authorizationToken: string | null;
 }
 
 export {

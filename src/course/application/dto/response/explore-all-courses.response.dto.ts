@@ -82,6 +82,7 @@ class ExploreAllCoursesResponseDTOImpl implements
 	totalSectionsCount: number;
 	totalLecturesCount: number;
 	totalDuration: number;
+	isStudentEnrolledForCourse: boolean;
 }
 
 

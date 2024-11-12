@@ -9,6 +9,7 @@ class ExploreAllCoursesRequestDTOImpl implements ExploreAllCoursesRequestDTO {
 	searchString: string | null = null;
 	sortField: string = "_id";
 	sortType: SortTypes = SortTypes.ASC;
+	authorizationToken: string | null = null;
 }
 
 export {

@@ -1,3 +1,4 @@
+import { TokenRepository } from "../../../token";
 import { UnitOfWork, UnitOfWorkImpl } from "../../../utils";
 import { CourseObject, CoursePaginationValueObject, CourseRepository } from "../../domain";
 import { ExploreAllCoursesCreatorResponseDTOImpl, ExploreAllCoursesRequestDTO, ExploreAllCoursesResponseDTO, ExploreAllCoursesResponseDTOImpl, ExploreAllCoursesSectionLectureResponseDTOImpl, ExploreAllCoursesSectionResponseDTOImpl } from "../dto";
@@ -24,8 +25,21 @@ export class ExploreAllCoursesUseCaseImpl implements
 	}
 
 	async execute(): Promise<ExploreAllCoursesResponseDTO[]> {
+		const tokenRepository = this._unitOfWork
+			.getRepository("TokenRepository") as TokenRepository;
 		const courseRepository = this._unitOfWork
 			.getRepository("CourseRepository") as CourseRepository;
+
+		let studentId: string | null = null;
+
+		if(this._exploreAllCoursesRequestDTO.authorizationToken) {
+			const { id } = await tokenRepository
+				.validateStudentAuthorizationToken(
+					this._exploreAllCoursesRequestDTO.authorizationToken
+				);
+
+			studentId = id;
+		}
 
 		const coursePaginationValueObject = new CoursePaginationValueObject();
 		coursePaginationValueObject.pageIndex =
@@ -40,7 +54,8 @@ export class ExploreAllCoursesUseCaseImpl implements
 		const coursesDocsCountList = await courseRepository.exploreAllCourses(
 			this._exploreAllCoursesRequestDTO.searchString,
 			this._exploreAllCoursesRequestDTO.categories,
-			coursePaginationValueObject
+			coursePaginationValueObject,
+			studentId
 		);
 
 		coursesDocsCountList.docs.forEach(course => {
@@ -108,6 +123,8 @@ export class ExploreAllCoursesUseCaseImpl implements
 			exploreAllCoursesResponseDTO.totalLecturesCount =
 				course.totalLecturesCount;
 			exploreAllCoursesResponseDTO.totalStudents = course.totalStudents;
+			exploreAllCoursesResponseDTO.isStudentEnrolledForCourse = 
+				course.isStudentEnrolledForCourse;
 
 			this._exploreAllCoursesResponseDTO
 				.push(exploreAllCoursesResponseDTO);
