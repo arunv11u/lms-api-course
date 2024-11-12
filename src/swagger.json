@@ -7,11 +7,11 @@
 	},
 	"servers": [
 		{
-			"url": "https://smooth-raptor-explicitly.ngrok-free.app/api/main",
+			"url": "https://api.lms-staging.com/api/main",
 			"description": "LMS API's related to courses"
 		},
 		{
-			"url": "http://localhost:3000",
+			"url": "http://localhost",
 			"description": "Local host server, exclusively for back-end developers."
 		}
 	],
