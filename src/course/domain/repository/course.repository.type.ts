@@ -55,7 +55,8 @@ export abstract class CourseRepository extends Repository {
 	abstract getAllCourseCategories(): Promise<DocsCountList<string>>;
 
 	abstract exploreACourse(
-		courseId: string
+		courseId: string,
+		studentId: string | null
 	): Promise<CourseEntity>;
 
 	abstract isCourseExists(id: string): Promise<boolean>;

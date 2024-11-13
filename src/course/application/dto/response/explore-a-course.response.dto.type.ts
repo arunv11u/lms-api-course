@@ -65,6 +65,7 @@ interface ExploreACourseResponseDTO {
 	totalSectionsCount: number;
 	totalLecturesCount: number;
 	totalDuration: number;
+	isStudentEnrolledForCourse: boolean;
 }
 
 

@@ -1,3 +1,4 @@
+import { TokenRepository } from "../../../token";
 import { UnitOfWork, UnitOfWorkImpl } from "../../../utils";
 import { CourseObject, CourseRepository } from "../../domain";
 import {
@@ -32,11 +33,27 @@ export class ExploreACourseUseCaseImpl implements
 	}
 
 	async execute(): Promise<ExploreACourseResponseDTO> {
+		const tokenRepository = this._unitOfWork
+			.getRepository("TokenRepository") as TokenRepository;
 		const courseRepository = this._unitOfWork
 			.getRepository("CourseRepository") as CourseRepository;
 
+		let studentId: string | null = null;
+
+		if (this._exploreACourseRequestDTO.authorizationToken) {
+			const { id } = await tokenRepository
+				.validateStudentAuthorizationToken(
+					this._exploreACourseRequestDTO.authorizationToken
+				);
+
+			studentId = id;
+		}
+
 		const course = await courseRepository
-			.exploreACourse(this._exploreACourseRequestDTO.courseId);
+			.exploreACourse(
+				this._exploreACourseRequestDTO.courseId,
+				studentId
+			);
 
 		this._exploreACourseResponseDTO.category = course.category;
 
@@ -95,11 +112,13 @@ export class ExploreACourseUseCaseImpl implements
 		this._exploreACourseResponseDTO.subtitles = course.subtitles;
 		this._exploreACourseResponseDTO.title = course.title;
 		this._exploreACourseResponseDTO.totalDuration = course.totalDuration;
-		this._exploreACourseResponseDTO.totalSectionsCount = 
+		this._exploreACourseResponseDTO.totalSectionsCount =
 			course.totalSectionsCount;
 		this._exploreACourseResponseDTO.totalLecturesCount =
 			course.totalLecturesCount;
 		this._exploreACourseResponseDTO.totalStudents = course.totalStudents;
+		this._exploreACourseResponseDTO.isStudentEnrolledForCourse = 
+			course.isStudentEnrolledForCourse;
 
 		return this._exploreACourseResponseDTO;
 	}
