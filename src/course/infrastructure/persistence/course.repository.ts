@@ -475,7 +475,10 @@ export class CourseRepositoryImpl implements CourseRepository, CourseObject {
 		return courseCategoriesDocsCountList;
 	}
 
-	async exploreACourse(courseId: string): Promise<CourseEntity> {
+	async exploreACourse(
+		courseId: string,
+		studentId: string | null
+	): Promise<CourseEntity> {
 		if (!this._mongodbRepository)
 			throw new GenericError({
 				code: ErrorCodes.mongoDBRepositoryDoesNotExist,
@@ -582,6 +585,17 @@ export class CourseRepositoryImpl implements CourseRepository, CourseObject {
 		courseEntity.totalLecturesCount = totalLecturesCount;
 		courseEntity.totalSectionsCount = course.sections.length;
 		courseEntity.totalStudents = course.totalStudents;
+
+		if(studentId) {
+			const courseStudentRepository = 
+				new CourseStudentRepositoryImpl(this._mongodbRepository);
+			
+			const isStudentEnrolledForCourse = await courseStudentRepository
+				.isStudentEnrolledForCourse(course._id, studentId);
+
+			courseEntity.isStudentEnrolledForCourse = 
+				isStudentEnrolledForCourse;
+		}
 
 		return courseEntity;
 	}

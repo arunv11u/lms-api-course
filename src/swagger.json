@@ -918,6 +918,11 @@
 				"tags": [
 					"Course"
 				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
 				"parameters": [
 					{
 						"name": "id",
