@@ -78,7 +78,8 @@ class CourseSocket {
 			this._io.on("connection", async (socket) => {
 				try {
 					this._winston.info("User trying to connect to the course socket namespace.");
-					const token = socket.handshake.headers.authorization;
+					// eslint-disable-next-line max-len
+					const token = socket.handshake.query.authorization as string;
 					if (!token)
 						throw new GenericError({
 							code: ErrorCodes.invalidAuthorizationToken,

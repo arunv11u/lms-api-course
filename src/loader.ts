@@ -62,7 +62,6 @@ export class LoaderImpl implements Loader {
 		await mongoDBConnect.connect();
 
 		await socketConnect.init(server);
-		socketConnect.connect();
 		sockets.listen(socketConnect.io);
 
 
