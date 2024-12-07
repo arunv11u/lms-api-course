@@ -93,13 +93,14 @@ export class CourseLectureWatchDurationRepositoryImpl {
 		courseId: string,
 		studentId: string
 	): Promise<string | null> {
+
 		const courseLectureWatchDurationORMEntity =
 			await this._mongodbRepository
 				.findOne<CourseLectureWatchDurationORMEntity>(
 					this._collectionName,
 					{
 						studentId: studentId,
-						courseId: new Date(courseId)
+						courseId: new ObjectId(courseId)
 					},
 					{
 						sort: { lastModifiedDate: -1 }
@@ -108,7 +109,7 @@ export class CourseLectureWatchDurationRepositoryImpl {
 
 		if(!courseLectureWatchDurationORMEntity) return null;
 
-		return courseLectureWatchDurationORMEntity.courseId.toString();
+		return courseLectureWatchDurationORMEntity.lectureId.toString();
 	}
 
 	private async _isCourseLectureWatchDurationExists(

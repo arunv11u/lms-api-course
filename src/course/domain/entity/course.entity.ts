@@ -222,6 +222,7 @@ class CourseEntityImpl implements CourseEntity {
 
 		courseSectionLectureEntity.thumbnail = lecture.thumbnail;
 		courseSectionLectureEntity.title = lecture.title;
+		courseSectionLectureEntity.watchDuration = lecture.watchDuration;
 
 		this._lastViewedLecture = courseSectionLectureEntity;
 	}
