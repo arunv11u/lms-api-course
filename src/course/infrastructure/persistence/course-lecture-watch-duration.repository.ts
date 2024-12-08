@@ -31,19 +31,28 @@ export class CourseLectureWatchDurationRepositoryImpl {
 				duration
 			);
 		} else {
-			await this._mongodbRepository
-				.update<CourseLectureWatchDurationORMEntity>(
-					this._collectionName,
-					{
-						studentId: studentId,
-						courseId: new ObjectId(courseId),
-						lectureId: new ObjectId(lectureId)
-					},
-					{
-						$set: { duration: duration },
-						$inc: { version: 1 }
-					}
-				);
+			// eslint-disable-next-line max-len
+			const existingWatchDuration = await this.getCourseLectureWatchDuration(
+				studentId,
+				courseId,
+				lectureId
+			);
+
+			if(duration > existingWatchDuration) {
+				await this._mongodbRepository
+					.update<CourseLectureWatchDurationORMEntity>(
+						this._collectionName,
+						{
+							studentId: studentId,
+							courseId: new ObjectId(courseId),
+							lectureId: new ObjectId(lectureId)
+						},
+						{
+							$set: { duration: duration },
+							$inc: { version: 1 }
+						}
+					);
+			}
 		}
 	}
 
