@@ -992,12 +992,15 @@ export class CourseRepositoryImpl implements CourseRepository, CourseObject {
 
 		let totalDuration = 0;
 		let totalLecturesCount = 0;
-		const sectionPromises = course.sections.map(async (section) => {
+
+		for(const section of course.sections) {
 			const courseSectionValueObject = new CourseSectionValueObject();
 			courseSectionValueObject.id = section._id.toString();
 
 			let lectureDuration = 0;
-			const lecturePromises = section.lectures.map(async (lecture) => {
+			// eslint-disable-next-line max-len
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars, max-len
+			const lecturePromises = section.lectures.map(async (lecture, lectureIndex) => {
 				lectureDuration += lecture.duration;
 
 				const courseLectureWatchDurationRepository =
@@ -1013,7 +1016,7 @@ export class CourseRepositoryImpl implements CourseRepository, CourseObject {
 						lecture._id.toString()
 					);
 
-				courseSectionValueObject.lectures.push({
+				courseSectionValueObject.lectures[lectureIndex] = {
 					description: lecture.description,
 					duration: lecture.duration,
 					id: lecture._id.toString(),
@@ -1024,7 +1027,7 @@ export class CourseRepositoryImpl implements CourseRepository, CourseObject {
 					thumbnail: lecture.thumbnail,
 					title: lecture.title,
 					watchDuration: watchDuration
-				});
+				};
 			});
 
 			await Promise.all(lecturePromises);
@@ -1039,9 +1042,7 @@ export class CourseRepositoryImpl implements CourseRepository, CourseObject {
 			courseSectionValueObject.title = section.title;
 
 			courseEntity.addSection(courseSectionValueObject);
-		});
-
-		await Promise.all(sectionPromises);
+		}
 
 		course.subtitles.forEach(subtitle => {
 			courseEntity.addSubtitle(subtitle.subtitle);
