@@ -7,7 +7,6 @@ The Course Service is a core microservice of the Learning Management System (LMS
 - Course creation, updating, and deletion by instructors.  
 - Management of lectures, including video and content tracking.  
 - Tracks student course progress and completion percentages.  
-- Handles course reviews and Q&A functionality.  
 - Flexible and efficient data storage using **MongoDB**.
 
 ## Tech Stack  
